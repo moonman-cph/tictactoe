@@ -434,6 +434,110 @@
   }
   .secondary-suggestion:hover { background: var(--hover-bg, #f3f4f6); }
 
+  /* ── CSV Import Modal ───────────────────────────────────────── */
+  #import-modal-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(16,24,40,0.45);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+  }
+  #import-modal-panel {
+    background: var(--surface);
+    border-radius: 14px;
+    width: 100%;
+    max-width: 560px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 60px rgba(16,24,40,0.18);
+    margin: 0 16px;
+    overflow: hidden;
+  }
+  .import-steps {
+    display: flex;
+    gap: 0;
+    padding: 16px 24px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .import-step {
+    flex: 1;
+    text-align: center;
+    padding: 0 4px 12px;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--text-muted);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+  }
+  .import-step.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .import-step.done { color: var(--text-secondary); }
+  .import-panel { display: none; padding: 20px 24px; flex: 1; overflow-y: auto; }
+  .import-panel.active { display: block; }
+  .import-drop-zone {
+    border: 2px dashed var(--border);
+    border-radius: 10px;
+    padding: 36px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .import-drop-zone:hover, .import-drop-zone.dragover {
+    border-color: var(--accent);
+    background: var(--accent-light);
+  }
+  .import-drop-zone svg { opacity: 0.4; margin-bottom: 10px; }
+  .import-drop-label { font-size: 13px; color: var(--text-secondary); margin-bottom: 4px; }
+  .import-drop-sub { font-size: 11.5px; color: var(--text-muted); }
+  .import-col-preview {
+    display: flex; flex-wrap: wrap; gap: 5px; margin-top: 14px;
+  }
+  .import-col-chip {
+    background: var(--bg); border: 1px solid var(--border); border-radius: 5px;
+    padding: 2px 8px; font-size: 11px; color: var(--text-secondary);
+  }
+  .import-map-group { margin-bottom: 16px; }
+  .import-map-group-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 8px;
+  }
+  .import-map-row {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 7px;
+  }
+  .import-map-label {
+    width: 130px; flex-shrink: 0; font-size: 12.5px; color: var(--text-secondary);
+  }
+  .import-map-label span { font-size: 10px; color: #ef4444; margin-left: 2px; }
+  .import-map-row select { flex: 1; }
+  .import-mode-option {
+    display: flex; align-items: flex-start; gap: 10px;
+    border: 1.5px solid var(--border); border-radius: 8px;
+    padding: 11px 14px; margin-bottom: 8px; cursor: pointer;
+    transition: border-color 0.12s, background 0.12s;
+  }
+  .import-mode-option.selected {
+    border-color: var(--accent); background: var(--accent-light);
+  }
+  .import-mode-option input[type=radio] { margin-top: 2px; flex-shrink: 0; }
+  .import-mode-title { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+  .import-mode-desc { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; }
+  .import-replace-warn {
+    display: none; background: #fef3c7; border: 1px solid #fcd34d;
+    border-radius: 6px; padding: 8px 12px; font-size: 12px; color: #92400e; margin-top: 8px;
+  }
+  .import-preview-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 5px 0; font-size: 13px; border-bottom: 1px solid var(--border);
+  }
+  .import-preview-row:last-child { border-bottom: none; }
+  .import-preview-icon { font-size: 14px; flex-shrink: 0; }
+  .import-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 24px; border-top: 1px solid var(--border); flex-shrink: 0;
+  }
+
   /* ── Team Settings Items ────────────────────────────────────── */
   .team-item {
     display: flex;
@@ -1513,6 +1617,13 @@
         </svg>
         Settings
       </a>
+      <a class="nav-item" href="#" id="import-csv-btn">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8 1v9M5 7l3 3 3-3"/>
+          <path d="M2 11v2a1 1 0 001 1h10a1 1 0 001-1v-2"/>
+        </svg>
+        Import CSV
+      </a>
       <a class="nav-item" href="#" id="clear-employees-btn" style="color:var(--danger,#e05252);">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="6" cy="5" r="2.5"/>
@@ -1710,6 +1821,83 @@
 </div>
 
 </div><!-- #app-content -->
+
+<!-- CSV Import Modal -->
+<div id="import-modal-backdrop">
+  <div id="import-modal-panel">
+    <div class="modal-header">
+      <span class="modal-title">Import CSV</span>
+      <button class="modal-close" id="import-modal-close">&#x2715;</button>
+    </div>
+    <div class="import-steps">
+      <div class="import-step active" id="import-step-1">1 · Upload</div>
+      <div class="import-step" id="import-step-2">2 · Map fields</div>
+      <div class="import-step" id="import-step-3">3 · Options</div>
+      <div class="import-step" id="import-step-4">4 · Preview</div>
+    </div>
+    <!-- Step 1: Upload -->
+    <div class="import-panel active" id="import-panel-1">
+      <div class="import-drop-zone" id="import-drop-zone">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M8 9l4-6 4 6"/><path d="M3 17v2a2 2 0 002 2h14a2 2 0 002-2v-2"/></svg>
+        <div class="import-drop-label">Drop a CSV file here, or click to browse</div>
+        <div class="import-drop-sub">One row per employee. First row must be headers.</div>
+        <input type="file" id="import-file-input" accept=".csv,text/csv" style="display:none" />
+      </div>
+      <div id="import-col-preview-area" style="display:none">
+        <div style="font-size:12px;font-weight:600;color:var(--text-secondary);margin-top:14px;margin-bottom:4px" id="import-row-count"></div>
+        <div class="import-col-preview" id="import-col-chips"></div>
+      </div>
+    </div>
+    <!-- Step 2: Map fields -->
+    <div class="import-panel" id="import-panel-2">
+      <div class="import-map-group">
+        <div class="import-map-group-label">Person</div>
+        <div class="import-map-row"><div class="import-map-label">Full name <span>*</span></div><select class="form-control" id="imap-name"></select></div>
+        <div class="import-map-row"><div class="import-map-label">Employee ID</div><select class="form-control" id="imap-employeeId"></select></div>
+        <div class="import-map-row"><div class="import-map-label">Salary (monthly)</div><select class="form-control" id="imap-salary"></select></div>
+        <div class="import-map-row"><div class="import-map-label">Gender</div><select class="form-control" id="imap-gender"></select></div>
+      </div>
+      <div class="import-map-group">
+        <div class="import-map-group-label">Role</div>
+        <div class="import-map-row"><div class="import-map-label">Job title <span>*</span></div><select class="form-control" id="imap-roleTitle"></select></div>
+        <div class="import-map-row"><div class="import-map-label">Level (L1–L8)</div><select class="form-control" id="imap-roleLevel"></select></div>
+        <div class="import-map-row"><div class="import-map-label">Department</div><select class="form-control" id="imap-roleDept"></select></div>
+        <div class="import-map-row"><div class="import-map-label">Team</div><select class="form-control" id="imap-roleTeam"></select></div>
+        <div class="import-map-row"><div class="import-map-label">Manager name</div><select class="form-control" id="imap-managerName"></select></div>
+      </div>
+    </div>
+    <!-- Step 3: Options -->
+    <div class="import-panel" id="import-panel-3">
+      <div style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:12px">How should existing data be handled?</div>
+      <label class="import-mode-option selected" id="import-mode-append-opt">
+        <input type="radio" name="import-mode" value="append" checked />
+        <div><div class="import-mode-title">Append</div><div class="import-mode-desc">Add all rows as new records. Existing data is untouched.</div></div>
+      </label>
+      <label class="import-mode-option" id="import-mode-merge-opt">
+        <input type="radio" name="import-mode" value="merge" />
+        <div><div class="import-mode-title">Merge</div><div class="import-mode-desc">Match on Employee ID (or name if no ID mapped). Update existing records, add new ones.</div></div>
+      </label>
+      <label class="import-mode-option" id="import-mode-replace-opt">
+        <input type="radio" name="import-mode" value="replace" />
+        <div><div class="import-mode-title">Replace</div><div class="import-mode-desc">Remove all existing employees and roles, then import fresh from this file.</div></div>
+      </label>
+      <div class="import-replace-warn" id="import-replace-warn">
+        ⚠ All current employees and roles will be permanently deleted before importing.
+      </div>
+    </div>
+    <!-- Step 4: Preview -->
+    <div class="import-panel" id="import-panel-4">
+      <div id="import-preview-content"></div>
+    </div>
+    <div class="import-footer">
+      <button class="btn btn-ghost" id="import-back-btn" style="visibility:hidden">← Back</button>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost" id="import-cancel-btn">Cancel</button>
+        <button class="btn btn-primary" id="import-next-btn">Next →</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div id="dept-modal-backdrop">
   <div id="dept-modal-panel">
@@ -4888,6 +5076,376 @@ document.getElementById('reparent-role-cancel-btn').addEventListener('click', cl
 document.getElementById('reparent-role-save-btn').addEventListener('click', saveReparentRoleModal);
 document.getElementById('reparent-role-modal-backdrop').addEventListener('click', e => { if (e.target === document.getElementById('reparent-role-modal-backdrop')) closeReparentRoleModal(); });
 document.getElementById('reparent-role-dept').addEventListener('change', reparentRoleRebuildTeamDropdown);
+
+// ── CSV Import ────────────────────────────────────────────────────────────────
+
+const IMPORT_MAPPING_KEY = 'orgchart_import_mapping_v1';
+
+const IMPORT_TARGET_FIELDS = [
+  { id: 'name',        hints: ['name','full name','employee name','fullname','person','navn'] },
+  { id: 'employeeId',  hints: ['id','emp id','employee id','staff id','medarbejder id','nr','number'] },
+  { id: 'salary',      hints: ['salary','pay','løn','wage','monthly','compensation','comp'] },
+  { id: 'gender',      hints: ['gender','køn','sex'] },
+  { id: 'roleTitle',   hints: ['title','job title','role','position','jobtitle','stilling','job'] },
+  { id: 'roleLevel',   hints: ['level','grade','rang','tier'] },
+  { id: 'roleDept',    hints: ['department','dept','afdeling','division','team dept'] },
+  { id: 'roleTeam',    hints: ['team','gruppe','group','squad'] },
+  { id: 'managerName', hints: ['manager','leder','reports to','reportsto','supervisor','chef'] },
+];
+
+let importState = {
+  step: 1,
+  headers: [],
+  rows: [],
+  mapping: {},
+  mode: 'append',
+  preview: null,
+};
+
+// ── CSV parser ──
+function parseCSV(text) {
+  const lines = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
+  const nonEmpty = lines.filter(l => l.trim() !== '');
+  if (nonEmpty.length < 2) return null;
+  function parseLine(line) {
+    const result = [];
+    let cur = '', inQ = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"') {
+        if (inQ && line[i+1] === '"') { cur += '"'; i++; }
+        else inQ = !inQ;
+      } else if (ch === ',' && !inQ) {
+        result.push(cur.trim()); cur = '';
+      } else cur += ch;
+    }
+    result.push(cur.trim());
+    return result;
+  }
+  const headers = parseLine(nonEmpty[0]).map(h => h.replace(/^"|"$/g, ''));
+  const rows = nonEmpty.slice(1).map(line => {
+    const vals = parseLine(line);
+    const obj = {};
+    headers.forEach((h, i) => { obj[h] = (vals[i] || '').trim(); });
+    return obj;
+  });
+  return { headers, rows };
+}
+
+// ── Auto-suggest mapping ──
+function autoSuggestMapping(headers) {
+  const saved = loadImportMapping();
+  const mapping = {};
+  IMPORT_TARGET_FIELDS.forEach(field => {
+    // Try saved mapping first
+    if (saved[field.id] && headers.includes(saved[field.id])) {
+      mapping[field.id] = saved[field.id];
+      return;
+    }
+    // Try hint matching
+    const h = headers.find(col => field.hints.some(hint => col.toLowerCase().includes(hint)));
+    if (h) mapping[field.id] = h;
+    else mapping[field.id] = '';
+  });
+  return mapping;
+}
+
+function loadImportMapping() {
+  try { return JSON.parse(localStorage.getItem(IMPORT_MAPPING_KEY) || '{}'); } catch { return {}; }
+}
+function saveImportMapping(mapping) {
+  const clean = {};
+  Object.keys(mapping).forEach(k => { if (mapping[k]) clean[k] = mapping[k]; });
+  localStorage.setItem(IMPORT_MAPPING_KEY, JSON.stringify(clean));
+}
+
+// ── Modal open/close ──
+function openImportModal() {
+  importState = { step: 1, headers: [], rows: [], mapping: {}, mode: 'append', preview: null };
+  document.getElementById('import-file-input').value = '';
+  document.getElementById('import-col-preview-area').style.display = 'none';
+  document.getElementById('import-drop-zone').classList.remove('dragover');
+  setImportStep(1);
+  document.getElementById('import-modal-backdrop').style.display = 'flex';
+}
+function closeImportModal() {
+  document.getElementById('import-modal-backdrop').style.display = 'none';
+}
+
+// ── Step indicator ──
+function setImportStep(n) {
+  importState.step = n;
+  [1,2,3,4].forEach(i => {
+    const el = document.getElementById(`import-step-${i}`);
+    const panel = document.getElementById(`import-panel-${i}`);
+    el.className = 'import-step' + (i === n ? ' active' : i < n ? ' done' : '');
+    panel.className = 'import-panel' + (i === n ? ' active' : '');
+  });
+  const backBtn = document.getElementById('import-back-btn');
+  const nextBtn = document.getElementById('import-next-btn');
+  backBtn.style.visibility = n > 1 ? 'visible' : 'hidden';
+  nextBtn.textContent = n === 4 ? 'Import' : 'Next →';
+}
+
+// ── Step 1: file handling ──
+function handleImportFile(file) {
+  if (!file || !file.name.match(/\.csv$/i)) { alert('Please select a .csv file.'); return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    const parsed = parseCSV(e.target.result);
+    if (!parsed || parsed.headers.length === 0) { alert('Could not parse CSV. Ensure the file has a header row and comma-separated values.'); return; }
+    importState.headers = parsed.headers;
+    importState.rows = parsed.rows;
+    // Show preview
+    document.getElementById('import-row-count').textContent = `${parsed.rows.length} rows · ${parsed.headers.length} columns detected`;
+    const chips = document.getElementById('import-col-chips');
+    chips.innerHTML = '';
+    parsed.headers.forEach(h => {
+      const chip = document.createElement('span');
+      chip.className = 'import-col-chip';
+      chip.textContent = h;
+      chips.appendChild(chip);
+    });
+    document.getElementById('import-col-preview-area').style.display = '';
+  };
+  reader.readAsText(file);
+}
+
+const dropZone = document.getElementById('import-drop-zone');
+dropZone.addEventListener('click', () => document.getElementById('import-file-input').click());
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('dragover'); if (e.dataTransfer.files[0]) handleImportFile(e.dataTransfer.files[0]); });
+document.getElementById('import-file-input').addEventListener('change', e => { if (e.target.files[0]) handleImportFile(e.target.files[0]); });
+
+// ── Step 2: populate mapping selects ──
+function populateMappingStep() {
+  importState.mapping = autoSuggestMapping(importState.headers);
+  IMPORT_TARGET_FIELDS.forEach(field => {
+    const sel = document.getElementById(`imap-${field.id}`);
+    sel.innerHTML = '<option value="">— skip</option>';
+    importState.headers.forEach(h => {
+      const opt = document.createElement('option');
+      opt.value = h; opt.textContent = h;
+      if (importState.mapping[field.id] === h) opt.selected = true;
+      sel.appendChild(opt);
+    });
+  });
+}
+
+function readMappingFromUI() {
+  const m = {};
+  IMPORT_TARGET_FIELDS.forEach(f => { m[f.id] = document.getElementById(`imap-${f.id}`).value; });
+  return m;
+}
+
+// ── Step 3: mode options ──
+document.querySelectorAll('input[name="import-mode"]').forEach(radio => {
+  radio.addEventListener('change', () => {
+    importState.mode = radio.value;
+    document.getElementById('import-mode-append-opt').classList.toggle('selected', importState.mode === 'append');
+    document.getElementById('import-mode-merge-opt').classList.toggle('selected', importState.mode === 'merge');
+    document.getElementById('import-mode-replace-opt').classList.toggle('selected', importState.mode === 'replace');
+    document.getElementById('import-replace-warn').style.display = importState.mode === 'replace' ? '' : 'none';
+  });
+});
+
+// ── Step 4: dry-run preview ──
+function buildPreview() {
+  const result = runImport(importState.rows, importState.mapping, importState.mode, true);
+  importState.preview = result;
+  const el = document.getElementById('import-preview-content');
+  const total = importState.rows.length;
+  const lines = [
+    { icon: '📋', text: `${total} row${total !== 1 ? 's' : ''} in file` },
+    result.personsCreated  > 0 ? { icon: '✓', text: `${result.personsCreated} employee${result.personsCreated !== 1 ? 's' : ''} will be added` } : null,
+    result.personsUpdated  > 0 ? { icon: '✓', text: `${result.personsUpdated} employee${result.personsUpdated !== 1 ? 's' : ''} will be updated` } : null,
+    result.rolesCreated    > 0 ? { icon: '✓', text: `${result.rolesCreated} new role${result.rolesCreated !== 1 ? 's' : ''} will be created` } : null,
+    result.deptsCreated    > 0 ? { icon: '✓', text: `${result.deptsCreated} new department${result.deptsCreated !== 1 ? 's' : ''} will be created` } : null,
+    result.teamsCreated    > 0 ? { icon: '✓', text: `${result.teamsCreated} new team${result.teamsCreated !== 1 ? 's' : ''} will be created` } : null,
+    result.skipped.length  > 0 ? { icon: '⚠', text: `${result.skipped.length} row${result.skipped.length !== 1 ? 's' : ''} skipped — ${result.skipped[0]}${result.skipped.length > 1 ? ` (+${result.skipped.length - 1} more)` : ''}` } : null,
+    importState.mode === 'replace' ? { icon: '⚠', text: 'All existing employees and roles will be deleted first' } : null,
+  ].filter(Boolean);
+  el.innerHTML = lines.map(l => `
+    <div class="import-preview-row">
+      <span class="import-preview-icon">${l.icon}</span>
+      <span style="font-size:13px;color:${l.icon==='⚠'?'#92400e':'var(--text-primary)'}">${l.text}</span>
+    </div>`).join('');
+}
+
+// ── Core import engine ──
+function runImport(rows, mapping, mode, dryRun = false) {
+  const result = { personsCreated: 0, personsUpdated: 0, rolesCreated: 0, deptsCreated: 0, teamsCreated: 0, skipped: [] };
+  const get = (row, field) => (mapping[field] ? (row[mapping[field]] || '').trim() : '');
+
+  // Working copies for dry-run
+  let wDepts = dryRun ? departments.map(d => ({...d})) : departments;
+  let wTeams = dryRun ? teams.map(t => ({...t})) : teams;
+  let wRoles = dryRun ? roles.map(r => ({...r})) : roles;
+  let wPersons = dryRun ? persons.map(p => ({...p})) : persons;
+  let wAssignments = dryRun ? [...roleAssignments] : roleAssignments;
+
+  function nextDeptId() { return wDepts.length > 0 ? Math.max(...wDepts.map(d => typeof d.id === 'number' ? d.id : 0)) + 1 : 100; }
+  function nextTeamId() { return wTeams.length > 0 ? Math.max(...wTeams.map(t => t.id)) + 1 : 200; }
+  function nextWRoleId() { return wRoles.length > 0 ? Math.max(...wRoles.map(r => r.id)) + 1 : 10001; }
+  function nextWPersonId() { return wPersons.length > 0 ? Math.max(...wPersons.map(p => p.id)) + 1 : 1; }
+
+  if (!dryRun && mode === 'replace') {
+    wPersons.splice(0, wPersons.length);
+    wRoles.splice(0, wRoles.length);
+    wAssignments.splice(0, wAssignments.length);
+  }
+
+  // Phase 1 & 2: ensure depts and teams
+  rows.forEach((row, idx) => {
+    const deptName = get(row, 'roleDept');
+    if (deptName) {
+      if (!wDepts.find(d => d.name.toLowerCase() === deptName.toLowerCase())) {
+        const newDept = { id: nextDeptId(), name: deptName, color: nextAvailableColorFrom(wDepts), description: '', headRoleId: null };
+        wDepts.push(newDept);
+        if (!dryRun) {} // already pushed into live array
+        result.deptsCreated++;
+      }
+    }
+    const teamName = get(row, 'roleTeam');
+    if (teamName && deptName) {
+      const dept = wDepts.find(d => d.name.toLowerCase() === deptName.toLowerCase());
+      if (dept && !wTeams.find(t => t.name.toLowerCase() === teamName.toLowerCase() && t.departmentId === dept.id)) {
+        wTeams.push({ id: nextTeamId(), name: teamName, departmentId: dept.id });
+        result.teamsCreated++;
+      }
+    }
+  });
+
+  // Phase 3: ensure roles, track rowIndex→roleId
+  const rowRoleIds = {};
+  rows.forEach((row, idx) => {
+    const name = get(row, 'name');
+    const roleTitle = get(row, 'roleTitle');
+    if (!name && !roleTitle) { result.skipped.push(`Row ${idx+2}: missing name and title`); return; }
+    if (!name) { result.skipped.push(`Row ${idx+2}: missing name`); return; }
+
+    const deptName = get(row, 'roleDept');
+    const dept = deptName ? wDepts.find(d => d.name.toLowerCase() === deptName.toLowerCase()) : null;
+    const deptId = dept ? dept.id : (wDepts[0] ? wDepts[0].id : null);
+
+    const teamName = get(row, 'roleTeam');
+    const team = (teamName && dept) ? wTeams.find(t => t.name.toLowerCase() === teamName.toLowerCase() && t.departmentId === dept.id) : null;
+
+    const levelRaw = get(row, 'roleLevel').toUpperCase();
+    const level = LEVELS.find(l => l.id === levelRaw || levelRaw.startsWith(l.id)) ? levelRaw.match(/L[1-8]/)?.[0] : null;
+
+    if (roleTitle && deptId) {
+      let role = wRoles.find(r => r.title.toLowerCase() === roleTitle.toLowerCase() && r.department === deptId);
+      if (!role) {
+        role = { id: nextWRoleId(), title: roleTitle, level: level || 'L3', department: deptId, managerRoleId: null, teamId: team ? team.id : null, secondaryManagerRoleIds: [] };
+        wRoles.push(role);
+        result.rolesCreated++;
+      }
+      rowRoleIds[idx] = role.id;
+    }
+  });
+
+  // Phase 4: hierarchy (two-pass) — build name→roleId map
+  if (mapping.managerName) {
+    const nameToRoleId = {};
+    rows.forEach((row, idx) => {
+      const name = get(row, 'name');
+      if (name && rowRoleIds[idx] !== undefined) nameToRoleId[name.toLowerCase()] = rowRoleIds[idx];
+    });
+    rows.forEach((row, idx) => {
+      const mgrName = get(row, 'managerName');
+      const roleId = rowRoleIds[idx];
+      if (!mgrName || roleId === undefined) return;
+      const mgrRoleId = nameToRoleId[mgrName.toLowerCase()];
+      if (mgrRoleId !== undefined && mgrRoleId !== roleId) {
+        const role = wRoles.find(r => r.id === roleId);
+        if (role) role.managerRoleId = mgrRoleId;
+      }
+    });
+  }
+
+  // Phase 5 & 6: persons and assignments
+  rows.forEach((row, idx) => {
+    const name = get(row, 'name');
+    if (!name) return;
+    const empId = get(row, 'employeeId');
+    const salaryRaw = get(row, 'salary').replace(/[^0-9.]/g, '');
+    const salary = salaryRaw ? Math.round(parseFloat(salaryRaw)) : 0;
+    const genderRaw = get(row, 'gender').toLowerCase();
+    const gender = genderRaw.startsWith('f') ? 'female' : genderRaw.startsWith('m') ? 'male' : '';
+
+    let person = null;
+    if (mode === 'merge') {
+      if (empId && mapping.employeeId) person = wPersons.find(p => String(p.employeeId) === empId);
+      if (!person) person = wPersons.find(p => p.name.toLowerCase() === name.toLowerCase());
+    }
+
+    if (person) {
+      person.name = name;
+      if (salary) person.salary = salary;
+      if (gender) person.gender = gender;
+      if (empId) person.employeeId = empId;
+      result.personsUpdated++;
+    } else {
+      person = { id: nextWPersonId(), name, salary: salary || 0, gender, employeeId: empId || undefined, salaryReviewNeeded: false, performanceReviewNeeded: false, isNew: false, onLeave: false };
+      wPersons.push(person);
+      result.personsCreated++;
+    }
+
+    const roleId = rowRoleIds[idx];
+    if (roleId !== undefined) {
+      const alreadyAssigned = wAssignments.find(a => a.personId === person.id && a.roleId === roleId);
+      if (!alreadyAssigned) wAssignments.push({ personId: person.id, roleId, percentage: 100 });
+    }
+  });
+
+  if (!dryRun) {
+    if (mode !== 'replace') {
+      // For append/merge, wDepts/wTeams/wRoles/wPersons/wAssignments ARE the live arrays already (no copy made)
+    }
+    saveToStorage();
+    render();
+  }
+
+  return result;
+}
+
+function nextAvailableColorFrom(deptList) {
+  const used = new Set(deptList.map(d => d.color));
+  return DEPT_COLOR_PALETTE.find(c => !used.has(c)) || DEPT_COLOR_PALETTE[0];
+}
+
+// ── Navigation between steps ──
+document.getElementById('import-next-btn').addEventListener('click', () => {
+  const step = importState.step;
+  if (step === 1) {
+    if (!importState.headers.length) { alert('Please select a CSV file first.'); return; }
+    populateMappingStep();
+    setImportStep(2);
+  } else if (step === 2) {
+    importState.mapping = readMappingFromUI();
+    if (!importState.mapping.name) { alert('Please map the "Full name" field — it is required.'); return; }
+    setImportStep(3);
+  } else if (step === 3) {
+    importState.mode = document.querySelector('input[name="import-mode"]:checked').value;
+    buildPreview();
+    setImportStep(4);
+  } else if (step === 4) {
+    saveImportMapping(importState.mapping);
+    runImport(importState.rows, importState.mapping, importState.mode, false);
+    closeImportModal();
+  }
+});
+
+document.getElementById('import-back-btn').addEventListener('click', () => {
+  if (importState.step > 1) setImportStep(importState.step - 1);
+});
+
+document.getElementById('import-modal-close').addEventListener('click', closeImportModal);
+document.getElementById('import-cancel-btn').addEventListener('click', closeImportModal);
+document.getElementById('import-modal-backdrop').addEventListener('click', e => { if (e.target === document.getElementById('import-modal-backdrop')) closeImportModal(); });
+document.getElementById('import-csv-btn').addEventListener('click', e => { e.preventDefault(); openImportModal(); });
 </script>
 
 </body>

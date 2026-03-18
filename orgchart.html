@@ -4220,10 +4220,10 @@ function openDropCreateRoleModal(draggedPerson, targetRole) {
 
   const levelSel = document.getElementById('drop-create-role-level');
   levelSel.innerHTML = '';
-  ['L1','L2','L3','L4','L5','L6','L7','L8'].forEach(l => {
+  LEVELS.forEach(l => {
     const opt = document.createElement('option');
-    opt.value = l; opt.textContent = l;
-    if (currentRole && currentRole.level === l) opt.selected = true;
+    opt.value = l.id; opt.textContent = l.label;
+    if (currentRole && currentRole.level === l.id) opt.selected = true;
     levelSel.appendChild(opt);
   });
 
@@ -4273,6 +4273,11 @@ function saveDropCreateRoleModal() {
   roleAssignments = roleAssignments.filter(a => a.personId !== draggedPersonId);
   roleAssignments.push({ personId: draggedPersonId, roleId: newRole.id, percentage: 100 });
 
+  if (TITLES[targetRole.department]) {
+    if (!TITLES[targetRole.department][level]) TITLES[targetRole.department][level] = [];
+    if (!TITLES[targetRole.department][level].includes(title)) TITLES[targetRole.department][level].push(title);
+  }
+
   closeDropCreateRoleModal();
   render();
 }
@@ -4306,9 +4311,9 @@ function openReparentRoleModal(draggedRoleId, targetRoleId) {
 
   const levelSel = document.getElementById('reparent-role-level');
   levelSel.innerHTML = '';
-  ['L1','L2','L3','L4','L5','L6','L7','L8'].forEach(l => {
-    const opt = document.createElement('option'); opt.value = l; opt.textContent = l;
-    if (draggedRole.level === l) opt.selected = true;
+  LEVELS.forEach(l => {
+    const opt = document.createElement('option'); opt.value = l.id; opt.textContent = l.label;
+    if (draggedRole.level === l.id) opt.selected = true;
     levelSel.appendChild(opt);
   });
 

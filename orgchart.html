@@ -68,35 +68,6 @@
         </svg>
         Directory
       </a>
-      <a class="nav-item" href="#">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="2" y="3" width="12" height="12" rx="1.5"/>
-          <line x1="5" y1="1" x2="5" y2="5"/>
-          <line x1="11" y1="1" x2="11" y2="5"/>
-          <line x1="2" y1="7" x2="14" y2="7"/>
-          <polyline points="5.5,11 7,12.5 10.5,9"/>
-        </svg>
-        Time Off
-      </a>
-      <a class="nav-item" href="#">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="1" y="6" width="14" height="9" rx="1.5"/>
-          <path d="M5 6V4.5a3 3 0 016 0V6"/>
-        </svg>
-        Hiring
-      </a>
-    </div>
-    <div class="nav-section">
-      <div class="nav-section-label">Insights</div>
-      <a class="nav-item" href="#">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="3" y1="14" x2="3" y2="9"/>
-          <line x1="8" y1="14" x2="8" y2="5"/>
-          <line x1="13" y1="14" x2="13" y2="1"/>
-          <line x1="1" y1="14" x2="15" y2="14"/>
-        </svg>
-        Reports
-      </a>
     </div>
     <div class="nav-spacer"></div>
     <div class="nav-section">
@@ -497,6 +468,19 @@
         <label class="form-label">Color</label>
         <div class="dept-color-swatches" id="dept-settings-color-swatches"></div>
       </div>
+      <div class="form-group">
+        <label style="display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;user-select:none;">
+          <div>
+            <div class="form-label" style="margin-bottom:1px;">Company-wide layout</div>
+            <div style="font-size:11px;color:var(--text-muted);">Direct reports displayed side by side instead of stacked</div>
+          </div>
+          <div style="position:relative;width:36px;height:20px;flex-shrink:0;">
+            <input type="checkbox" id="dept-settings-company-wide-cb" style="opacity:0;width:0;height:0;position:absolute;" />
+            <span id="dept-settings-company-wide-track" style="position:absolute;inset:0;border-radius:20px;background:var(--border);transition:background 0.15s;"></span>
+            <span id="dept-settings-company-wide-thumb" style="position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.2);transition:transform 0.15s;"></span>
+          </div>
+        </label>
+      </div>
       <hr class="title-section-divider" />
       <div class="title-section-heading">Teams</div>
       <div id="dept-settings-teams-body"></div>
@@ -730,6 +714,19 @@
             <input type="checkbox" id="settings-view-only-cb" style="opacity:0;width:0;height:0;position:absolute;" />
             <span id="settings-view-only-track" style="position:absolute;inset:0;border-radius:20px;background:var(--border);transition:background 0.15s;"></span>
             <span id="settings-view-only-thumb" style="position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.2);transition:transform 0.15s;"></span>
+          </div>
+        </label>
+      </div>
+      <div style="border-top:1px solid var(--border);margin-top:16px;padding-top:16px;">
+        <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;">
+          <div>
+            <span style="font-size:13px;font-weight:500;color:var(--text-secondary);">Move person + role when dragging</span>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">On: drags reorganize the hierarchy. Off: drags transfer the person only (leaves old role vacant)</div>
+          </div>
+          <div id="settings-drag-mode-toggle" style="position:relative;width:36px;height:20px;flex-shrink:0;">
+            <input type="checkbox" id="settings-drag-mode-cb" style="opacity:0;width:0;height:0;position:absolute;" />
+            <span id="settings-drag-mode-track" style="position:absolute;inset:0;border-radius:20px;background:var(--border);transition:background 0.15s;"></span>
+            <span id="settings-drag-mode-thumb" style="position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.2);transition:transform 0.15s;"></span>
           </div>
         </label>
       </div>
@@ -1243,7 +1240,7 @@ const state = {
   editingPersonId: null,
 };
 
-let settings = { currency: 'DKK', hideSalaries: false, hideLevels: false, viewOnly: false, matrixMode: false, dragDropEnabled: true };
+let settings = { currency: 'DKK', hideSalaries: false, hideLevels: false, viewOnly: false, matrixMode: false, dragDropEnabled: true, dragMode: 'person' };
 
 let snapshots = [];
 
@@ -1364,13 +1361,28 @@ function getDescendantRoleIds(roleId) {
 
 function getReachableRoleIds(deptId) {
   const reachable = new Set();
+
+  // Seed 1: normal dept roots (managerRoleId === null, in this dept)
   const roots = roles.filter(r => r.departmentId === deptId && r.managerRoleId === null);
-  const queue = roots.map(r => r.id);
+
+  // Seed 2: team roots whose manager lives in a different department.
+  // The team section already renders these with a "↑ Reports to:" indicator,
+  // so they must not appear again in the orphans section.
+  const crossDeptTeamRoots = getTeamsForDept(deptId).flatMap(t =>
+    getTeamRootRoles(t.id).filter(r => {
+      if (!r.managerRoleId) return false;          // already covered by Seed 1
+      const mgr = roles.find(m => m.id === r.managerRoleId);
+      return !mgr || mgr.departmentId !== deptId;  // manager is gone or cross-dept
+    })
+  );
+
+  const queue = [...roots, ...crossDeptTeamRoots].map(r => r.id);
   while (queue.length) {
     const id = queue.shift();
     if (reachable.has(id)) continue;
     reachable.add(id);
-    roles.filter(r => r.managerRoleId === id && r.departmentId === deptId).forEach(r => queue.push(r.id));
+    roles.filter(r => r.managerRoleId === id && r.departmentId === deptId)
+         .forEach(r => queue.push(r.id));
   }
   return reachable;
 }
@@ -1425,12 +1437,12 @@ function renderCard(role, isOrphaned = false) {
   card.className = 'emp-card' + (isVacant ? ' vacant' : '') + (isOrphaned ? ' orphaned' : '');
   card.dataset.roleId = role.id;
 
+  if (state.selectedRoleIds.has(role.id)) card.classList.add('selected');
   if (!isVacant) {
     if (!person.noLongerHired && !settings.viewOnly && settings.dragDropEnabled !== false) {
       card.draggable = true;
       if (state.draggedPersonId === person.id || state.draggedRoleId === role.id) card.classList.add('dragging');
     }
-    if (state.selectedRoleIds.has(role.id)) card.classList.add('selected');
   }
 
   const avatar = document.createElement('div');
@@ -1518,7 +1530,8 @@ function renderCard(role, isOrphaned = false) {
       });
       card.addEventListener('dragend', () => { state.draggedRoleId = null; render(); });
     }
-    card.addEventListener('click', e => { e.stopPropagation(); openCombinedModal(role.id, 'role'); });
+    card.addEventListener('click', e => { e.stopPropagation(); state.selectedRoleIds.clear(); state.selectedRoleIds.add(role.id); clearTimeout(card._clickTimer); card._clickTimer = setTimeout(() => render(), 250); });
+    card.addEventListener('dblclick', e => { e.stopPropagation(); clearTimeout(card._clickTimer); openCombinedModal(role.id, 'role'); });
     card.addEventListener('dragover', e => {
       if (state.draggedPersonId !== null) {
         e.preventDefault(); e.stopPropagation(); e.dataTransfer.dropEffect = 'move'; card.classList.add('drop-target');
@@ -1570,7 +1583,7 @@ function renderCard(role, isOrphaned = false) {
     });
     card.addEventListener('dblclick', e => { e.stopPropagation(); clearTimeout(card._clickTimer); if (person.noLongerHired) openPersonModal(person.id); else openCombinedModal(role.id, 'person'); });
     card.addEventListener('dragstart', e => {
-      if (cardDragMode === 'role') {
+      if (cardDragMode === 'role' || settings.dragMode === 'role') {
         state.draggedRoleId = role.id;
         e.dataTransfer.effectAllowed = 'move';
         e.dataTransfer.setData('text/plain', 'role:' + role.id);
@@ -1624,19 +1637,37 @@ function renderCard(role, isOrphaned = false) {
       const draggedAssignments = getAssignmentsForPerson(draggedPerson.id);
       const isUnassigned = draggedAssignments.length === 0;
       if (!isUnassigned) {
-        // Treat as reparenting the dragged person's role under the target role
         const draggedRoleId = draggedAssignments[0].roleId;
         const draggedRole = roles.find(r => r.id === draggedRoleId);
         state.draggedPersonId = null;
         if (!draggedRole || draggedRole.id === role.id) { render(); return; }
-        // Guard against cycles: target must not be a descendant of dragged role
-        const descendants = getDescendantRoleIds(draggedRoleId);
-        if (descendants.has(role.id)) { render(); return; }
-        if (draggedRole.departmentId === role.departmentId) {
-          draggedRole.managerRoleId = role.id;
-          render();
+        if (settings.dragMode !== 'role' && draggedRole.managerRoleId === role.id) { render(); return; }
+
+        if (settings.dragMode === 'role') {
+          // Reorganize: reparent the dragged person's role under the target role
+          const descendants = getDescendantRoleIds(draggedRoleId);
+          if (descendants.has(role.id)) { render(); return; }
+          if (draggedRole.departmentId === role.departmentId) {
+            draggedRole.managerRoleId = role.id;
+            render();
+          } else {
+            openReparentRoleModal(draggedRoleId, role.id);
+            render();
+          }
         } else {
-          openReparentRoleModal(draggedRoleId, role.id);
+          // Transfer: create a new role under the target, move person, leave old role vacant
+          const newRole = {
+            id: nextRoleId(),
+            title: draggedRole.title,
+            level: draggedRole.level,
+            departmentId: role.departmentId,
+            managerRoleId: role.id,
+            teamId: role.teamId ?? null,
+          };
+          roles.push(newRole);
+          roleAssignments = roleAssignments.filter(a => a.personId !== draggedPerson.id);
+          roleAssignments.push({ id: nextRoleAssignmentId(), personId: draggedPerson.id, roleId: newRole.id, percentage: 100 });
+          saveToStorage();
           render();
         }
         return;
@@ -1678,13 +1709,13 @@ function renderCard(role, isOrphaned = false) {
   return card;
 }
 
-function renderTree(managerRoleId, deptId, excludeTeamRoles = false, restrictToTeamId = undefined) {
+function renderTree(managerRoleId, deptId, excludeTeamRoles = false, restrictToTeamId = undefined, horizontal = false) {
   let children = getChildRoles(managerRoleId, deptId);
   if (excludeTeamRoles) children = children.filter(r => !r.teamId);
   if (restrictToTeamId !== undefined) children = children.filter(r => r.teamId === restrictToTeamId || !r.teamId);
   if (!children.length) return null;
   const container = document.createElement('div');
-  container.className = 'tree-children';
+  container.className = 'tree-children' + (horizontal ? ' horizontal' : '');
 
   if (managerRoleId !== null && collapsedManagers.has(managerRoleId)) {
     const ghost = document.createElement('div');
@@ -1695,7 +1726,7 @@ function renderTree(managerRoleId, deptId, excludeTeamRoles = false, restrictToT
     return container;
   }
 
-  if (managerRoleId !== null) {
+  if (managerRoleId !== null && !horizontal) {
     const toggleBtn = document.createElement('button');
     toggleBtn.className = 'tree-collapse-btn';
     toggleBtn.textContent = '▼';
@@ -1716,6 +1747,16 @@ function renderTree(managerRoleId, deptId, excludeTeamRoles = false, restrictToT
 }
 
 function dropOnTeam(teamId, deptId) {
+  if (state.draggedRoleId !== null) {
+    const role = roles.find(r => r.id === state.draggedRoleId);
+    state.draggedRoleId = null;
+    if (!role) { render(); return; }
+    role.teamId = teamId;
+    role.departmentId = deptId;
+    debounceSave();
+    render();
+    return;
+  }
   if (state.draggedPersonId === null) return;
   const draggedPerson = persons.find(x => x.id === state.draggedPersonId);
   if (!draggedPerson) return;
@@ -1773,6 +1814,9 @@ function renderDeptColumn(dept) {
   col.className = 'dept-column';
   col.dataset.dept = dept.id;
   col.style.setProperty('--dept-color', dept.color);
+  if (dept.companyWide) {
+    col.classList.add('cw-col');
+  }
 
   const deptRoles = roles.filter(r => r.departmentId === dept.id);
   const vacantCount = deptRoles.filter(r => !getPersonForRole(r.id)).length;
@@ -1862,7 +1906,7 @@ function renderDeptColumn(dept) {
           const rootNode = document.createElement('div');
           rootNode.className = 'tree-node';
           rootNode.appendChild(renderCard(deptDirector));
-          const subtree = renderTree(deptDirector.id, dept.id, true);
+          const subtree = renderTree(deptDirector.id, dept.id, true, undefined, !!dept.companyWide);
           if (subtree) rootNode.appendChild(subtree);
           tree.appendChild(rootNode);
         });
@@ -1889,7 +1933,7 @@ function renderDeptColumn(dept) {
         });
         subHeader.appendChild(btn);
       }
-      subHeader.addEventListener('dragover', e => { if (state.draggedPersonId !== null) { e.preventDefault(); e.stopPropagation(); subHeader.classList.add('drop-target'); } });
+      subHeader.addEventListener('dragover', e => { if (state.draggedPersonId !== null || state.draggedRoleId !== null) { e.preventDefault(); e.stopPropagation(); subHeader.classList.add('drop-target'); } });
       subHeader.addEventListener('dragleave', () => subHeader.classList.remove('drop-target'));
       subHeader.addEventListener('drop', e => { e.preventDefault(); e.stopPropagation(); subHeader.classList.remove('drop-target'); dropOnTeam(team.id, dept.id); });
       tree.appendChild(subHeader);
@@ -1906,10 +1950,11 @@ function renderDeptColumn(dept) {
             const externalMgr = roles.find(r => r.id === teamRoot.managerRoleId);
             if (externalMgr) {
               const mgrPerson = getPersonForRole(externalMgr.id);
-              const indicator = document.createElement('div');
+              const indicator = document.createElement('span');
               indicator.className = 'team-external-ref';
-              indicator.textContent = `↑ Reports to: ${mgrPerson ? mgrPerson.name : externalMgr.title}`;
-              tree.appendChild(indicator);
+              indicator.textContent = `↑ ${mgrPerson ? mgrPerson.name : externalMgr.title}`;
+              const collapseBtn = subHeader.querySelector('.team-collapse-btn');
+              collapseBtn ? subHeader.insertBefore(indicator, collapseBtn) : subHeader.appendChild(indicator);
             }
           }
           const rootNode = document.createElement('div');
@@ -1928,7 +1973,7 @@ function renderDeptColumn(dept) {
       const rootNode = document.createElement('div');
       rootNode.className = 'tree-node';
       rootNode.appendChild(renderCard(rootRole));
-      const subtree = renderTree(rootRole.id, dept.id);
+      const subtree = renderTree(rootRole.id, dept.id, false, undefined, !!dept.companyWide);
       if (subtree) rootNode.appendChild(subtree);
       tree.appendChild(rootNode);
     });
@@ -2036,17 +2081,33 @@ function render() {
   const columns = document.getElementById('columns');
   columns.innerHTML = '';
 
-  departments.filter(d => !hiddenDepts.has(d.id)).forEach(dept => columns.appendChild(renderDeptColumn(dept)));
+  const cwDepts = departments.filter(d => d.companyWide && !hiddenDepts.has(d.id));
+  const regularDepts = departments.filter(d => !d.companyWide && !hiddenDepts.has(d.id));
+
+  // Top row: company-wide departments (only rendered if any exist)
+  if (cwDepts.length > 0) {
+    const cwRow = document.createElement('div');
+    cwRow.className = 'columns-row cw-row';
+    cwDepts.forEach(d => cwRow.appendChild(renderDeptColumn(d)));
+    columns.appendChild(cwRow);
+  }
+
+  // Bottom row: regular departments + unassigned + add-dept
+  const regularRow = document.createElement('div');
+  regularRow.className = 'columns-row';
+  regularDepts.forEach(d => regularRow.appendChild(renderDeptColumn(d)));
 
   const unassCol = renderUnassignedColumn();
-  if (unassCol) columns.appendChild(unassCol);
+  if (unassCol) regularRow.appendChild(unassCol);
 
   const addDeptCol = document.createElement('div');
   addDeptCol.className = 'dept-column add-dept-col';
   Object.assign(addDeptCol.style, { minWidth:'200px', flex:'0 0 auto', display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', borderStyle:'dashed', borderColor:'var(--border-hover)', background:'transparent', minHeight:'120px' });
   addDeptCol.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--text-muted)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg><span style="font-size:12px;font-weight:600">Add Department</span></div>`;
   addDeptCol.addEventListener('click', openDeptModal);
-  columns.appendChild(addDeptCol);
+  regularRow.appendChild(addDeptCol);
+
+  columns.appendChild(regularRow);
 
   const totalRoles = roles.length;
   const vacantTotal = roles.filter(r => !getPersonForRole(r.id)).length;
@@ -3174,6 +3235,12 @@ function openDeptSettingsModal(deptId) {
     if (r.id === dept.headRoleId) opt.selected = true;
     headSelect.appendChild(opt);
   });
+  const cwCb = document.getElementById('dept-settings-company-wide-cb');
+  const cwTrack = document.getElementById('dept-settings-company-wide-track');
+  const cwThumb = document.getElementById('dept-settings-company-wide-thumb');
+  cwCb.checked = !!dept.companyWide;
+  cwTrack.style.background = dept.companyWide ? 'var(--accent)' : 'var(--border)';
+  cwThumb.style.transform = dept.companyWide ? 'translateX(16px)' : 'translateX(0)';
   buildTeamSection(deptId);
   buildTitleSection(deptId);
   document.getElementById('dept-settings-modal-backdrop').classList.add('visible');
@@ -3217,6 +3284,7 @@ function saveDeptSettingsModal() {
   const headVal = document.getElementById('dept-settings-head-role').value;
   dept.headRoleId = headVal ? (isNaN(Number(headVal)) ? headVal : Number(headVal)) : null;
   dept.color = selectedSettingsColor || dept.color;
+  dept.companyWide = document.getElementById('dept-settings-company-wide-cb').checked;
   // Persist teams
   const existingTeamIds = new Set(getTeamsForDept(editingDeptId).map(t => t.id));
   const keptTeamIds = new Set();
@@ -3248,6 +3316,12 @@ function saveDeptSettingsModal() {
   closeDeptSettingsModal(); render();
 }
 
+document.getElementById('dept-settings-company-wide-cb').addEventListener('change', e => {
+  const track = document.getElementById('dept-settings-company-wide-track');
+  const thumb = document.getElementById('dept-settings-company-wide-thumb');
+  track.style.background = e.target.checked ? 'var(--accent)' : 'var(--border)';
+  thumb.style.transform = e.target.checked ? 'translateX(16px)' : 'translateX(0)';
+});
 document.getElementById('dept-settings-close-btn').addEventListener('click', closeDeptSettingsModal);
 document.getElementById('dept-settings-cancel-btn').addEventListener('click', closeDeptSettingsModal);
 document.getElementById('dept-settings-save-btn').addEventListener('click', saveDeptSettingsModal);
@@ -3475,6 +3549,17 @@ function applyDragDrop() {
   thumb.style.transform = enabled ? 'translateX(16px)' : 'translateX(0)';
 }
 
+function applyDragMode() {
+  const cb = document.getElementById('settings-drag-mode-cb');
+  const track = document.getElementById('settings-drag-mode-track');
+  const thumb = document.getElementById('settings-drag-mode-thumb');
+  if (!cb) return;
+  const isRole = settings.dragMode === 'role';
+  cb.checked = isRole;
+  track.style.background = isRole ? 'var(--accent)' : 'var(--border)';
+  thumb.style.transform = isRole ? 'translateX(16px)' : 'translateX(0)';
+}
+
 document.getElementById('settings-hide-salaries-cb').addEventListener('change', e => {
   settings.hideSalaries = e.target.checked;
   applySalaryVisibility();
@@ -3507,6 +3592,12 @@ document.getElementById('dnd-toggle-cb').addEventListener('change', e => {
   render();
 });
 
+document.getElementById('settings-drag-mode-cb').addEventListener('change', e => {
+  settings.dragMode = e.target.checked ? 'role' : 'person';
+  applyDragMode();
+  saveToStorage();
+});
+
 document.getElementById('settings-nav-btn').addEventListener('click', e => {
   e.preventDefault();
   document.getElementById('settings-currency-dkk').classList.toggle('active', settings.currency === 'DKK');
@@ -3515,6 +3606,7 @@ document.getElementById('settings-nav-btn').addEventListener('click', e => {
   applyLevelVisibility();
   applyViewOnly();
   applyMatrixMode();
+  applyDragMode();
   document.getElementById('settings-modal-backdrop').style.display = 'flex';
 });
 document.getElementById('settings-modal-close').addEventListener('click', () => {

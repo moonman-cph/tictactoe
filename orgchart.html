@@ -13,7 +13,7 @@
 </head>
 <body>
 
-<div id="loading-overlay" style="position:fixed;inset:0;background:#fff;display:flex;align-items:center;justify-content:center;font-family:inherit;color:#6b7280;z-index:9999;font-size:1.1rem;">Loading…</div>
+<div id="loading-overlay" style="position:fixed;inset:0;background:#fff;display:flex;align-items:center;justify-content:center;font-family:inherit;color:#6b7280;z-index:9999;font-size:1.1rem;">Loadingï¿½</div>
 
 <nav id="left-nav">
   <div id="nav-logo">
@@ -158,7 +158,7 @@
   <div class="header-divider"></div>
   <span class="header-meta">Roles &amp; Employees</span>
   <div class="header-spacer"></div>
-  <input type="text" id="header-search" placeholder="Search name or title…" />
+  <input type="text" id="header-search" placeholder="Search name or titleï¿½" />
   <button class="header-btn" id="add-dept-btn">+ Department</button>
   <button class="header-btn" id="add-role-btn">+ Role</button>
   <button class="header-btn primary" id="add-emp-btn">+ Person</button>
@@ -186,11 +186,11 @@
     <span id="status-text">No selection</span>
     <span class="status-hint">
       Click to select
-      <span class="status-sep">·</span>
+      <span class="status-sep">ï¿½</span>
       Ctrl+Click for multi-select
-      <span class="status-sep">·</span>
+      <span class="status-sep">ï¿½</span>
       Drag to reorganize
-      <span class="status-sep">·</span>
+      <span class="status-sep">ï¿½</span>
       Double-click to edit
     </span>
   </div>
@@ -292,7 +292,7 @@
           <div id="modal-role-secondary-list" style="display:flex;flex-direction:column;gap:4px;margin-bottom:6px"></div>
           <div style="position:relative">
             <input type="text" id="modal-role-secondary-search" class="form-control"
-                   placeholder="Search by name or role…" autocomplete="off"
+                   placeholder="Search by name or roleï¿½" autocomplete="off"
                    style="font-size:12px" />
             <div id="modal-role-secondary-suggestions"></div>
           </div>
@@ -306,7 +306,7 @@
       <div class="modal-comp-section" style="font-size:12.5px;">
         Assigned to: <span id="modal-role-person-name" style="font-weight:600"></span>
       </div>
-      <button class="btn btn-ghost" id="modal-role-assign-btn" style="width:100%;margin-top:8px;display:none">Assign person…</button>
+      <button class="btn btn-ghost" id="modal-role-assign-btn" style="width:100%;margin-top:8px;display:none">Assign personï¿½</button>
       <div class="role-edit">
         <button class="btn btn-ghost" id="modal-role-delete-btn" style="color:#ef4444;border-color:#fca5a5;width:100%;margin-top:8px;display:none">Delete role</button>
       </div>
@@ -329,10 +329,10 @@
       <button class="modal-close" id="import-modal-close">&#x2715;</button>
     </div>
     <div class="import-steps">
-      <div class="import-step active" id="import-step-1">1 · Upload</div>
-      <div class="import-step" id="import-step-2">2 · Map fields</div>
-      <div class="import-step" id="import-step-3">3 · Options</div>
-      <div class="import-step" id="import-step-4">4 · Preview</div>
+      <div class="import-step active" id="import-step-1">1 ï¿½ Upload</div>
+      <div class="import-step" id="import-step-2">2 ï¿½ Map fields</div>
+      <div class="import-step" id="import-step-3">3 ï¿½ Options</div>
+      <div class="import-step" id="import-step-4">4 ï¿½ Preview</div>
     </div>
     <!-- Step 1: Upload -->
     <div class="import-panel active" id="import-panel-1">
@@ -360,7 +360,7 @@
       <div class="import-map-group">
         <div class="import-map-group-label">Role</div>
         <div class="import-map-row"><div class="import-map-label">Job title <span>*</span></div><div class="imap-field-wrap"><select class="form-control" id="imap-roleTitle"></select><span class="imap-sample" id="imap-sample-roleTitle"></span></div></div>
-        <div class="import-map-row"><div class="import-map-label">Level (L1–L8)</div><div class="imap-field-wrap"><div class="imap-field-top"><select class="form-control" id="imap-roleLevel"></select><button class="imap-vmap-btn" id="imap-vmap-btn-roleLevel" style="display:none">? Map values</button></div><span class="imap-sample" id="imap-sample-roleLevel"></span></div></div>
+        <div class="import-map-row"><div class="import-map-label">Level (L1ï¿½L8)</div><div class="imap-field-wrap"><div class="imap-field-top"><select class="form-control" id="imap-roleLevel"></select><button class="imap-vmap-btn" id="imap-vmap-btn-roleLevel" style="display:none">? Map values</button></div><span class="imap-sample" id="imap-sample-roleLevel"></span></div></div>
         <div class="imap-vmap-panel" id="imap-vmap-roleLevel" style="display:none"></div>
         <div class="import-map-row"><div class="import-map-label">Department</div><div class="imap-field-wrap"><select class="form-control" id="imap-roleDept"></select><span class="imap-sample" id="imap-sample-roleDept"></span></div></div>
         <div class="import-map-row"><div class="import-map-label">Team</div><div class="imap-field-wrap"><select class="form-control" id="imap-roleTeam"></select><span class="imap-sample" id="imap-sample-roleTeam"></span></div></div>
@@ -685,7 +685,7 @@
         <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;">
           <div>
             <span style="font-size:13px;font-weight:500;color:var(--text-secondary);">Hide level badges</span>
-            <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Removes L1–L8 badges from org chart cards</div>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Removes L1ï¿½L8 badges from org chart cards</div>
           </div>
           <div id="settings-hide-levels-toggle" style="position:relative;width:36px;height:20px;flex-shrink:0;">
             <input type="checkbox" id="settings-hide-levels-cb" style="opacity:0;width:0;height:0;position:absolute;" />
@@ -696,7 +696,7 @@
       </div>
       <div style="border-top:1px solid var(--border);margin-top:16px;padding-top:16px;">
         <button id="settings-open-paybands" style="width:100%;padding:8px 12px;border-radius:6px;border:1.5px solid var(--border);background:#fff;font-size:13px;font-weight:500;cursor:pointer;color:var(--text-secondary);text-align:left;display:flex;align-items:center;justify-content:space-between;">
-          Manage pay bands <span style="color:var(--text-muted);font-size:16px;">›</span>
+          Manage pay bands <span style="color:var(--text-muted);font-size:16px;">ï¿½</span>
         </button>
       </div>
       <div style="border-top:1px solid var(--border);margin-top:16px;padding-top:16px;">
@@ -767,37 +767,37 @@ const departments = [
 ];
 
 let teams = [
-  // Engineering — product teams
+  // Engineering ï¿½ product teams
   { id:1,  name:'Nexus',         departmentId:'engineering' },
   { id:2,  name:'Plinger',       departmentId:'engineering' },
   { id:3,  name:'Delta Wing',    departmentId:'engineering' },
-  // Product — product teams
+  // Product ï¿½ product teams
   { id:4,  name:'Nexus',         departmentId:'product' },
   { id:5,  name:'Plinger',       departmentId:'product' },
   { id:6,  name:'Delta Wing',    departmentId:'product' },
-  // Sales — regions
+  // Sales ï¿½ regions
   { id:7,  name:'North America', departmentId:'sales' },
   { id:8,  name:'Europe',        departmentId:'sales' },
   { id:9,  name:'APAC',          departmentId:'sales' },
-  // Marketing — regions
+  // Marketing ï¿½ regions
   { id:10, name:'North America', departmentId:'marketing' },
   { id:11, name:'Europe',        departmentId:'marketing' },
   { id:12, name:'APAC',          departmentId:'marketing' },
-  // Customer Success — regions
+  // Customer Success ï¿½ regions
   { id:13, name:'North America', departmentId:'customer-success' },
   { id:14, name:'Europe',        departmentId:'customer-success' },
   { id:15, name:'APAC',          departmentId:'customer-success' },
 ];
 
 let roles = [
-  // -- Executive (9001–9006) --------------------------------------------------
+  // -- Executive (9001ï¿½9006) --------------------------------------------------
   { id:9001, title:'Chief Executive Officer',   level:'L8', department:'executive', managerRoleId:null, teamId:null },
   { id:9002, title:'Chief Technology Officer',  level:'L8', department:'executive', managerRoleId:9001, teamId:null },
   { id:9003, title:'Chief Product Officer',     level:'L8', department:'executive', managerRoleId:9001, teamId:null },
   { id:9004, title:'Chief Financial Officer',   level:'L8', department:'executive', managerRoleId:9001, teamId:null },
   { id:9005, title:'Chief Marketing Officer',   level:'L8', department:'executive', managerRoleId:9001, teamId:null },
   { id:9006, title:'Chief People Officer',      level:'L8', department:'executive', managerRoleId:9001, teamId:null },
-  // -- Engineering — VP + one manager per product team ------------------------
+  // -- Engineering ï¿½ VP + one manager per product team ------------------------
   { id:10001, title:'VP of Engineering',        level:'L7', department:'engineering', managerRoleId:null,  teamId:null },
   { id:10002, title:'Engineering Manager',      level:'L5', department:'engineering', managerRoleId:10001, teamId:1 },
   { id:10003, title:'Engineering Manager',      level:'L5', department:'engineering', managerRoleId:10001, teamId:2 },
@@ -833,7 +833,7 @@ let roles = [
   { id:10030, title:'QA Engineer',              level:'L2', department:'engineering', managerRoleId:10004, teamId:3 },
   { id:10031, title:'Junior Software Engineer', level:'L1', department:'engineering', managerRoleId:10004, teamId:3 },
   { id:10032, title:'Junior Software Engineer', level:'L1', department:'engineering', managerRoleId:10004, teamId:3 },
-  // -- Product — Director + one GPM per product team --------------------------
+  // -- Product ï¿½ Director + one GPM per product team --------------------------
   { id:10033, title:'Director of Product',      level:'L7', department:'product', managerRoleId:null,  teamId:null },
   // Nexus
   { id:10034, title:'Group Product Manager',    level:'L5', department:'product', managerRoleId:10033, teamId:4 },
@@ -858,7 +858,7 @@ let roles = [
   { id:10050, title:'UX Designer',              level:'L2', department:'design', managerRoleId:10046, teamId:null },
   { id:10051, title:'Senior Visual Designer',   level:'L3', department:'design', managerRoleId:10047, teamId:null },
   { id:10052, title:'Visual Designer',          level:'L2', department:'design', managerRoleId:10047, teamId:null },
-  // -- Sales — VP + one regional manager per territory ------------------------
+  // -- Sales ï¿½ VP + one regional manager per territory ------------------------
   { id:10053, title:'VP of Sales',              level:'L7', department:'sales', managerRoleId:null,  teamId:null },
   // North America
   { id:10054, title:'Regional Sales Manager',   level:'L5', department:'sales', managerRoleId:10053, teamId:7 },
@@ -882,7 +882,7 @@ let roles = [
   { id:10070, title:'Account Executive',        level:'L4', department:'sales', managerRoleId:10069, teamId:9 },
   { id:10071, title:'Account Executive',        level:'L4', department:'sales', managerRoleId:10069, teamId:9 },
   { id:10072, title:'Sales Development Rep',    level:'L2', department:'sales', managerRoleId:10069, teamId:9 },
-  // -- Marketing — Director + one regional manager per territory --------------
+  // -- Marketing ï¿½ Director + one regional manager per territory --------------
   { id:10073, title:'Director of Marketing',         level:'L7', department:'marketing', managerRoleId:null,  teamId:null },
   // North America
   { id:10074, title:'Regional Marketing Manager',    level:'L5', department:'marketing', managerRoleId:10073, teamId:10 },
@@ -898,7 +898,7 @@ let roles = [
   { id:10082, title:'Regional Marketing Manager',    level:'L5', department:'marketing', managerRoleId:10073, teamId:12 },
   { id:10083, title:'Senior Marketing Manager',      level:'L3', department:'marketing', managerRoleId:10082, teamId:12 },
   { id:10084, title:'Marketing Coordinator',         level:'L1', department:'marketing', managerRoleId:10082, teamId:12 },
-  // -- Customer Success — Director + one CS manager per territory -------------
+  // -- Customer Success ï¿½ Director + one CS manager per territory -------------
   { id:10085, title:'Director of Customer Success',    level:'L7', department:'customer-success', managerRoleId:null,  teamId:null },
   // North America
   { id:10086, title:'CS Manager',                      level:'L5', department:'customer-success', managerRoleId:10085, teamId:13 },
@@ -978,7 +978,7 @@ let persons = [
   { id:33,  name:'Nina Simone',         salary:47000,  salaryReviewNeeded:false, gender:'female',                        roleId:10027 },
   { id:34,  name:'Marlon Wayans',       salary:45000,  salaryReviewNeeded:false, gender:'male',                          roleId:10028 },
   { id:35,  name:'Ray Charles',         salary:50000,  salaryReviewNeeded:false, gender:'male',                          roleId:10029 },
-  // Product  (roles 10030–10032 in Delta Wing are vacant)
+  // Product  (roles 10030ï¿½10032 in Delta Wing are vacant)
   { id:36,  name:'Denzel Washington',   salary:155000, salaryReviewNeeded:false, gender:'male',                          roleId:10033 },
   { id:37,  name:'Beyonce Knowles',     salary:110000, salaryReviewNeeded:false, gender:'female',                        roleId:10034 },
   { id:38,  name:'Robert De Niro',      salary:105000, salaryReviewNeeded:false, gender:'male',                          roleId:10038 },
@@ -1075,7 +1075,7 @@ let persons = [
 const DEFAULT_PERSONS = persons.map(p => ({ id: p.id, gender: p.gender }));
 
 // roleAssignments replaces person.roleId as the join between persons and roles.
-// Each entry: { personId, roleId, percentage } where percentage is 1–100.
+// Each entry: { personId, roleId, percentage } where percentage is 1ï¿½100.
 // A role may have at most one person; a person may have many roles.
 let roleAssignments = persons
   .filter(p => p.roleId != null)
@@ -1084,14 +1084,14 @@ let roleAssignments = persons
 // -- Level & Title Config ------------------------------------------------------
 
 const LEVELS = [
-  { id: 'L1', label: 'L1 · Junior' },
-  { id: 'L2', label: 'L2 · Mid' },
-  { id: 'L3', label: 'L3 · Senior' },
-  { id: 'L4', label: 'L4 · Lead / Specialist' },
-  { id: 'L5', label: 'L5 · Manager' },
-  { id: 'L6', label: 'L6 · Senior Manager' },
-  { id: 'L7', label: 'L7 · Director' },
-  { id: 'L8', label: 'L8 · VP / Head' },
+  { id: 'L1', label: 'L1 ï¿½ Junior' },
+  { id: 'L2', label: 'L2 ï¿½ Mid' },
+  { id: 'L3', label: 'L3 ï¿½ Senior' },
+  { id: 'L4', label: 'L4 ï¿½ Lead / Specialist' },
+  { id: 'L5', label: 'L5 ï¿½ Manager' },
+  { id: 'L6', label: 'L6 ï¿½ Senior Manager' },
+  { id: 'L7', label: 'L7 ï¿½ Director' },
+  { id: 'L8', label: 'L8 ï¿½ VP / Head' },
 ];
 
 const PERSON_FLAGS = [
@@ -1256,7 +1256,7 @@ function levelTierClass(levelId) {
 function getLevelNum(levelId) { return parseInt(levelId.slice(1), 10); }
 
 function formatSalary(n) {
-  if (settings.currency === 'EUR') return '€' + n.toLocaleString('en-US') + '/mo';
+  if (settings.currency === 'EUR') return 'ï¿½' + n.toLocaleString('en-US') + '/mo';
   return n.toLocaleString('da-DK') + ' kr/mo';
 }
 
@@ -1639,7 +1639,7 @@ function renderCard(role, isOrphaned = false) {
       const smRole = roles.find(r => r.id === smId);
       if (!smRole) return null;
       const smPerson = getPersonForRole(smId);
-      return `? ${smPerson ? smPerson.name : smRole.title} · ${smRole.title}`;
+      return `? ${smPerson ? smPerson.name : smRole.title} ï¿½ ${smRole.title}`;
     }).filter(Boolean).join('\n');
     const icon = document.createElement('div');
     icon.className = 'matrix-icon';
@@ -1662,7 +1662,7 @@ function renderTree(managerRoleId, deptId, excludeTeamRoles = false, restrictToT
   if (managerRoleId !== null && collapsedManagers.has(managerRoleId)) {
     const ghost = document.createElement('div');
     ghost.className = 'collapsed-ghost';
-    ghost.textContent = `? ${children.length} direct report${children.length !== 1 ? 's' : ''} hidden — click to expand`;
+    ghost.textContent = `? ${children.length} direct report${children.length !== 1 ? 's' : ''} hidden ï¿½ click to expand`;
     ghost.addEventListener('click', () => { collapsedManagers.delete(managerRoleId); render(); });
     container.appendChild(ghost);
     return container;
@@ -1795,7 +1795,7 @@ function renderDeptColumn(dept) {
       const person = getPersonForRole(headRole.id);
       const ref = document.createElement('div');
       ref.className = 'dept-head-ref';
-      ref.textContent = `? ${person ? person.name : headRole.title} · ${headRole.title}`;
+      ref.textContent = `? ${person ? person.name : headRole.title} ï¿½ ${headRole.title}`;
       tree.appendChild(ref);
     }
   }
@@ -1827,7 +1827,7 @@ function renderDeptColumn(dept) {
       if (collapsedTeams.has(genKey)) {
         const ghost = document.createElement('div');
         ghost.className = 'collapsed-ghost';
-        ghost.textContent = `? ${deptRootRoles.length} role${deptRootRoles.length !== 1 ? 's' : ''} hidden — click to expand`;
+        ghost.textContent = `? ${deptRootRoles.length} role${deptRootRoles.length !== 1 ? 's' : ''} hidden ï¿½ click to expand`;
         ghost.addEventListener('click', () => { collapsedTeams.delete(genKey); render(); });
         tree.appendChild(ghost);
       } else {
@@ -1869,7 +1869,7 @@ function renderDeptColumn(dept) {
       if (collapsedTeams.has(team.id)) {
         const ghost = document.createElement('div');
         ghost.className = 'collapsed-ghost';
-        ghost.textContent = `? ${teamRoleCount} role${teamRoleCount !== 1 ? 's' : ''} hidden — click to expand`;
+        ghost.textContent = `? ${teamRoleCount} role${teamRoleCount !== 1 ? 's' : ''} hidden ï¿½ click to expand`;
         ghost.addEventListener('click', () => { collapsedTeams.delete(team.id); render(); });
         tree.appendChild(ghost);
       } else {
@@ -1895,7 +1895,7 @@ function renderDeptColumn(dept) {
       }
     });
   } else {
-    // No teams — render all root roles (managerRoleId === null)
+    // No teams ï¿½ render all root roles (managerRoleId === null)
     const rootRoles = roles.filter(r => r.department === dept.id && r.managerRoleId === null && !r.teamId);
     rootRoles.forEach(rootRole => {
       const rootNode = document.createElement('div');
@@ -2103,11 +2103,11 @@ function rebuildSecondaryManagersUI(roleId) {
   const secIds = (role?.secondaryManagerRoleIds) || [];
 
   const viewEl = document.getElementById('modal-role-secondary-view');
-  viewEl.textContent = secIds.length === 0 ? '—' : secIds.map(id => {
+  viewEl.textContent = secIds.length === 0 ? 'ï¿½' : secIds.map(id => {
     const r = roles.find(x => x.id === id);
     if (!r) return '';
     const p = getPersonForRole(id);
-    return `${p ? p.name : r.title} · ${r.title}`;
+    return `${p ? p.name : r.title} ï¿½ ${r.title}`;
   }).filter(Boolean).join(', ');
 
   const listEl = document.getElementById('modal-role-secondary-list');
@@ -2136,7 +2136,7 @@ function rebuildSecondaryManagersUI(roleId) {
       const deptName = departments.find(d => d.id === r.department)?.name || '';
       const item = document.createElement('div');
       item.className = 'secondary-suggestion';
-      item.textContent = `${p.name} · ${r.title} (${deptName})`;
+      item.textContent = `${p.name} ï¿½ ${r.title} (${deptName})`;
       item.onmousedown = e => {
         e.preventDefault();
         appendSecondaryManagerItem(listEl, r.id, roleId);
@@ -2167,10 +2167,10 @@ function appendSecondaryManagerItem(listEl, roleId, editingRoleId) {
   item.style.cssText = 'display:flex;align-items:center;gap:6px;font-size:12px;padding:2px 0';
   const label = document.createElement('span');
   label.style.flex = '1';
-  label.textContent = `${p ? p.name : r.title} · ${r.title} (${deptName})`;
+  label.textContent = `${p ? p.name : r.title} ï¿½ ${r.title} (${deptName})`;
   const removeBtn = document.createElement('button');
   removeBtn.type = 'button';
-  removeBtn.textContent = '×';
+  removeBtn.textContent = 'ï¿½';
   removeBtn.style.cssText = 'border:none;background:none;cursor:pointer;color:var(--text-muted);font-size:14px;padding:0 2px';
   removeBtn.onclick = () => item.remove();
   item.append(label, removeBtn);
@@ -2333,13 +2333,13 @@ function openCombinedModal(roleId, defaultTab) {
     // Populate view-mode text spans
     const levelEntry = LEVELS.find(l => l.id === role.level);
     document.getElementById('modal-role-level-view').textContent = levelEntry ? levelEntry.label : role.level;
-    document.getElementById('modal-role-title-view').textContent = role.title || '—';
+    document.getElementById('modal-role-title-view').textContent = role.title || 'ï¿½';
     const deptObj = departments.find(d => d.id === role.department);
-    document.getElementById('modal-role-dept-view').textContent = deptObj ? deptObj.name : (role.department || '—');
+    document.getElementById('modal-role-dept-view').textContent = deptObj ? deptObj.name : (role.department || 'ï¿½');
     const mgrObj = role.managerRoleId ? roles.find(r => r.id === role.managerRoleId) : null;
     document.getElementById('modal-role-manager-view').textContent = mgrObj ? mgrObj.title : 'None (top level)';
     const teamObj = role.teamId ? teams.find(t => t.id === role.teamId) : null;
-    document.getElementById('modal-role-team-view').textContent = teamObj ? teamObj.name : '—';
+    document.getElementById('modal-role-team-view').textContent = teamObj ? teamObj.name : 'ï¿½';
   }
 
   document.getElementById('modal-title-text').textContent = hasPerson ? person.name : (role ? role.title + ' (Vacant)' : 'Edit');
@@ -2574,7 +2574,7 @@ function openAssignPersonPicker(roleId) {
   function renderPersonRow(person) {
     const totalAlloc = getTotalAllocationForPerson(person.id);
     const suggested = Math.max(1, Math.min(100, 100 - totalAlloc));
-    const freeLabel = totalAlloc > 0 ? ` · ${100 - totalAlloc}% free` : '';
+    const freeLabel = totalAlloc > 0 ? ` ï¿½ ${100 - totalAlloc}% free` : '';
     const row = document.createElement('div');
     row.className = 'assign-person-row';
     row.style.cssText = 'display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:default;border-radius:8px;transition:background 0.12s';
@@ -2701,7 +2701,7 @@ function populateAddToRoleList(personId, deptFilter) {
     row.innerHTML = `
       <div style="flex:1;min-width:0">
         <div style="font-size:12.5px;font-weight:600;color:var(--text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.title}</div>
-        <div style="font-size:11px;color:var(--text-muted)">${dept ? dept.name : r.department} · <span class="level-badge ${levelTierClass(r.level)}" style="font-size:10px;padding:1px 4px">${r.level}</span></div>
+        <div style="font-size:11px;color:var(--text-muted)">${dept ? dept.name : r.department} ï¿½ <span class="level-badge ${levelTierClass(r.level)}" style="font-size:10px;padding:1px 4px">${r.level}</span></div>
       </div>
     `;
     row.appendChild(pctInput);
@@ -2815,13 +2815,13 @@ function restoreSnapshot(snapId) {
   restored.forEach(p => { if (!currentPersonIds.has(p.id)) p.noLongerHired = true; });
 
   // Persons in current but not in snapshot ? hired after snapshot; add to unassigned
-  // Only active (non-ghost) persons are preserved — ghosts come from snapshot data, not current state
+  // Only active (non-ghost) persons are preserved ï¿½ ghosts come from snapshot data, not current state
   persons.filter(p => !p.noLongerHired).forEach(p => { if (!snapPersonIds.has(p.id)) restored.push({ ...p }); });
 
   persons.splice(0, persons.length, ...restored);
 
   // Restore assignments from snapshot (noLongerHired persons keep their slot)
-  // Exclude only post-snapshot hires — they go to unassigned
+  // Exclude only post-snapshot hires ï¿½ they go to unassigned
   const postHireIds = new Set(restored.filter(p => !snapPersonIds.has(p.id)).map(p => p.id));
   roleAssignments.splice(0, roleAssignments.length,
     ...JSON.parse(JSON.stringify(snap.data.roleAssignments)).filter(a => !postHireIds.has(a.personId)));
@@ -3112,14 +3112,14 @@ function openDeptSettingsModal(deptId) {
   document.getElementById('dept-settings-warning').classList.remove('visible');
   // Populate Responsible Person dropdown
   const headSelect = document.getElementById('dept-settings-head-role');
-  headSelect.innerHTML = '<option value="">— None —</option>';
+  headSelect.innerHTML = '<option value="">ï¿½ None ï¿½</option>';
   roles.forEach(r => {
     const p = getPersonForRole(r.id);
     if (!p) return;
     const opt = document.createElement('option');
     opt.value = r.id;
     const deptName = departments.find(d => d.id === r.department)?.name || '';
-    opt.textContent = `${p.name} · ${r.title} (${deptName})`;
+    opt.textContent = `${p.name} ï¿½ ${r.title} (${deptName})`;
     if (r.id === dept.headRoleId) opt.selected = true;
     headSelect.appendChild(opt);
   });
@@ -3141,7 +3141,7 @@ function openDeptSettingsModal(deptId) {
           .filter(pid => persons.find(p => p.id === pid)?.noLongerHired)
       );
       persons.splice(0, persons.length, ...persons.filter(p => !ghostsToRemove.has(p.id)));
-      // Remove assignments for this dept's roles — live employees become unassigned
+      // Remove assignments for this dept's roles ï¿½ live employees become unassigned
       roleAssignments.splice(0, roleAssignments.length, ...roleAssignments.filter(a => !deptRoleIds.has(a.roleId)));
       roles.splice(0, roles.length, ...roles.filter(r => r.department !== deptId));
     } else {
@@ -3295,7 +3295,7 @@ async function loadFromStorage() {
     const res = await fetch('/api/data');
     if (!res.ok) throw new Error('Server returned ' + res.status);
     const saved = await res.json();
-    if (!saved || !saved.departments) return; // empty — will seed defaults
+    if (!saved || !saved.departments) return; // empty ï¿½ will seed defaults
     if (saved.departments) departments.splice(0, departments.length, ...saved.departments.map(d => ({ ...d, headRoleId: d.headRoleId ?? null })));
     if (saved.roles) roles.splice(0, roles.length, ...saved.roles.map(r => ({ ...r, teamId: r.teamId || null, secondaryManagerRoleIds: r.secondaryManagerRoleIds || [] })));
     if (saved.persons) persons.splice(0, persons.length, ...saved.persons.map(p => ({ ...p })));
@@ -3514,6 +3514,7 @@ async function init() {
     applyMatrixMode();
     applyDragDrop();
     render();
+    setTimeout(() => document.body.classList.add('page-ready'), 700);
     overlay.style.display = 'none';
   } catch (e) {
     overlay.innerHTML = `
@@ -3551,7 +3552,7 @@ function openDropCreateRoleModal(draggedPerson, context) {
   const deptTeams = getTeamsForDept(context.department);
   if (deptTeams.length) {
     teamSel.innerHTML = '';
-    const none = document.createElement('option'); none.value = ''; none.textContent = '— None —';
+    const none = document.createElement('option'); none.value = ''; none.textContent = 'ï¿½ None ï¿½';
     teamSel.appendChild(none);
     deptTeams.forEach(t => {
       const opt = document.createElement('option'); opt.value = t.id; opt.textContent = t.name;
@@ -3651,7 +3652,7 @@ function reparentRoleRebuildTeamDropdown() {
   const deptTeams = getTeamsForDept(deptId);
   if (deptTeams.length) {
     teamSel.innerHTML = '';
-    const none = document.createElement('option'); none.value = ''; none.textContent = '— None —';
+    const none = document.createElement('option'); none.value = ''; none.textContent = 'ï¿½ None ï¿½';
     teamSel.appendChild(none);
     deptTeams.forEach(t => {
       const opt = document.createElement('option'); opt.value = t.id; opt.textContent = t.name;
@@ -3702,8 +3703,8 @@ const IMPORT_MAPPING_KEY = 'orgchart_import_mapping_v1';
 const IMPORT_TARGET_FIELDS = [
   { id: 'name',        hints: ['name','full name','employee name','fullname','person','navn'] },
   { id: 'employeeId',  hints: ['id','emp id','employee id','staff id','medarbejder id','nr','number'] },
-  { id: 'salary',      hints: ['salary','pay','løn','wage','monthly','compensation','comp'] },
-  { id: 'gender',      hints: ['gender','køn','sex'], enumValues: ['male','female','other'] },
+  { id: 'salary',      hints: ['salary','pay','lï¿½n','wage','monthly','compensation','comp'] },
+  { id: 'gender',      hints: ['gender','kï¿½n','sex'], enumValues: ['male','female','other'] },
   { id: 'roleTitle',   hints: ['title','job title','role','position','jobtitle','stilling','job'] },
   { id: 'roleLevel',   hints: ['level','grade','rang','tier'], enumValues: ['L1','L2','L3','L4','L5','L6','L7','L8'] },
   { id: 'roleDept',    hints: ['department','dept','afdeling','division','team dept'] },
@@ -3818,7 +3819,7 @@ function handleImportFile(file) {
     importState.headers = parsed.headers;
     importState.rows = parsed.rows;
     // Show preview
-    document.getElementById('import-row-count').textContent = `${parsed.rows.length} rows · ${parsed.headers.length} columns detected`;
+    document.getElementById('import-row-count').textContent = `${parsed.rows.length} rows ï¿½ ${parsed.headers.length} columns detected`;
     const chips = document.getElementById('import-col-chips');
     chips.innerHTML = '';
     parsed.headers.forEach(h => {
@@ -3886,7 +3887,7 @@ function renderValueMapPanel(fieldId) {
 
   let html = '';
   for (const srcVal of allValues) {
-    const optionsHtml = `<option value="">— as-is</option>` +
+    const optionsHtml = `<option value="">ï¿½ as-is</option>` +
       field.enumValues.map(ev => `<option value="${ev}" ${transforms[srcVal] === ev ? 'selected' : ''}>${ev}</option>`).join('');
     html += `<div class="imap-vmap-row">
       <span class="imap-vmap-source">"${srcVal}"</span>
@@ -3910,7 +3911,7 @@ function populateMappingStep() {
   importState.mapping = autoSuggestMapping(importState.headers);
   IMPORT_TARGET_FIELDS.forEach(field => {
     const sel = document.getElementById(`imap-${field.id}`);
-    sel.innerHTML = '<option value="">— skip</option>';
+    sel.innerHTML = '<option value="">ï¿½ skip</option>';
     importState.headers.forEach(h => {
       const opt = document.createElement('option');
       opt.value = h; opt.textContent = h;
@@ -3977,20 +3978,20 @@ function buildPreview() {
   // -- Info --
   if (result.infoTopLevel > 0) {
     html += section('Info');
-    html += row('info', '?', `${result.infoTopLevel} employee${result.infoTopLevel !== 1 ? 's have' : ' has'} no manager — will be placed at top level`);
+    html += row('info', '?', `${result.infoTopLevel} employee${result.infoTopLevel !== 1 ? 's have' : ' has'} no manager ï¿½ will be placed at top level`);
   }
 
   // -- Warnings --
   const allWarnings = [...result.warnings];
   if (result.missingGender > 0) allWarnings.push(`${result.missingGender} employee${result.missingGender !== 1 ? 's have' : ' has'} no gender data (will be blank)`);
   if (result.missingSalary > 0) allWarnings.push(`${result.missingSalary} employee${result.missingSalary !== 1 ? 's have' : ' has'} no salary data (will be 0)`);
-  if (result.unmatchedLevels > 0) allWarnings.push(`${result.unmatchedLevels} row${result.unmatchedLevels !== 1 ? 's have' : ' has'} unrecognised level values (e.g. "A", "B") — defaulting to L3`);
+  if (result.unmatchedLevels > 0) allWarnings.push(`${result.unmatchedLevels} row${result.unmatchedLevels !== 1 ? 's have' : ' has'} unrecognised level values (e.g. "A", "B") ï¿½ defaulting to L3`);
   if (allWarnings.length > 0) {
     html += section(`Warnings (${allWarnings.length})`);
     const MAX_VISIBLE = 8;
     allWarnings.slice(0, MAX_VISIBLE).forEach(w => { html += row('warn', '?', w); });
     if (allWarnings.length > MAX_VISIBLE) {
-      html += `<div class="import-show-more" id="import-show-more-btn">… show ${allWarnings.length - MAX_VISIBLE} more</div>`;
+      html += `<div class="import-show-more" id="import-show-more-btn">ï¿½ show ${allWarnings.length - MAX_VISIBLE} more</div>`;
       html += `<div id="import-warnings-extra" style="display:none">` +
         allWarnings.slice(MAX_VISIBLE).map(w => row('warn', '?', w)).join('') +
         `</div>`;
@@ -4008,7 +4009,7 @@ function buildPreview() {
   const ignoredCols = importState.headers.filter(h => !mappedCols.has(h));
   if (ignoredCols.length > 0) {
     html += section(`Ignored columns (${ignoredCols.length})`);
-    html += `<div class="import-ignored-cols">${ignoredCols.join(' · ')}</div>`;
+    html += `<div class="import-ignored-cols">${ignoredCols.join(' ï¿½ ')}</div>`;
   }
 
   el.innerHTML = html;
@@ -4073,7 +4074,7 @@ function runImport(rows, mapping, mode, dryRun = false, valueTransforms = {}) {
   });
 
   // Phase 3: ensure roles, track rowIndex?roleId
-  // claimedRoleIds prevents two CSV rows from sharing the same role object —
+  // claimedRoleIds prevents two CSV rows from sharing the same role object ï¿½
   // each row gets its own role so every imported person is individually visible.
   const rowRoleIds = {};
   const claimedRoleIds = new Set();
@@ -4123,7 +4124,7 @@ function runImport(rows, mapping, mode, dryRun = false, valueTransforms = {}) {
       if (!mgrName) { result.infoTopLevel++; return; }
       const mgrRoleId = nameToRoleId[mgrName.toLowerCase()];
       if (mgrRoleId === undefined) {
-        result.warnings.push(`Row ${idx + 2} · ${get(row, 'name') || '?'} — manager "${mgrName}" not found`);
+        result.warnings.push(`Row ${idx + 2} ï¿½ ${get(row, 'name') || '?'} ï¿½ manager "${mgrName}" not found`);
         return;
       }
       if (mgrRoleId !== roleId) {
@@ -4162,7 +4163,7 @@ function runImport(rows, mapping, mode, dryRun = false, valueTransforms = {}) {
       if (!mgrEmpId) { result.infoTopLevel++; return; }
       const mgrRoleId = empIdToRoleId[mgrEmpId.toLowerCase()];
       if (mgrRoleId === undefined) {
-        result.warnings.push(`Row ${idx + 2} · ${get(row, 'name') || '?'} — manager ID "${mgrEmpId}" not found`);
+        result.warnings.push(`Row ${idx + 2} ï¿½ ${get(row, 'name') || '?'} ï¿½ manager ID "${mgrEmpId}" not found`);
         return;
       }
       if (mgrRoleId !== roleId) {
@@ -4198,7 +4199,7 @@ function runImport(rows, mapping, mode, dryRun = false, valueTransforms = {}) {
       if (roleId === undefined || !dottedEmpId) return;
       const dottedRoleId = empIdToRoleId2[dottedEmpId.toLowerCase()];
       if (dottedRoleId === undefined) {
-        result.warnings.push(`Row ${idx + 2} · ${get(row, 'name') || '?'} — dotted-line manager ID "${dottedEmpId}" not found`);
+        result.warnings.push(`Row ${idx + 2} ï¿½ ${get(row, 'name') || '?'} ï¿½ dotted-line manager ID "${dottedEmpId}" not found`);
         return;
       }
       if (dottedRoleId !== roleId) {
@@ -4273,7 +4274,7 @@ document.getElementById('import-next-btn').addEventListener('click', () => {
     setImportStep(2);
   } else if (step === 2) {
     importState.mapping = readMappingFromUI();
-    if (!importState.mapping.name) { alert('Please map the "Full name" field — it is required.'); return; }
+    if (!importState.mapping.name) { alert('Please map the "Full name" field ï¿½ it is required.'); return; }
     setImportStep(3);
   } else if (step === 3) {
     importState.mode = document.querySelector('input[name="import-mode"]:checked').value;

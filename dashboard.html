@@ -61,20 +61,6 @@
         </svg>
         Directory
       </a>
-      <a class="nav-item" href="#">
-        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="2" y="3" width="12" height="12" rx="1.5"/>
-          <line x1="5" y1="1" x2="5" y2="5"/><line x1="11" y1="1" x2="11" y2="5"/><line x1="2" y1="7" x2="14" y2="7"/>
-          <polyline points="5.5,11 7,12.5 10.5,9"/>
-        </svg>
-        Time Off
-      </a>
-      <a class="nav-item" href="#">
-        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="1" y="6" width="14" height="9" rx="1.5"/><path d="M5 6V4.5a3 3 0 016 0V6"/>
-        </svg>
-        Hiring
-      </a>
     </div>
     <div class="nav-spacer"></div>
     <div class="nav-section">
@@ -171,8 +157,8 @@ function genderKey(person) {
   const g = (person.gender || '').toLowerCase().trim();
   if (g === 'male' || g === 'm') return 'male';
   if (g === 'female' || g === 'f') return 'female';
-  if (g === 'other') return 'other';
-  return 'unknown';
+  if (g === '') return 'unknown';
+  return 'other';
 }
 function levelSortKey(lvl) {
   if (!lvl) return 999;
@@ -511,24 +497,23 @@ kpiDefs.forEach(k => {
     const headline = document.createElement('div');
     headline.className = 'gap-headline';
     if (allMaleSalaries.length > 0 && allFemaleSalaries.length > 0) {
-      const otherNote = genderCounts.other > 0
-        ? ` <span style="color:var(--text-3)">· ${genderCounts.other} employee${genderCounts.other !== 1 ? 's' : ''} with gender 'Other' shown per level below</span>`
-        : '';
       headline.innerHTML = `
         <span class="gap-headline-val">${overallGap > 0 ? overallGap + '%' : '0%'}</span>
-        <span class="gap-headline-label">overall gender pay gap (men earn ${overallGap}% more on average)</span>${otherNote}`;
+        <span class="gap-headline-label">overall gender pay gap (men earn ${overallGap}% more on average)</span>`;
     } else {
       headline.innerHTML = `<span class="gap-headline-label" style="color:var(--text-3)">Insufficient data for overall pay gap calculation</span>`;
     }
     card.appendChild(headline);
+    const levels = Object.keys(levelGenderData).sort((a, b) => levelSortKey(a) - levelSortKey(b));
+    const hasOtherData = levels.some(lvl => levelGenderData[lvl].other.filter(v => v > 0).length >= 2);
+    const colCount = hasOtherData ? 5 : 4;
     const tbl = document.createElement('table');
     tbl.className = 'gap-table';
-    tbl.innerHTML = `<thead><tr><th>Level</th><th>Avg Male</th><th>Avg Female</th><th>Avg Other</th><th>Gap</th></tr></thead>`;
+    tbl.innerHTML = `<thead><tr><th>Level</th><th>Avg Male</th><th>Avg Female</th>${hasOtherData ? '<th>Avg Other</th>' : ''}<th>Gap</th></tr></thead>`;
     const tbody = document.createElement('tbody');
-    const levels = Object.keys(levelGenderData).sort((a, b) => levelSortKey(a) - levelSortKey(b));
     if (levels.length === 0) {
       const tr = document.createElement('tr');
-      tr.innerHTML = `<td colspan="5" class="gap-na">No level data available</td>`;
+      tr.innerHTML = `<td colspan="${colCount}" class="gap-na">No level data available</td>`;
       tbody.appendChild(tr);
     }
     levels.forEach(lvl => {
@@ -537,24 +522,30 @@ kpiDefs.forEach(k => {
       const mSalaries = d.male.filter(v => v > 0);
       const fSalaries = d.female.filter(v => v > 0);
       const oSalaries = d.other.filter(v => v > 0);
-      const avgOCell = oSalaries.length >= 2 ? fmt(avg(oSalaries)) : `<span class="gap-na">—</span>`;
       if (mSalaries.length < 2 || fSalaries.length < 2) {
-        tr.innerHTML = `<td>${lvl}</td><td colspan="4" class="gap-na">Insufficient data (need ≥2 per gender)</td>`;
+        tr.innerHTML = `<td>${lvl}</td><td colspan="${colCount - 1}" class="gap-na">Insufficient data (need ≥2 per gender)</td>`;
       } else {
         const avgM = avg(mSalaries), avgF = avg(fSalaries);
         const gap  = avgM > 0 ? Math.round((avgM - avgF) / avgM * 100) : 0;
         const barW = Math.min(Math.abs(gap) * 2, 60);
+        const avgOCell = hasOtherData ? `<td>${oSalaries.length >= 2 ? fmt(avg(oSalaries)) : '<span class="gap-na">—</span>'}</td>` : '';
         tr.innerHTML = `
           <td>${lvl}</td>
           <td>${fmt(avgM)}</td>
           <td>${fmt(avgF)}</td>
-          <td>${avgOCell}</td>
+          ${avgOCell}
           <td><span class="gap-pct ${gap <= 0 ? 'ok' : ''}">${gap > 0 ? '+' : ''}${gap}%</span>${gap > 0 ? `<span class="gap-bar" style="width:${barW}px"></span>` : ''}</td>`;
       }
       tbody.appendChild(tr);
     });
     tbl.appendChild(tbody);
     card.appendChild(tbl);
+    if (!hasOtherData && genderCounts.other > 0) {
+      const note = document.createElement('p');
+      note.style.cssText = 'margin:10px 0 0; font-size:12px; color:var(--text-3)';
+      note.textContent = `${genderCounts.other} employee${genderCounts.other !== 1 ? 's' : ''} with gender 'Other' — too few per level to calculate averages.`;
+      card.appendChild(note);
+    }
   }
   grid.appendChild(card);
 }

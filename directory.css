@@ -226,7 +226,7 @@ textarea.form-control { resize: vertical; min-height: 72px; }
 /* Tabs */
 #pm-tab-bar {
   display: flex; border-bottom: 1px solid var(--border);
-  padding: 0 24px; flex-shrink: 0; overflow-x: auto;
+  padding: 0 24px; flex-shrink: 0; overflow-x: auto; overflow-y: hidden;
 }
 .pm-tab {
   padding: 11px 16px; border-bottom: 2.5px solid transparent;

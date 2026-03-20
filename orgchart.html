@@ -1613,6 +1613,8 @@
 </head>
 <body>
 
+<div id="loading-overlay" style="position:fixed;inset:0;background:#fff;display:flex;align-items:center;justify-content:center;font-family:inherit;color:#6b7280;z-index:9999;font-size:1.1rem;">Loading…</div>
+
 <nav id="left-nav">
   <div id="nav-logo">
     <div class="nav-logo-icon">
@@ -4840,7 +4842,10 @@ document.getElementById('clear-data-btn').addEventListener('click', e => {
 
 document.getElementById('reset-data-btn').addEventListener('click', e => {
   e.preventDefault();
-  if (confirm('Reset all data to defaults? This cannot be undone.')) { localStorage.removeItem(STORAGE_KEY); location.reload(); }
+  if (confirm('Reset all data to defaults? This cannot be undone.')) {
+    fetch('/api/data', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' })
+      .then(() => location.reload()).catch(() => location.reload());
+  }
 });
 
 document.addEventListener('click', e => {
@@ -4873,38 +4878,24 @@ function migrateOldFormat(saved) {
   };
 }
 
+let _saveTimer = null;
 function saveToStorage() {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ departments, roles, persons, roleAssignments, titles: TITLES, teams, settings, salaryBands: SALARY_BANDS, snapshots })); } catch (e) {}
+  clearTimeout(_saveTimer);
+  _saveTimer = setTimeout(() => {
+    fetch('/api/data', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ departments, roles, persons, roleAssignments, titles: TITLES, teams, settings, salaryBands: SALARY_BANDS, snapshots })
+    }).catch(e => console.warn('Save failed:', e));
+  }, 300);
 }
 
-function loadFromStorage() {
+async function loadFromStorage() {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) {
-      // Try migrating from v2
-      const v2Raw = localStorage.getItem('orgchart_data_v2');
-      if (v2Raw) {
-        const saved = JSON.parse(v2Raw);
-        if (saved.departments) departments.splice(0, departments.length, ...saved.departments);
-        if (saved.roles) { roles.splice(0, roles.length, ...saved.roles.map(r => ({ ...r, teamId: r.teamId || null }))); }
-        if (saved.persons) persons.splice(0, persons.length, ...saved.persons);
-        if (saved.titles) { Object.keys(TITLES).forEach(k => delete TITLES[k]); Object.assign(TITLES, saved.titles); }
-        return;
-      }
-      // Try migrating from v1
-      const oldRaw = localStorage.getItem('orgchart_data');
-      if (!oldRaw) return;
-      const saved = JSON.parse(oldRaw);
-      if (saved.departments) departments.splice(0, departments.length, ...saved.departments);
-      if (saved.employees && !saved.roles) {
-        const migrated = migrateOldFormat(saved);
-        roles.splice(0, roles.length, ...migrated.roles);
-        persons.splice(0, persons.length, ...migrated.persons);
-      }
-      if (saved.titles) { Object.keys(TITLES).forEach(k => delete TITLES[k]); Object.assign(TITLES, saved.titles); }
-      return;
-    }
-    const saved = JSON.parse(raw);
+    const res = await fetch('/api/data');
+    if (!res.ok) throw new Error('Server returned ' + res.status);
+    const saved = await res.json();
+    if (!saved || !saved.departments) return; // empty — will seed defaults
     if (saved.departments) departments.splice(0, departments.length, ...saved.departments.map(d => ({ ...d, headRoleId: d.headRoleId ?? null })));
     if (saved.roles) roles.splice(0, roles.length, ...saved.roles.map(r => ({ ...r, teamId: r.teamId || null, secondaryManagerRoleIds: r.secondaryManagerRoleIds || [] })));
     if (saved.persons) persons.splice(0, persons.length, ...saved.persons.map(p => ({ ...p })));
@@ -4920,7 +4911,9 @@ function loadFromStorage() {
     if (saved.settings) Object.assign(settings, saved.settings);
     if (saved.salaryBands) Object.assign(SALARY_BANDS, saved.salaryBands);
     if (saved.snapshots) snapshots.splice(0, snapshots.length, ...saved.snapshots);
-  } catch (e) {}
+  } catch (e) {
+    throw e; // re-throw so init() can show error overlay
+  }
 }
 
 // ── Settings modal ────────────────────────────────────────────────────────────
@@ -5082,21 +5075,56 @@ document.getElementById('paybands-save-btn').addEventListener('click', () => {
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 
-loadFromStorage();
-// Persist default data on first load so dashboard/directory can read it
-if (!localStorage.getItem(STORAGE_KEY)) saveToStorage();
-persons.forEach(p => {
-  if (!p.gender) {
-    const def = DEFAULT_PERSONS.find(d => d.id === p.id);
-    if (def && def.gender) p.gender = def.gender;
+async function init() {
+  const overlay = document.getElementById('loading-overlay');
+  try {
+    await loadFromStorage();
+    // If server had no data, seed defaults (or migrate from localStorage)
+    if (!departments.length) {
+      const localRaw = localStorage.getItem('orgchart_data_v4');
+      if (localRaw) {
+        try {
+          const saved = JSON.parse(localRaw);
+          if (saved.departments) departments.splice(0, departments.length, ...saved.departments.map(d => ({ ...d, headRoleId: d.headRoleId ?? null })));
+          if (saved.roles) roles.splice(0, roles.length, ...saved.roles.map(r => ({ ...r, teamId: r.teamId || null, secondaryManagerRoleIds: r.secondaryManagerRoleIds || [] })));
+          if (saved.persons) persons.splice(0, persons.length, ...saved.persons.map(p => ({ ...p })));
+          if (saved.roleAssignments) {
+            roleAssignments.splice(0, roleAssignments.length, ...saved.roleAssignments);
+          } else if (saved.persons) {
+            roleAssignments.splice(0, roleAssignments.length, ...saved.persons.filter(p => p.roleId != null).map(p => ({ personId: p.id, roleId: p.roleId, percentage: 100 })));
+          }
+          if (saved.titles) { Object.keys(TITLES).forEach(k => delete TITLES[k]); Object.assign(TITLES, saved.titles); }
+          if (saved.teams) teams.splice(0, teams.length, ...saved.teams);
+          if (saved.settings) Object.assign(settings, saved.settings);
+          if (saved.salaryBands) Object.assign(SALARY_BANDS, saved.salaryBands);
+          if (saved.snapshots) snapshots.splice(0, snapshots.length, ...saved.snapshots);
+        } catch (e) {}
+      }
+      saveToStorage(); // persist defaults (or migrated data) to server
+    }
+    persons.forEach(p => {
+      if (!p.gender) {
+        const def = DEFAULT_PERSONS.find(d => d.id === p.id);
+        if (def && def.gender) p.gender = def.gender;
+      }
+    });
+    applySalaryVisibility();
+    applyLevelVisibility();
+    applyViewOnly();
+    applyMatrixMode();
+    applyDragDrop();
+    render();
+    overlay.style.display = 'none';
+  } catch (e) {
+    overlay.innerHTML = `
+      <div style="text-align:center;padding:2rem">
+        <div style="font-size:1.25rem;font-weight:600;color:#0f172a;margin-bottom:0.5rem">Cannot connect to server</div>
+        <div style="color:#6b7280;margin-bottom:1.5rem">Make sure the server is running: <code style="background:#f1f5f9;padding:2px 6px;border-radius:4px">npm start</code></div>
+        <button onclick="location.reload()" style="padding:0.5rem 1.5rem;background:#6366f1;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:1rem">Retry</button>
+      </div>`;
   }
-});
-applySalaryVisibility();
-applyLevelVisibility();
-applyViewOnly();
-applyMatrixMode();
-applyDragDrop();
-render();
+}
+init();
 
 // ── Drop Create Role Modal ────────────────────────────────────────────────────
 

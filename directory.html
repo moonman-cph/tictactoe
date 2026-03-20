@@ -431,6 +431,8 @@
 </head>
 <body>
 
+<div id="loading-overlay" style="position:fixed;inset:0;background:#fff;display:flex;align-items:center;justify-content:center;font-family:inherit;color:#6b7280;z-index:9999;font-size:1.1rem;">Loading…</div>
+
 <nav id="left-nav">
   <div id="nav-logo">
     <div class="nav-logo-icon">
@@ -955,11 +957,11 @@ let teams = [];
 let settings = {};
 let salaryBands = {};
 
-function loadData() {
+async function loadData() {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return;
-    const saved = JSON.parse(raw);
+    const res = await fetch('/api/data');
+    if (!res.ok) throw new Error('Server returned ' + res.status);
+    const saved = await res.json();
     if (saved.departments) departments = saved.departments.map(d => ({ ...d, headRoleId: d.headRoleId ?? null }));
     if (saved.roles)       roles = saved.roles.map(r => ({ ...r, teamId: r.teamId || null, secondaryManagerRoleIds: r.secondaryManagerRoleIds || [] }));
     if (saved.persons)     persons = saved.persons.map(p => ({ ...p }));
@@ -974,15 +976,17 @@ function loadData() {
     if (saved.salaryBands) salaryBands = { ...saved.salaryBands };
   } catch (e) {
     console.warn('Directory: failed to load data', e);
+    throw e;
   }
 }
 
 // Merge-save: only update persons[], never overwrite other keys
-function saveToStorage() {
+async function saveToStorage() {
   try {
-    const p = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    const res = await fetch('/api/data');
+    const p = res.ok ? await res.json() : {};
     p.persons = persons;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(p));
+    await fetch('/api/data', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(p) });
   } catch (e) {
     console.warn('Directory: failed to save', e);
   }
@@ -1759,9 +1763,23 @@ function populateDeptFilter() {
 }
 
 // ── Init ───────────────────────────────────────────────────────────────────────
-loadData();
-populateDeptFilter();
-render();
+async function init() {
+  const overlay = document.getElementById('loading-overlay');
+  try {
+    await loadData();
+    populateDeptFilter();
+    render();
+    overlay.style.display = 'none';
+  } catch (e) {
+    overlay.innerHTML = `
+      <div style="text-align:center;padding:2rem">
+        <div style="font-size:1.25rem;font-weight:600;color:#0f172a;margin-bottom:0.5rem">Cannot connect to server</div>
+        <div style="color:#6b7280;margin-bottom:1.5rem">Make sure the server is running: <code style="background:#f1f5f9;padding:2px 6px;border-radius:4px">npm start</code></div>
+        <button onclick="location.reload()" style="padding:0.5rem 1.5rem;background:#6366f1;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:1rem">Retry</button>
+      </div>`;
+  }
+}
+init();
 </script>
 </body>
 </html>

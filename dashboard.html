@@ -345,6 +345,8 @@ body {
 </head>
 <body>
 
+<div id="loading-overlay" style="position:fixed;inset:0;background:#fff;display:flex;align-items:center;justify-content:center;font-family:inherit;color:#6b7280;z-index:9999;font-size:1.1rem;">Loading…</div>
+
 <nav id="left-nav">
   <div id="nav-logo">
     <div class="nav-logo-icon">
@@ -459,27 +461,12 @@ body {
 </div>
 
 <script>
-const STORAGE_KEY = 'orgchart_data_v4';
-
-// ── Load data ─────────────────────────────────────────────────────
+// ── Data (file scope) ─────────────────────────────────────────────
 let departments = [], roles = [], persons = [], roleAssignments = [],
     settings = { currency: 'DKK', hideSalaries: false, viewOnly: false },
     salaryBands = {};
 
-try {
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (raw) {
-    const saved = JSON.parse(raw);
-    if (saved.departments) departments = saved.departments;
-    if (saved.roles)       roles = saved.roles;
-    if (saved.persons)     persons = saved.persons;
-    if (saved.roleAssignments) roleAssignments = saved.roleAssignments;
-    if (saved.settings)    Object.assign(settings, saved.settings);
-    if (saved.salaryBands) salaryBands = saved.salaryBands;
-  }
-} catch (e) {}
-
-// ── Helpers ───────────────────────────────────────────────────────
+// ── Helpers (file scope — reference data variables above) ─────────
 function fmt(n) {
   if (!n) return settings.currency === 'EUR' ? '€0' : '0 kr';
   const rounded = Math.round(n);
@@ -522,6 +509,28 @@ function levelSortKey(lvl) {
   return 50;
 }
 function avg(arr) { return arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0; }
+
+async function init() {
+  const overlay = document.getElementById('loading-overlay');
+  try {
+    const res = await fetch('/api/data');
+    if (!res.ok) throw new Error('Server returned ' + res.status);
+    const saved = await res.json();
+    if (saved.departments) departments = saved.departments;
+    if (saved.roles)       roles = saved.roles;
+    if (saved.persons)     persons = saved.persons;
+    if (saved.roleAssignments) roleAssignments = saved.roleAssignments;
+    if (saved.settings)    Object.assign(settings, saved.settings);
+    if (saved.salaryBands) salaryBands = saved.salaryBands;
+  } catch (e) {
+    overlay.innerHTML = `
+      <div style="text-align:center;padding:2rem">
+        <div style="font-size:1.25rem;font-weight:600;color:#0f172a;margin-bottom:0.5rem">Cannot connect to server</div>
+        <div style="color:#6b7280;margin-bottom:1.5rem">Make sure the server is running: <code style="background:#f1f5f9;padding:2px 6px;border-radius:4px">npm start</code></div>
+        <button onclick="location.reload()" style="padding:0.5rem 1.5rem;background:#6366f1;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:1rem">Retry</button>
+      </div>`;
+    return;
+  }
 
 // ── Compute metrics ───────────────────────────────────────────────
 const activePersons = persons.filter(p => !p.noLongerHired);
@@ -1170,6 +1179,10 @@ kpiDefs.forEach(k => {
 // ── Last updated ───────────────────────────────────────────────────
 document.getElementById('last-updated').textContent =
   `Data as of ${new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}`;
+
+  overlay.style.display = 'none';
+} // end init()
+init();
 </script>
 </body>
 </html>

@@ -64,12 +64,23 @@ body:not(.page-ready) #columns > .dept-column:nth-child(n+9) { animation-delay: 
 
 #columns {
   display: flex;
+  flex-direction: column;
   gap: 16px;
-  align-items: flex-start;
   flex: 1;
   overflow-x: auto;
   padding-bottom: 8px;
   min-width: 0;
+}
+
+.columns-row {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  align-items: flex-start;
+  flex-shrink: 0;
+}
+.columns-row.cw-row {
+  justify-content: safe center;
 }
 
 /* ── Department Column ────────────────────────────────────────── */
@@ -87,6 +98,73 @@ body:not(.page-ready) #columns > .dept-column:nth-child(n+9) { animation-delay: 
   flex-direction: column;
   transition: box-shadow 0.18s, border-color 0.18s, flex-basis 0.18s ease;
 }
+
+/* Company-wide column: shrink to content width, cards same size as normal columns */
+.dept-column.cw-col {
+  flex: 0 0 auto;
+  width: max-content;
+  min-width: 0;
+  max-width: none;
+}
+.dept-column.cw-col .dept-tree {
+  align-items: center;
+}
+/* Top-level node: flex column so the card can be centered above the row */
+.dept-column.cw-col .dept-tree > .tree-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.dept-column.cw-col .dept-tree > .tree-node > .emp-card {
+  width: 450px;
+}
+.dept-column.cw-col .tree-children.horizontal > .tree-node {
+  width: 450px;
+  flex-shrink: 0;
+}
+
+/* Vertical stem: bottom of top-level card → horizontal bar */
+.dept-column.cw-col .dept-tree > .tree-node > .emp-card::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1.5px;
+  height: 10px;
+  background: #e4e7ec;
+  pointer-events: none;
+}
+
+/* Horizontal bar: center of first child → center of last child */
+.dept-column.cw-col .tree-children.horizontal {
+  position: relative;
+  padding-top: 20px;
+}
+.dept-column.cw-col .tree-children.horizontal::before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 225px;
+  right: 225px;
+  height: 1.5px;
+  background: #e4e7ec;
+  pointer-events: none;
+}
+
+/* Vertical drops: horizontal bar → top of each child card */
+.dept-column.cw-col .tree-children.horizontal > .tree-node::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1.5px;
+  height: 10px;
+  background: #e4e7ec;
+  pointer-events: none;
+}
+
 .dept-column.drop-active {
   border-color: var(--accent-border);
   box-shadow: 0 0 0 3px rgba(90,103,216,0.12), var(--shadow-md);
@@ -173,6 +251,20 @@ body:not(.page-ready) #columns > .dept-column:nth-child(n+9) { animation-delay: 
 .dept-tree > .tree-node + .tree-node {
   margin-top: 5px;
 }
+.tree-children.horizontal {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 12px;
+  margin-left: 0;
+  padding-left: 0;
+  border-left: none;
+  padding-top: 8px;
+}
+.tree-children.horizontal > .tree-node {
+  margin-top: 0;
+}
 
 /* ── Unassigned Section ───────────────────────────────────────── */
 .unassigned-section {
@@ -240,12 +332,12 @@ body:not(.page-ready) #columns > .dept-column:nth-child(n+9) { animation-delay: 
   outline-offset: -2px;
 }
 .team-external-ref {
-  font-size: 10.5px;
+  font-size: 10px;
   color: var(--text-muted);
-  padding: 3px 10px;
-  border-left: 2px dashed var(--border);
-  margin: 4px 0 2px 10px;
   font-style: italic;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .dept-head-ref {
   font-size: 10.5px;

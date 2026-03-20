@@ -645,7 +645,7 @@ function getAllRolesForPerson(personId) {
 function getDeptForPerson(personId) {
   const role = getPrimaryRoleForPerson(personId);
   if (!role) return null;
-  return departments.find(d => d.id === role.department || d.name === role.department) || null;
+  return departments.find(d => d.id === role.departmentId) || null;
 }
 
 function getManagerForPerson(personId) {
@@ -1021,7 +1021,7 @@ function populateModal(personId) {
     roleList.innerHTML = '<div style="color:var(--text-muted);font-size:13px;padding:8px 0">No role assignments</div>';
   } else {
     allRoles.forEach(({ role: r, percentage }) => {
-      const d = departments.find(dep => dep.id === r.department || dep.name === r.department);
+      const d = departments.find(dep => dep.id === r.departmentId);
       const item = document.createElement('div');
       item.className = 'pm-role-item';
       item.innerHTML = `
@@ -1030,7 +1030,7 @@ function populateModal(personId) {
         </div>
         <div class="pm-role-info">
           <div class="pm-role-title">${r.title}</div>
-          <div class="pm-role-meta">${d ? d.name : r.department || '—'} · <span class="level-badge ${levelTierClass(r.level)}" style="font-size:10px;padding:1px 5px">${r.level}</span></div>
+          <div class="pm-role-meta">${d ? d.name : '—'} · <span class="level-badge ${levelTierClass(r.level)}" style="font-size:10px;padding:1px 5px">${r.level}</span></div>
         </div>
         <div class="pm-role-pct">${percentage != null ? percentage + '%' : '100%'}</div>
       `;

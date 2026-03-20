@@ -264,7 +264,7 @@ const seniorFemaleCount = seniorPersons.filter(p => genderKey(p) === 'female').l
 const seniorFemalePct = seniorPersons.length ? Math.round(seniorFemaleCount / seniorPersons.length * 100) : 0;
 
 const deptStats = departments.map(d => {
-  const deptRoles = roles.filter(r => r.department === d.id);
+  const deptRoles = roles.filter(r => r.departmentId === d.id);
   const deptRoleIds = new Set(deptRoles.map(r => r.id));
   const deptPersonIds = new Set();
   roleAssignments.forEach(a => {

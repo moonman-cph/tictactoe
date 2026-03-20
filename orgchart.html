@@ -762,332 +762,350 @@
 // ── Data ─────────────────────────────────────────────────────────────────────
 
 const departments = [
-  { id: 'executive',        name: 'Executive',        color: '#0f172a', description: 'C-Level leadership', headRoleId: null },
-  { id: 'engineering',      name: 'Engineering',      color: '#6366f1', description: '', headRoleId: null },
-  { id: 'product',          name: 'Product',          color: '#8b5cf6', description: '', headRoleId: null },
-  { id: 'design',           name: 'Design',           color: '#ec4899', description: '', headRoleId: null },
-  { id: 'sales',            name: 'Sales',            color: '#10b981', description: '', headRoleId: null },
-  { id: 'marketing',        name: 'Marketing',        color: '#f97316', description: '', headRoleId: null },
-  { id: 'customer-success', name: 'Customer Success', color: '#06b6d4', description: '', headRoleId: null },
-  { id: 'hr',               name: 'People & HR',      color: '#f59e0b', description: '', headRoleId: null },
-  { id: 'finance',          name: 'Finance',          color: '#84cc16', description: '', headRoleId: null },
-  { id: 'legal',            name: 'Legal',            color: '#94a3b8', description: '', headRoleId: null },
+  { id: 1,  name: 'Executive',        color: '#0f172a', description: 'C-Level leadership', headRoleId: null },
+  { id: 2,  name: 'Engineering',      color: '#6366f1', description: '', headRoleId: null },
+  { id: 3,  name: 'Product',          color: '#8b5cf6', description: '', headRoleId: null },
+  { id: 4,  name: 'Design',           color: '#ec4899', description: '', headRoleId: null },
+  { id: 5,  name: 'Sales',            color: '#10b981', description: '', headRoleId: null },
+  { id: 6,  name: 'Marketing',        color: '#f97316', description: '', headRoleId: null },
+  { id: 7,  name: 'Customer Success', color: '#06b6d4', description: '', headRoleId: null },
+  { id: 8,  name: 'People & HR',      color: '#f59e0b', description: '', headRoleId: null },
+  { id: 9,  name: 'Finance',          color: '#84cc16', description: '', headRoleId: null },
+  { id: 10, name: 'Legal',            color: '#94a3b8', description: '', headRoleId: null },
 ];
 
 let teams = [
   // Engineering — product teams
-  { id:1,  name:'Nexus',         departmentId:'engineering' },
-  { id:2,  name:'Plinger',       departmentId:'engineering' },
-  { id:3,  name:'Delta Wing',    departmentId:'engineering' },
+  { id:1,  name:'Nexus',         departmentId:2 },
+  { id:2,  name:'Plinger',       departmentId:2 },
+  { id:3,  name:'Delta Wing',    departmentId:2 },
   // Product — product teams
-  { id:4,  name:'Nexus',         departmentId:'product' },
-  { id:5,  name:'Plinger',       departmentId:'product' },
-  { id:6,  name:'Delta Wing',    departmentId:'product' },
+  { id:4,  name:'Nexus',         departmentId:3 },
+  { id:5,  name:'Plinger',       departmentId:3 },
+  { id:6,  name:'Delta Wing',    departmentId:3 },
   // Sales — regions
-  { id:7,  name:'North America', departmentId:'sales' },
-  { id:8,  name:'Europe',        departmentId:'sales' },
-  { id:9,  name:'APAC',          departmentId:'sales' },
+  { id:7,  name:'North America', departmentId:5 },
+  { id:8,  name:'Europe',        departmentId:5 },
+  { id:9,  name:'APAC',          departmentId:5 },
   // Marketing — regions
-  { id:10, name:'North America', departmentId:'marketing' },
-  { id:11, name:'Europe',        departmentId:'marketing' },
-  { id:12, name:'APAC',          departmentId:'marketing' },
+  { id:10, name:'North America', departmentId:6 },
+  { id:11, name:'Europe',        departmentId:6 },
+  { id:12, name:'APAC',          departmentId:6 },
   // Customer Success — regions
-  { id:13, name:'North America', departmentId:'customer-success' },
-  { id:14, name:'Europe',        departmentId:'customer-success' },
-  { id:15, name:'APAC',          departmentId:'customer-success' },
+  { id:13, name:'North America', departmentId:7 },
+  { id:14, name:'Europe',        departmentId:7 },
+  { id:15, name:'APAC',          departmentId:7 },
 ];
 
 let roles = [
   // ── Executive (9001–9006) ──────────────────────────────────────────────────
-  { id:9001, title:'Chief Executive Officer',   level:'L8', department:'executive', managerRoleId:null, teamId:null },
-  { id:9002, title:'Chief Technology Officer',  level:'L8', department:'executive', managerRoleId:9001, teamId:null },
-  { id:9003, title:'Chief Product Officer',     level:'L8', department:'executive', managerRoleId:9001, teamId:null },
-  { id:9004, title:'Chief Financial Officer',   level:'L8', department:'executive', managerRoleId:9001, teamId:null },
-  { id:9005, title:'Chief Marketing Officer',   level:'L8', department:'executive', managerRoleId:9001, teamId:null },
-  { id:9006, title:'Chief People Officer',      level:'L8', department:'executive', managerRoleId:9001, teamId:null },
+  { id:9001, title:'Chief Executive Officer',   level:'L8', departmentId:1, managerRoleId:null, teamId:null },
+  { id:9002, title:'Chief Technology Officer',  level:'L8', departmentId:1, managerRoleId:9001, teamId:null },
+  { id:9003, title:'Chief Product Officer',     level:'L8', departmentId:1, managerRoleId:9001, teamId:null },
+  { id:9004, title:'Chief Financial Officer',   level:'L8', departmentId:1, managerRoleId:9001, teamId:null },
+  { id:9005, title:'Chief Marketing Officer',   level:'L8', departmentId:1, managerRoleId:9001, teamId:null },
+  { id:9006, title:'Chief People Officer',      level:'L8', departmentId:1, managerRoleId:9001, teamId:null },
   // ── Engineering — VP + one manager per product team ────────────────────────
-  { id:10001, title:'VP of Engineering',        level:'L7', department:'engineering', managerRoleId:null,  teamId:null },
-  { id:10002, title:'Engineering Manager',      level:'L5', department:'engineering', managerRoleId:10001, teamId:1 },
-  { id:10003, title:'Engineering Manager',      level:'L5', department:'engineering', managerRoleId:10001, teamId:2 },
-  { id:10004, title:'Engineering Manager',      level:'L5', department:'engineering', managerRoleId:10001, teamId:3 },
+  { id:10001, title:'VP of Engineering',        level:'L7', departmentId:2, managerRoleId:null,  teamId:null },
+  { id:10002, title:'Engineering Manager',      level:'L5', departmentId:2, managerRoleId:10001, teamId:1 },
+  { id:10003, title:'Engineering Manager',      level:'L5', departmentId:2, managerRoleId:10001, teamId:2 },
+  { id:10004, title:'Engineering Manager',      level:'L5', departmentId:2, managerRoleId:10001, teamId:3 },
   // Nexus team
-  { id:10005, title:'Senior Software Engineer', level:'L3', department:'engineering', managerRoleId:10002, teamId:1 },
-  { id:10006, title:'Senior Software Engineer', level:'L3', department:'engineering', managerRoleId:10002, teamId:1 },
-  { id:10007, title:'Senior Software Engineer', level:'L3', department:'engineering', managerRoleId:10002, teamId:1 },
-  { id:10008, title:'Senior QA Engineer',       level:'L3', department:'engineering', managerRoleId:10002, teamId:1 },
-  { id:10009, title:'Software Engineer',        level:'L2', department:'engineering', managerRoleId:10002, teamId:1 },
-  { id:10010, title:'Software Engineer',        level:'L2', department:'engineering', managerRoleId:10002, teamId:1 },
-  { id:10011, title:'Software Engineer',        level:'L2', department:'engineering', managerRoleId:10002, teamId:1 },
-  { id:10012, title:'QA Engineer',              level:'L2', department:'engineering', managerRoleId:10002, teamId:1 },
-  { id:10013, title:'Junior Software Engineer', level:'L1', department:'engineering', managerRoleId:10002, teamId:1 },
-  { id:10014, title:'Junior QA Engineer',       level:'L1', department:'engineering', managerRoleId:10002, teamId:1 },
+  { id:10005, title:'Senior Software Engineer', level:'L3', departmentId:2, managerRoleId:10002, teamId:1 },
+  { id:10006, title:'Senior Software Engineer', level:'L3', departmentId:2, managerRoleId:10002, teamId:1 },
+  { id:10007, title:'Senior Software Engineer', level:'L3', departmentId:2, managerRoleId:10002, teamId:1 },
+  { id:10008, title:'Senior QA Engineer',       level:'L3', departmentId:2, managerRoleId:10002, teamId:1 },
+  { id:10009, title:'Software Engineer',        level:'L2', departmentId:2, managerRoleId:10002, teamId:1 },
+  { id:10010, title:'Software Engineer',        level:'L2', departmentId:2, managerRoleId:10002, teamId:1 },
+  { id:10011, title:'Software Engineer',        level:'L2', departmentId:2, managerRoleId:10002, teamId:1 },
+  { id:10012, title:'QA Engineer',              level:'L2', departmentId:2, managerRoleId:10002, teamId:1 },
+  { id:10013, title:'Junior Software Engineer', level:'L1', departmentId:2, managerRoleId:10002, teamId:1 },
+  { id:10014, title:'Junior QA Engineer',       level:'L1', departmentId:2, managerRoleId:10002, teamId:1 },
   // Plinger team
-  { id:10015, title:'Senior Software Engineer', level:'L3', department:'engineering', managerRoleId:10003, teamId:2 },
-  { id:10016, title:'Senior Software Engineer', level:'L3', department:'engineering', managerRoleId:10003, teamId:2 },
-  { id:10017, title:'Senior QA Engineer',       level:'L3', department:'engineering', managerRoleId:10003, teamId:2 },
-  { id:10018, title:'Software Engineer',        level:'L2', department:'engineering', managerRoleId:10003, teamId:2 },
-  { id:10019, title:'Software Engineer',        level:'L2', department:'engineering', managerRoleId:10003, teamId:2 },
-  { id:10020, title:'Software Engineer',        level:'L2', department:'engineering', managerRoleId:10003, teamId:2 },
-  { id:10021, title:'QA Engineer',              level:'L2', department:'engineering', managerRoleId:10003, teamId:2 },
-  { id:10022, title:'Junior Software Engineer', level:'L1', department:'engineering', managerRoleId:10003, teamId:2 },
-  { id:10023, title:'Junior Software Engineer', level:'L1', department:'engineering', managerRoleId:10003, teamId:2 },
+  { id:10015, title:'Senior Software Engineer', level:'L3', departmentId:2, managerRoleId:10003, teamId:2 },
+  { id:10016, title:'Senior Software Engineer', level:'L3', departmentId:2, managerRoleId:10003, teamId:2 },
+  { id:10017, title:'Senior QA Engineer',       level:'L3', departmentId:2, managerRoleId:10003, teamId:2 },
+  { id:10018, title:'Software Engineer',        level:'L2', departmentId:2, managerRoleId:10003, teamId:2 },
+  { id:10019, title:'Software Engineer',        level:'L2', departmentId:2, managerRoleId:10003, teamId:2 },
+  { id:10020, title:'Software Engineer',        level:'L2', departmentId:2, managerRoleId:10003, teamId:2 },
+  { id:10021, title:'QA Engineer',              level:'L2', departmentId:2, managerRoleId:10003, teamId:2 },
+  { id:10022, title:'Junior Software Engineer', level:'L1', departmentId:2, managerRoleId:10003, teamId:2 },
+  { id:10023, title:'Junior Software Engineer', level:'L1', departmentId:2, managerRoleId:10003, teamId:2 },
   // Delta Wing team
-  { id:10024, title:'Senior Software Engineer', level:'L3', department:'engineering', managerRoleId:10004, teamId:3 },
-  { id:10025, title:'Senior Software Engineer', level:'L3', department:'engineering', managerRoleId:10004, teamId:3 },
-  { id:10026, title:'Senior QA Engineer',       level:'L3', department:'engineering', managerRoleId:10004, teamId:3 },
-  { id:10027, title:'Software Engineer',        level:'L2', department:'engineering', managerRoleId:10004, teamId:3 },
-  { id:10028, title:'Software Engineer',        level:'L2', department:'engineering', managerRoleId:10004, teamId:3 },
-  { id:10029, title:'Software Engineer',        level:'L2', department:'engineering', managerRoleId:10004, teamId:3 },
-  { id:10030, title:'QA Engineer',              level:'L2', department:'engineering', managerRoleId:10004, teamId:3 },
-  { id:10031, title:'Junior Software Engineer', level:'L1', department:'engineering', managerRoleId:10004, teamId:3 },
-  { id:10032, title:'Junior Software Engineer', level:'L1', department:'engineering', managerRoleId:10004, teamId:3 },
+  { id:10024, title:'Senior Software Engineer', level:'L3', departmentId:2, managerRoleId:10004, teamId:3 },
+  { id:10025, title:'Senior Software Engineer', level:'L3', departmentId:2, managerRoleId:10004, teamId:3 },
+  { id:10026, title:'Senior QA Engineer',       level:'L3', departmentId:2, managerRoleId:10004, teamId:3 },
+  { id:10027, title:'Software Engineer',        level:'L2', departmentId:2, managerRoleId:10004, teamId:3 },
+  { id:10028, title:'Software Engineer',        level:'L2', departmentId:2, managerRoleId:10004, teamId:3 },
+  { id:10029, title:'Software Engineer',        level:'L2', departmentId:2, managerRoleId:10004, teamId:3 },
+  { id:10030, title:'QA Engineer',              level:'L2', departmentId:2, managerRoleId:10004, teamId:3 },
+  { id:10031, title:'Junior Software Engineer', level:'L1', departmentId:2, managerRoleId:10004, teamId:3 },
+  { id:10032, title:'Junior Software Engineer', level:'L1', departmentId:2, managerRoleId:10004, teamId:3 },
   // ── Product — Director + one GPM per product team ──────────────────────────
-  { id:10033, title:'Director of Product',      level:'L7', department:'product', managerRoleId:null,  teamId:null },
+  { id:10033, title:'Director of Product',      level:'L7', departmentId:3, managerRoleId:null,  teamId:null },
   // Nexus
-  { id:10034, title:'Group Product Manager',    level:'L5', department:'product', managerRoleId:10033, teamId:4 },
-  { id:10035, title:'Senior Product Manager',   level:'L4', department:'product', managerRoleId:10034, teamId:4 },
-  { id:10036, title:'Product Manager',          level:'L3', department:'product', managerRoleId:10034, teamId:4 },
-  { id:10037, title:'Product Analyst',          level:'L2', department:'product', managerRoleId:10034, teamId:4 },
+  { id:10034, title:'Group Product Manager',    level:'L5', departmentId:3, managerRoleId:10033, teamId:4 },
+  { id:10035, title:'Senior Product Manager',   level:'L4', departmentId:3, managerRoleId:10034, teamId:4 },
+  { id:10036, title:'Product Manager',          level:'L3', departmentId:3, managerRoleId:10034, teamId:4 },
+  { id:10037, title:'Product Analyst',          level:'L2', departmentId:3, managerRoleId:10034, teamId:4 },
   // Plinger
-  { id:10038, title:'Group Product Manager',    level:'L5', department:'product', managerRoleId:10033, teamId:5 },
-  { id:10039, title:'Senior Product Manager',   level:'L4', department:'product', managerRoleId:10038, teamId:5 },
-  { id:10040, title:'Product Manager',          level:'L3', department:'product', managerRoleId:10038, teamId:5 },
-  { id:10041, title:'Product Analyst',          level:'L2', department:'product', managerRoleId:10038, teamId:5 },
+  { id:10038, title:'Group Product Manager',    level:'L5', departmentId:3, managerRoleId:10033, teamId:5 },
+  { id:10039, title:'Senior Product Manager',   level:'L4', departmentId:3, managerRoleId:10038, teamId:5 },
+  { id:10040, title:'Product Manager',          level:'L3', departmentId:3, managerRoleId:10038, teamId:5 },
+  { id:10041, title:'Product Analyst',          level:'L2', departmentId:3, managerRoleId:10038, teamId:5 },
   // Delta Wing
-  { id:10042, title:'Group Product Manager',    level:'L5', department:'product', managerRoleId:10033, teamId:6 },
-  { id:10043, title:'Senior Product Manager',   level:'L4', department:'product', managerRoleId:10042, teamId:6 },
-  { id:10044, title:'Product Manager',          level:'L3', department:'product', managerRoleId:10042, teamId:6 },
+  { id:10042, title:'Group Product Manager',    level:'L5', departmentId:3, managerRoleId:10033, teamId:6 },
+  { id:10043, title:'Senior Product Manager',   level:'L4', departmentId:3, managerRoleId:10042, teamId:6 },
+  { id:10044, title:'Product Manager',          level:'L3', departmentId:3, managerRoleId:10042, teamId:6 },
   // ── Design ─────────────────────────────────────────────────────────────────
-  { id:10045, title:'Director of Design',       level:'L7', department:'design', managerRoleId:null,  teamId:null },
-  { id:10046, title:'Design Manager',           level:'L5', department:'design', managerRoleId:10045, teamId:null },
-  { id:10047, title:'Design Manager',           level:'L5', department:'design', managerRoleId:10045, teamId:null },
-  { id:10048, title:'Senior UX Designer',       level:'L3', department:'design', managerRoleId:10046, teamId:null },
-  { id:10049, title:'Senior UX Designer',       level:'L3', department:'design', managerRoleId:10046, teamId:null },
-  { id:10050, title:'UX Designer',              level:'L2', department:'design', managerRoleId:10046, teamId:null },
-  { id:10051, title:'Senior Visual Designer',   level:'L3', department:'design', managerRoleId:10047, teamId:null },
-  { id:10052, title:'Visual Designer',          level:'L2', department:'design', managerRoleId:10047, teamId:null },
+  { id:10045, title:'Director of Design',       level:'L7', departmentId:4, managerRoleId:null,  teamId:null },
+  { id:10046, title:'Design Manager',           level:'L5', departmentId:4, managerRoleId:10045, teamId:null },
+  { id:10047, title:'Design Manager',           level:'L5', departmentId:4, managerRoleId:10045, teamId:null },
+  { id:10048, title:'Senior UX Designer',       level:'L3', departmentId:4, managerRoleId:10046, teamId:null },
+  { id:10049, title:'Senior UX Designer',       level:'L3', departmentId:4, managerRoleId:10046, teamId:null },
+  { id:10050, title:'UX Designer',              level:'L2', departmentId:4, managerRoleId:10046, teamId:null },
+  { id:10051, title:'Senior Visual Designer',   level:'L3', departmentId:4, managerRoleId:10047, teamId:null },
+  { id:10052, title:'Visual Designer',          level:'L2', departmentId:4, managerRoleId:10047, teamId:null },
   // ── Sales — VP + one regional manager per territory ────────────────────────
-  { id:10053, title:'VP of Sales',              level:'L7', department:'sales', managerRoleId:null,  teamId:null },
+  { id:10053, title:'VP of Sales',              level:'L7', departmentId:5, managerRoleId:null,  teamId:null },
   // North America
-  { id:10054, title:'Regional Sales Manager',   level:'L5', department:'sales', managerRoleId:10053, teamId:7 },
-  { id:10055, title:'Senior Account Executive', level:'L4', department:'sales', managerRoleId:10054, teamId:7 },
-  { id:10056, title:'Senior Account Executive', level:'L4', department:'sales', managerRoleId:10054, teamId:7 },
-  { id:10057, title:'Account Executive',        level:'L4', department:'sales', managerRoleId:10054, teamId:7 },
-  { id:10058, title:'Account Executive',        level:'L4', department:'sales', managerRoleId:10054, teamId:7 },
-  { id:10059, title:'Account Executive',        level:'L4', department:'sales', managerRoleId:10054, teamId:7 },
-  { id:10060, title:'Sales Development Rep',    level:'L2', department:'sales', managerRoleId:10054, teamId:7 },
-  { id:10061, title:'Sales Development Rep',    level:'L2', department:'sales', managerRoleId:10054, teamId:7 },
+  { id:10054, title:'Regional Sales Manager',   level:'L5', departmentId:5, managerRoleId:10053, teamId:7 },
+  { id:10055, title:'Senior Account Executive', level:'L4', departmentId:5, managerRoleId:10054, teamId:7 },
+  { id:10056, title:'Senior Account Executive', level:'L4', departmentId:5, managerRoleId:10054, teamId:7 },
+  { id:10057, title:'Account Executive',        level:'L4', departmentId:5, managerRoleId:10054, teamId:7 },
+  { id:10058, title:'Account Executive',        level:'L4', departmentId:5, managerRoleId:10054, teamId:7 },
+  { id:10059, title:'Account Executive',        level:'L4', departmentId:5, managerRoleId:10054, teamId:7 },
+  { id:10060, title:'Sales Development Rep',    level:'L2', departmentId:5, managerRoleId:10054, teamId:7 },
+  { id:10061, title:'Sales Development Rep',    level:'L2', departmentId:5, managerRoleId:10054, teamId:7 },
   // Europe
-  { id:10062, title:'Regional Sales Manager',   level:'L5', department:'sales', managerRoleId:10053, teamId:8 },
-  { id:10063, title:'Senior Account Executive', level:'L4', department:'sales', managerRoleId:10062, teamId:8 },
-  { id:10064, title:'Senior Account Executive', level:'L4', department:'sales', managerRoleId:10062, teamId:8 },
-  { id:10065, title:'Account Executive',        level:'L4', department:'sales', managerRoleId:10062, teamId:8 },
-  { id:10066, title:'Account Executive',        level:'L4', department:'sales', managerRoleId:10062, teamId:8 },
-  { id:10067, title:'Sales Development Rep',    level:'L2', department:'sales', managerRoleId:10062, teamId:8 },
-  { id:10068, title:'Sales Development Rep',    level:'L2', department:'sales', managerRoleId:10062, teamId:8 },
+  { id:10062, title:'Regional Sales Manager',   level:'L5', departmentId:5, managerRoleId:10053, teamId:8 },
+  { id:10063, title:'Senior Account Executive', level:'L4', departmentId:5, managerRoleId:10062, teamId:8 },
+  { id:10064, title:'Senior Account Executive', level:'L4', departmentId:5, managerRoleId:10062, teamId:8 },
+  { id:10065, title:'Account Executive',        level:'L4', departmentId:5, managerRoleId:10062, teamId:8 },
+  { id:10066, title:'Account Executive',        level:'L4', departmentId:5, managerRoleId:10062, teamId:8 },
+  { id:10067, title:'Sales Development Rep',    level:'L2', departmentId:5, managerRoleId:10062, teamId:8 },
+  { id:10068, title:'Sales Development Rep',    level:'L2', departmentId:5, managerRoleId:10062, teamId:8 },
   // APAC
-  { id:10069, title:'Regional Sales Manager',   level:'L5', department:'sales', managerRoleId:10053, teamId:9 },
-  { id:10070, title:'Account Executive',        level:'L4', department:'sales', managerRoleId:10069, teamId:9 },
-  { id:10071, title:'Account Executive',        level:'L4', department:'sales', managerRoleId:10069, teamId:9 },
-  { id:10072, title:'Sales Development Rep',    level:'L2', department:'sales', managerRoleId:10069, teamId:9 },
+  { id:10069, title:'Regional Sales Manager',   level:'L5', departmentId:5, managerRoleId:10053, teamId:9 },
+  { id:10070, title:'Account Executive',        level:'L4', departmentId:5, managerRoleId:10069, teamId:9 },
+  { id:10071, title:'Account Executive',        level:'L4', departmentId:5, managerRoleId:10069, teamId:9 },
+  { id:10072, title:'Sales Development Rep',    level:'L2', departmentId:5, managerRoleId:10069, teamId:9 },
   // ── Marketing — Director + one regional manager per territory ──────────────
-  { id:10073, title:'Director of Marketing',         level:'L7', department:'marketing', managerRoleId:null,  teamId:null },
+  { id:10073, title:'Director of Marketing',         level:'L7', departmentId:6, managerRoleId:null,  teamId:null },
   // North America
-  { id:10074, title:'Regional Marketing Manager',    level:'L5', department:'marketing', managerRoleId:10073, teamId:10 },
-  { id:10075, title:'Senior Content Strategist',     level:'L3', department:'marketing', managerRoleId:10074, teamId:10 },
-  { id:10076, title:'Senior Demand Gen Manager',     level:'L3', department:'marketing', managerRoleId:10074, teamId:10 },
-  { id:10077, title:'Marketing Specialist',          level:'L2', department:'marketing', managerRoleId:10074, teamId:10 },
+  { id:10074, title:'Regional Marketing Manager',    level:'L5', departmentId:6, managerRoleId:10073, teamId:10 },
+  { id:10075, title:'Senior Content Strategist',     level:'L3', departmentId:6, managerRoleId:10074, teamId:10 },
+  { id:10076, title:'Senior Demand Gen Manager',     level:'L3', departmentId:6, managerRoleId:10074, teamId:10 },
+  { id:10077, title:'Marketing Specialist',          level:'L2', departmentId:6, managerRoleId:10074, teamId:10 },
   // Europe
-  { id:10078, title:'Regional Marketing Manager',    level:'L5', department:'marketing', managerRoleId:10073, teamId:11 },
-  { id:10079, title:'Senior Field Marketing Manager',level:'L3', department:'marketing', managerRoleId:10078, teamId:11 },
-  { id:10080, title:'Content Specialist',            level:'L2', department:'marketing', managerRoleId:10078, teamId:11 },
-  { id:10081, title:'Marketing Specialist',          level:'L2', department:'marketing', managerRoleId:10078, teamId:11 },
+  { id:10078, title:'Regional Marketing Manager',    level:'L5', departmentId:6, managerRoleId:10073, teamId:11 },
+  { id:10079, title:'Senior Field Marketing Manager',level:'L3', departmentId:6, managerRoleId:10078, teamId:11 },
+  { id:10080, title:'Content Specialist',            level:'L2', departmentId:6, managerRoleId:10078, teamId:11 },
+  { id:10081, title:'Marketing Specialist',          level:'L2', departmentId:6, managerRoleId:10078, teamId:11 },
   // APAC
-  { id:10082, title:'Regional Marketing Manager',    level:'L5', department:'marketing', managerRoleId:10073, teamId:12 },
-  { id:10083, title:'Senior Marketing Manager',      level:'L3', department:'marketing', managerRoleId:10082, teamId:12 },
-  { id:10084, title:'Marketing Coordinator',         level:'L1', department:'marketing', managerRoleId:10082, teamId:12 },
+  { id:10082, title:'Regional Marketing Manager',    level:'L5', departmentId:6, managerRoleId:10073, teamId:12 },
+  { id:10083, title:'Senior Marketing Manager',      level:'L3', departmentId:6, managerRoleId:10082, teamId:12 },
+  { id:10084, title:'Marketing Coordinator',         level:'L1', departmentId:6, managerRoleId:10082, teamId:12 },
   // ── Customer Success — Director + one CS manager per territory ─────────────
-  { id:10085, title:'Director of Customer Success',    level:'L7', department:'customer-success', managerRoleId:null,  teamId:null },
+  { id:10085, title:'Director of Customer Success',    level:'L7', departmentId:7, managerRoleId:null,  teamId:null },
   // North America
-  { id:10086, title:'CS Manager',                      level:'L5', department:'customer-success', managerRoleId:10085, teamId:13 },
-  { id:10087, title:'Senior Customer Success Manager', level:'L4', department:'customer-success', managerRoleId:10086, teamId:13 },
-  { id:10088, title:'Senior Customer Success Manager', level:'L4', department:'customer-success', managerRoleId:10086, teamId:13 },
-  { id:10089, title:'Customer Success Manager',        level:'L3', department:'customer-success', managerRoleId:10086, teamId:13 },
-  { id:10090, title:'Customer Success Manager',        level:'L3', department:'customer-success', managerRoleId:10086, teamId:13 },
-  { id:10091, title:'Customer Success Specialist',     level:'L2', department:'customer-success', managerRoleId:10086, teamId:13 },
+  { id:10086, title:'CS Manager',                      level:'L5', departmentId:7, managerRoleId:10085, teamId:13 },
+  { id:10087, title:'Senior Customer Success Manager', level:'L4', departmentId:7, managerRoleId:10086, teamId:13 },
+  { id:10088, title:'Senior Customer Success Manager', level:'L4', departmentId:7, managerRoleId:10086, teamId:13 },
+  { id:10089, title:'Customer Success Manager',        level:'L3', departmentId:7, managerRoleId:10086, teamId:13 },
+  { id:10090, title:'Customer Success Manager',        level:'L3', departmentId:7, managerRoleId:10086, teamId:13 },
+  { id:10091, title:'Customer Success Specialist',     level:'L2', departmentId:7, managerRoleId:10086, teamId:13 },
   // Europe
-  { id:10092, title:'CS Manager',                      level:'L5', department:'customer-success', managerRoleId:10085, teamId:14 },
-  { id:10093, title:'Senior Customer Success Manager', level:'L4', department:'customer-success', managerRoleId:10092, teamId:14 },
-  { id:10094, title:'Customer Success Manager',        level:'L3', department:'customer-success', managerRoleId:10092, teamId:14 },
-  { id:10095, title:'Customer Success Manager',        level:'L3', department:'customer-success', managerRoleId:10092, teamId:14 },
-  { id:10096, title:'Customer Success Specialist',     level:'L2', department:'customer-success', managerRoleId:10092, teamId:14 },
+  { id:10092, title:'CS Manager',                      level:'L5', departmentId:7, managerRoleId:10085, teamId:14 },
+  { id:10093, title:'Senior Customer Success Manager', level:'L4', departmentId:7, managerRoleId:10092, teamId:14 },
+  { id:10094, title:'Customer Success Manager',        level:'L3', departmentId:7, managerRoleId:10092, teamId:14 },
+  { id:10095, title:'Customer Success Manager',        level:'L3', departmentId:7, managerRoleId:10092, teamId:14 },
+  { id:10096, title:'Customer Success Specialist',     level:'L2', departmentId:7, managerRoleId:10092, teamId:14 },
   // APAC
-  { id:10097, title:'CS Manager',                      level:'L5', department:'customer-success', managerRoleId:10085, teamId:15 },
-  { id:10098, title:'Customer Success Manager',        level:'L3', department:'customer-success', managerRoleId:10097, teamId:15 },
-  { id:10099, title:'Customer Success Manager',        level:'L3', department:'customer-success', managerRoleId:10097, teamId:15 },
+  { id:10097, title:'CS Manager',                      level:'L5', departmentId:7, managerRoleId:10085, teamId:15 },
+  { id:10098, title:'Customer Success Manager',        level:'L3', departmentId:7, managerRoleId:10097, teamId:15 },
+  { id:10099, title:'Customer Success Manager',        level:'L3', departmentId:7, managerRoleId:10097, teamId:15 },
   // ── People & HR ────────────────────────────────────────────────────────────
-  { id:10100, title:'Director of People',              level:'L7', department:'hr', managerRoleId:null,  teamId:null },
-  { id:10101, title:'HR Manager',                      level:'L5', department:'hr', managerRoleId:10100, teamId:null },
-  { id:10102, title:'Senior HR Business Partner',      level:'L4', department:'hr', managerRoleId:10101, teamId:null },
-  { id:10103, title:'HR Business Partner',             level:'L4', department:'hr', managerRoleId:10101, teamId:null },
-  { id:10104, title:'Senior Recruiter',                level:'L3', department:'hr', managerRoleId:10101, teamId:null },
-  { id:10105, title:'HR Specialist',                   level:'L2', department:'hr', managerRoleId:10102, teamId:null },
-  { id:10106, title:'Recruiter',                       level:'L2', department:'hr', managerRoleId:10104, teamId:null },
-  { id:10107, title:'People Operations Specialist',    level:'L2', department:'hr', managerRoleId:10101, teamId:null },
+  { id:10100, title:'Director of People',              level:'L7', departmentId:8, managerRoleId:null,  teamId:null },
+  { id:10101, title:'HR Manager',                      level:'L5', departmentId:8, managerRoleId:10100, teamId:null },
+  { id:10102, title:'Senior HR Business Partner',      level:'L4', departmentId:8, managerRoleId:10101, teamId:null },
+  { id:10103, title:'HR Business Partner',             level:'L4', departmentId:8, managerRoleId:10101, teamId:null },
+  { id:10104, title:'Senior Recruiter',                level:'L3', departmentId:8, managerRoleId:10101, teamId:null },
+  { id:10105, title:'HR Specialist',                   level:'L2', departmentId:8, managerRoleId:10102, teamId:null },
+  { id:10106, title:'Recruiter',                       level:'L2', departmentId:8, managerRoleId:10104, teamId:null },
+  { id:10107, title:'People Operations Specialist',    level:'L2', departmentId:8, managerRoleId:10101, teamId:null },
   // ── Finance ────────────────────────────────────────────────────────────────
-  { id:10108, title:'Director of Finance',             level:'L7', department:'finance', managerRoleId:null,  teamId:null },
-  { id:10109, title:'Finance Manager',                 level:'L5', department:'finance', managerRoleId:10108, teamId:null },
-  { id:10110, title:'Senior Financial Analyst',        level:'L4', department:'finance', managerRoleId:10109, teamId:null },
-  { id:10111, title:'Financial Analyst',               level:'L3', department:'finance', managerRoleId:10109, teamId:null },
-  { id:10112, title:'Financial Analyst',               level:'L3', department:'finance', managerRoleId:10109, teamId:null },
-  { id:10113, title:'Finance Analyst',                 level:'L2', department:'finance', managerRoleId:10109, teamId:null },
+  { id:10108, title:'Director of Finance',             level:'L7', departmentId:9, managerRoleId:null,  teamId:null },
+  { id:10109, title:'Finance Manager',                 level:'L5', departmentId:9, managerRoleId:10108, teamId:null },
+  { id:10110, title:'Senior Financial Analyst',        level:'L4', departmentId:9, managerRoleId:10109, teamId:null },
+  { id:10111, title:'Financial Analyst',               level:'L3', departmentId:9, managerRoleId:10109, teamId:null },
+  { id:10112, title:'Financial Analyst',               level:'L3', departmentId:9, managerRoleId:10109, teamId:null },
+  { id:10113, title:'Finance Analyst',                 level:'L2', departmentId:9, managerRoleId:10109, teamId:null },
   // ── Legal ──────────────────────────────────────────────────────────────────
-  { id:10114, title:'General Counsel',                 level:'L7', department:'legal', managerRoleId:null,  teamId:null },
-  { id:10115, title:'Senior Counsel',                  level:'L5', department:'legal', managerRoleId:10114, teamId:null },
-  { id:10116, title:'Counsel',                         level:'L4', department:'legal', managerRoleId:10115, teamId:null },
-  { id:10117, title:'Counsel',                         level:'L4', department:'legal', managerRoleId:10115, teamId:null },
+  { id:10114, title:'General Counsel',                 level:'L7', departmentId:10, managerRoleId:null,  teamId:null },
+  { id:10115, title:'Senior Counsel',                  level:'L5', departmentId:10, managerRoleId:10114, teamId:null },
+  { id:10116, title:'Counsel',                         level:'L4', departmentId:10, managerRoleId:10115, teamId:null },
+  { id:10117, title:'Counsel',                         level:'L4', departmentId:10, managerRoleId:10115, teamId:null },
 ];
 
 let persons = [
   // Executive
-  { id:1,   name:'David Bowie',         salary:220000, salaryReviewNeeded:false, gender:'male',                          roleId:9001  },
-  { id:2,   name:'Meryl Streep',        salary:195000, salaryReviewNeeded:false, gender:'female',                        roleId:9002  },
-  { id:3,   name:'Freddie Mercury',     salary:190000, salaryReviewNeeded:true,  gender:'male',                          roleId:9003  },
-  { id:4,   name:'Audrey Hepburn',      salary:195000, salaryReviewNeeded:false, gender:'female',                        roleId:9004  },
-  { id:5,   name:'Elvis Presley',       salary:185000, salaryReviewNeeded:false, gender:'male',                          roleId:9005  },
-  { id:6,   name:'Cate Blanchett',      salary:180000, salaryReviewNeeded:true,  gender:'female',                        roleId:9006  },
+  { id:1,   name:'David Bowie',         salary:220000, salaryReviewNeeded:false, gender:'male'                          },
+  { id:2,   name:'Meryl Streep',        salary:195000, salaryReviewNeeded:false, gender:'female'                        },
+  { id:3,   name:'Freddie Mercury',     salary:190000, salaryReviewNeeded:true,  gender:'male'                          },
+  { id:4,   name:'Audrey Hepburn',      salary:195000, salaryReviewNeeded:false, gender:'female'                        },
+  { id:5,   name:'Elvis Presley',       salary:185000, salaryReviewNeeded:false, gender:'male'                          },
+  { id:6,   name:'Cate Blanchett',      salary:180000, salaryReviewNeeded:true,  gender:'female'                        },
   // Engineering
-  { id:7,   name:'Michael Jackson',     salary:160000, salaryReviewNeeded:false, gender:'male',                          roleId:10001 },
-  { id:8,   name:'Marlon Brando',       salary:105000, salaryReviewNeeded:false, gender:'male',                          roleId:10002 },
-  { id:9,   name:'Aretha Franklin',     salary:100000, salaryReviewNeeded:false, gender:'female', isNew:true,            roleId:10003 },
-  { id:10,  name:'Al Pacino',           salary:98000,  salaryReviewNeeded:false, gender:'male',                          roleId:10004 },
-  { id:11,  name:'Whitney Houston',     salary:65000,  salaryReviewNeeded:false, gender:'female',                        roleId:10005 },
-  { id:12,  name:'Jack Nicholson',      salary:68000,  salaryReviewNeeded:true,  gender:'male',                          roleId:10006 },
-  { id:13,  name:'Tina Turner',         salary:62000,  salaryReviewNeeded:false, gender:'female',                        roleId:10007 },
-  { id:14,  name:'Katharine Hepburn',   salary:60000,  salaryReviewNeeded:false, gender:'female', onLeave:true,          roleId:10008 },
-  { id:15,  name:'Prince',              salary:48000,  salaryReviewNeeded:false, gender:'male',                          roleId:10009 },
-  { id:16,  name:'Sophia Loren',        salary:45000,  salaryReviewNeeded:false, gender:'female', isNew:true,            roleId:10010 },
-  { id:17,  name:'Bob Dylan',           salary:50000,  salaryReviewNeeded:false, gender:'male',                          roleId:10011 },
-  { id:18,  name:'Ingrid Bergman',      salary:44000,  salaryReviewNeeded:false, gender:'female', performanceReviewNeeded:true, roleId:10012 },
-  { id:19,  name:'Mick Jagger',         salary:35000,  salaryReviewNeeded:false, gender:'male',   isNew:true,            roleId:10013 },
-  { id:20,  name:'Grace Kelly',         salary:33000,  salaryReviewNeeded:false, gender:'female', isNew:true,            roleId:10014 },
-  { id:21,  name:'Jimi Hendrix',        salary:66000,  salaryReviewNeeded:false, gender:'male',                          roleId:10015 },
-  { id:22,  name:'Marilyn Monroe',      salary:64000,  salaryReviewNeeded:true,  gender:'female', performanceReviewNeeded:true, roleId:10016 },
-  { id:23,  name:'Bruce Springsteen',   salary:60000,  salaryReviewNeeded:false, gender:'male',                          roleId:10017 },
-  { id:24,  name:'Elizabeth Taylor',    salary:47000,  salaryReviewNeeded:false, gender:'female',                        roleId:10018 },
-  { id:25,  name:'Kurt Cobain',         salary:46000,  salaryReviewNeeded:false, gender:'male',   onLeave:true,          roleId:10019 },
-  { id:26,  name:'Bette Davis',         salary:49000,  salaryReviewNeeded:false, gender:'female',                        roleId:10020 },
-  { id:27,  name:'Stevie Wonder',       salary:43000,  salaryReviewNeeded:false, gender:'male',   isNew:true,            roleId:10021 },
-  { id:28,  name:'Humphrey Bogart',     salary:34000,  salaryReviewNeeded:false, gender:'male',                          roleId:10022 },
-  { id:29,  name:'Janis Joplin',        salary:36000,  salaryReviewNeeded:false, gender:'female', isNew:true,            roleId:10023 },
-  { id:30,  name:'Cary Grant',          salary:67000,  salaryReviewNeeded:false, gender:'male',                          roleId:10024 },
-  { id:31,  name:'Billie Holiday',      salary:63000,  salaryReviewNeeded:false, gender:'female',                        roleId:10025 },
-  { id:32,  name:'James Dean',          salary:59000,  salaryReviewNeeded:false, gender:'male',   performanceReviewNeeded:true, roleId:10026 },
-  { id:33,  name:'Nina Simone',         salary:47000,  salaryReviewNeeded:false, gender:'female',                        roleId:10027 },
-  { id:34,  name:'Marlon Wayans',       salary:45000,  salaryReviewNeeded:false, gender:'male',                          roleId:10028 },
-  { id:35,  name:'Ray Charles',         salary:50000,  salaryReviewNeeded:false, gender:'male',                          roleId:10029 },
+  { id:7,   name:'Michael Jackson',     salary:160000, salaryReviewNeeded:false, gender:'male'                          },
+  { id:8,   name:'Marlon Brando',       salary:105000, salaryReviewNeeded:false, gender:'male'                          },
+  { id:9,   name:'Aretha Franklin',     salary:100000, salaryReviewNeeded:false, gender:'female', isNew:true             },
+  { id:10,  name:'Al Pacino',           salary:98000,  salaryReviewNeeded:false, gender:'male'                          },
+  { id:11,  name:'Whitney Houston',     salary:65000,  salaryReviewNeeded:false, gender:'female'                        },
+  { id:12,  name:'Jack Nicholson',      salary:68000,  salaryReviewNeeded:true,  gender:'male'                          },
+  { id:13,  name:'Tina Turner',         salary:62000,  salaryReviewNeeded:false, gender:'female'                        },
+  { id:14,  name:'Katharine Hepburn',   salary:60000,  salaryReviewNeeded:false, gender:'female', onLeave:true           },
+  { id:15,  name:'Prince',              salary:48000,  salaryReviewNeeded:false, gender:'male'                          },
+  { id:16,  name:'Sophia Loren',        salary:45000,  salaryReviewNeeded:false, gender:'female', isNew:true             },
+  { id:17,  name:'Bob Dylan',           salary:50000,  salaryReviewNeeded:false, gender:'male'                          },
+  { id:18,  name:'Ingrid Bergman',      salary:44000,  salaryReviewNeeded:false, gender:'female', performanceReviewNeeded:true },
+  { id:19,  name:'Mick Jagger',         salary:35000,  salaryReviewNeeded:false, gender:'male',   isNew:true             },
+  { id:20,  name:'Grace Kelly',         salary:33000,  salaryReviewNeeded:false, gender:'female', isNew:true             },
+  { id:21,  name:'Jimi Hendrix',        salary:66000,  salaryReviewNeeded:false, gender:'male'                          },
+  { id:22,  name:'Marilyn Monroe',      salary:64000,  salaryReviewNeeded:true,  gender:'female', performanceReviewNeeded:true },
+  { id:23,  name:'Bruce Springsteen',   salary:60000,  salaryReviewNeeded:false, gender:'male'                          },
+  { id:24,  name:'Elizabeth Taylor',    salary:47000,  salaryReviewNeeded:false, gender:'female'                        },
+  { id:25,  name:'Kurt Cobain',         salary:46000,  salaryReviewNeeded:false, gender:'male',   onLeave:true           },
+  { id:26,  name:'Bette Davis',         salary:49000,  salaryReviewNeeded:false, gender:'female'                        },
+  { id:27,  name:'Stevie Wonder',       salary:43000,  salaryReviewNeeded:false, gender:'male',   isNew:true             },
+  { id:28,  name:'Humphrey Bogart',     salary:34000,  salaryReviewNeeded:false, gender:'male'                          },
+  { id:29,  name:'Janis Joplin',        salary:36000,  salaryReviewNeeded:false, gender:'female', isNew:true             },
+  { id:30,  name:'Cary Grant',          salary:67000,  salaryReviewNeeded:false, gender:'male'                          },
+  { id:31,  name:'Billie Holiday',      salary:63000,  salaryReviewNeeded:false, gender:'female'                        },
+  { id:32,  name:'James Dean',          salary:59000,  salaryReviewNeeded:false, gender:'male',   performanceReviewNeeded:true },
+  { id:33,  name:'Nina Simone',         salary:47000,  salaryReviewNeeded:false, gender:'female'                        },
+  { id:34,  name:'Marlon Wayans',       salary:45000,  salaryReviewNeeded:false, gender:'male'                          },
+  { id:35,  name:'Ray Charles',         salary:50000,  salaryReviewNeeded:false, gender:'male'                          },
   // Product  (roles 10030–10032 in Delta Wing are vacant)
-  { id:36,  name:'Denzel Washington',   salary:155000, salaryReviewNeeded:false, gender:'male',                          roleId:10033 },
-  { id:37,  name:'Beyonce Knowles',     salary:110000, salaryReviewNeeded:false, gender:'female',                        roleId:10034 },
-  { id:38,  name:'Robert De Niro',      salary:105000, salaryReviewNeeded:false, gender:'male',                          roleId:10038 },
-  { id:39,  name:'Madonna Ciccone',     salary:80000,  salaryReviewNeeded:false, gender:'female', isNew:true,            roleId:10035 },
-  { id:40,  name:'Tom Hanks',           salary:78000,  salaryReviewNeeded:true,  gender:'male',                          roleId:10039 },
-  { id:41,  name:'Rihanna Fenty',       salary:108000, salaryReviewNeeded:false, gender:'female',                        roleId:10042 },
-  { id:42,  name:'Dustin Hoffman',      salary:58000,  salaryReviewNeeded:false, gender:'male',   performanceReviewNeeded:true, roleId:10036 },
-  { id:43,  name:'Adele Adkins',        salary:56000,  salaryReviewNeeded:false, gender:'female',                        roleId:10040 },
-  { id:44,  name:'Jodie Foster',        salary:77000,  salaryReviewNeeded:false, gender:'female',                        roleId:10043 },
-  { id:45,  name:'Elton John',          salary:57000,  salaryReviewNeeded:false, gender:'male',   onLeave:true,          roleId:10044 },
-  { id:46,  name:'Natalie Portman',     salary:43000,  salaryReviewNeeded:false, gender:'female', isNew:true,            roleId:10037 },
-  { id:47,  name:'Johnny Cash',         salary:42000,  salaryReviewNeeded:false, gender:'male',                          roleId:10041 },
+  { id:36,  name:'Denzel Washington',   salary:155000, salaryReviewNeeded:false, gender:'male'                          },
+  { id:37,  name:'Beyonce Knowles',     salary:110000, salaryReviewNeeded:false, gender:'female'                        },
+  { id:38,  name:'Robert De Niro',      salary:105000, salaryReviewNeeded:false, gender:'male'                          },
+  { id:39,  name:'Madonna Ciccone',     salary:80000,  salaryReviewNeeded:false, gender:'female', isNew:true             },
+  { id:40,  name:'Tom Hanks',           salary:78000,  salaryReviewNeeded:true,  gender:'male'                          },
+  { id:41,  name:'Rihanna Fenty',       salary:108000, salaryReviewNeeded:false, gender:'female'                        },
+  { id:42,  name:'Dustin Hoffman',      salary:58000,  salaryReviewNeeded:false, gender:'male',   performanceReviewNeeded:true },
+  { id:43,  name:'Adele Adkins',        salary:56000,  salaryReviewNeeded:false, gender:'female'                        },
+  { id:44,  name:'Jodie Foster',        salary:77000,  salaryReviewNeeded:false, gender:'female'                        },
+  { id:45,  name:'Elton John',          salary:57000,  salaryReviewNeeded:false, gender:'male',   onLeave:true           },
+  { id:46,  name:'Natalie Portman',     salary:43000,  salaryReviewNeeded:false, gender:'female', isNew:true             },
+  { id:47,  name:'Johnny Cash',         salary:42000,  salaryReviewNeeded:false, gender:'male'                          },
   // Design
-  { id:48,  name:'Charlize Theron',     salary:150000, salaryReviewNeeded:false, gender:'female',                        roleId:10045 },
-  { id:49,  name:'Frank Sinatra',       salary:95000,  salaryReviewNeeded:false, gender:'male',                          roleId:10046 },
-  { id:50,  name:'Penelope Cruz',       salary:92000,  salaryReviewNeeded:false, gender:'female', isNew:true,            roleId:10047 },
-  { id:51,  name:'Jim Morrison',        salary:65000,  salaryReviewNeeded:false, gender:'male',                          roleId:10048 },
-  { id:52,  name:'Halle Berry',         salary:63000,  salaryReviewNeeded:false, gender:'female', performanceReviewNeeded:true, roleId:10049 },
-  { id:53,  name:'Leonard Cohen',       salary:46000,  salaryReviewNeeded:false, gender:'male',                          roleId:10050 },
-  { id:54,  name:'Sandra Bullock',      salary:64000,  salaryReviewNeeded:false, gender:'female',                        roleId:10051 },
-  { id:55,  name:'Lou Reed',            salary:44000,  salaryReviewNeeded:false, gender:'male',   isNew:true,            roleId:10052 },
+  { id:48,  name:'Charlize Theron',     salary:150000, salaryReviewNeeded:false, gender:'female'                        },
+  { id:49,  name:'Frank Sinatra',       salary:95000,  salaryReviewNeeded:false, gender:'male'                          },
+  { id:50,  name:'Penelope Cruz',       salary:92000,  salaryReviewNeeded:false, gender:'female', isNew:true             },
+  { id:51,  name:'Jim Morrison',        salary:65000,  salaryReviewNeeded:false, gender:'male'                          },
+  { id:52,  name:'Halle Berry',         salary:63000,  salaryReviewNeeded:false, gender:'female', performanceReviewNeeded:true },
+  { id:53,  name:'Leonard Cohen',       salary:46000,  salaryReviewNeeded:false, gender:'male'                          },
+  { id:54,  name:'Sandra Bullock',      salary:64000,  salaryReviewNeeded:false, gender:'female'                        },
+  { id:55,  name:'Lou Reed',            salary:44000,  salaryReviewNeeded:false, gender:'male',   isNew:true             },
   // Sales
-  { id:56,  name:'Anthony Hopkins',     salary:175000, salaryReviewNeeded:false, gender:'male',                          roleId:10053 },
-  { id:57,  name:'Amy Winehouse',       salary:100000, salaryReviewNeeded:false, gender:'female',                        roleId:10054 },
-  { id:58,  name:'Clint Eastwood',      salary:98000,  salaryReviewNeeded:false, gender:'male',                          roleId:10062 },
-  { id:59,  name:'Joni Mitchell',       salary:95000,  salaryReviewNeeded:true,  gender:'female',                        roleId:10069 },
-  { id:60,  name:'Paul Newman',         salary:83000,  salaryReviewNeeded:false, gender:'male',                          roleId:10055 },
-  { id:61,  name:'Dolly Parton',        salary:81000,  salaryReviewNeeded:false, gender:'female', performanceReviewNeeded:true, roleId:10056 },
-  { id:62,  name:'Gene Hackman',        salary:73000,  salaryReviewNeeded:false, gender:'male',                          roleId:10057 },
-  { id:63,  name:'Taylor Swift',        salary:75000,  salaryReviewNeeded:false, gender:'female', isNew:true,            roleId:10058 },
-  { id:64,  name:'Orson Welles',        salary:72000,  salaryReviewNeeded:false, gender:'male',                          roleId:10059 },
-  { id:65,  name:'Alicia Keys',         salary:43000,  salaryReviewNeeded:false, gender:'female', isNew:true,            roleId:10060 },
-  { id:66,  name:'Sidney Poitier',      salary:41000,  salaryReviewNeeded:false, gender:'male',                          roleId:10061 },
-  { id:67,  name:'Shakira Mebarak',     salary:82000,  salaryReviewNeeded:false, gender:'female',                        roleId:10063 },
-  { id:68,  name:'Gregory Peck',        salary:80000,  salaryReviewNeeded:false, gender:'male',                          roleId:10064 },
-  { id:69,  name:'Cardi B',             salary:72000,  salaryReviewNeeded:false, gender:'female', onLeave:true,          roleId:10065 },
-  { id:70,  name:'Laurence Olivier',    salary:74000,  salaryReviewNeeded:false, gender:'male',                          roleId:10066 },
-  { id:71,  name:'Nicki Minaj',         salary:42000,  salaryReviewNeeded:true,  gender:'female',                        roleId:10067 },
-  { id:72,  name:'Marlon Wayans',       salary:41000,  salaryReviewNeeded:false, gender:'male',   isNew:true,            roleId:10068 },
-  { id:73,  name:'Lady Gaga',           salary:71000,  salaryReviewNeeded:false, gender:'female',                        roleId:10070 },
-  { id:74,  name:'Cillian Murphy',      salary:73000,  salaryReviewNeeded:false, gender:'male',   performanceReviewNeeded:true, roleId:10071 },
-  { id:75,  name:'Billie Eilish',       salary:40000,  salaryReviewNeeded:false, gender:'female', isNew:true,            roleId:10072 },
+  { id:56,  name:'Anthony Hopkins',     salary:175000, salaryReviewNeeded:false, gender:'male'                          },
+  { id:57,  name:'Amy Winehouse',       salary:100000, salaryReviewNeeded:false, gender:'female'                        },
+  { id:58,  name:'Clint Eastwood',      salary:98000,  salaryReviewNeeded:false, gender:'male'                          },
+  { id:59,  name:'Joni Mitchell',       salary:95000,  salaryReviewNeeded:true,  gender:'female'                        },
+  { id:60,  name:'Paul Newman',         salary:83000,  salaryReviewNeeded:false, gender:'male'                          },
+  { id:61,  name:'Dolly Parton',        salary:81000,  salaryReviewNeeded:false, gender:'female', performanceReviewNeeded:true },
+  { id:62,  name:'Gene Hackman',        salary:73000,  salaryReviewNeeded:false, gender:'male'                          },
+  { id:63,  name:'Taylor Swift',        salary:75000,  salaryReviewNeeded:false, gender:'female', isNew:true             },
+  { id:64,  name:'Orson Welles',        salary:72000,  salaryReviewNeeded:false, gender:'male'                          },
+  { id:65,  name:'Alicia Keys',         salary:43000,  salaryReviewNeeded:false, gender:'female', isNew:true             },
+  { id:66,  name:'Sidney Poitier',      salary:41000,  salaryReviewNeeded:false, gender:'male'                          },
+  { id:67,  name:'Shakira Mebarak',     salary:82000,  salaryReviewNeeded:false, gender:'female'                        },
+  { id:68,  name:'Gregory Peck',        salary:80000,  salaryReviewNeeded:false, gender:'male'                          },
+  { id:69,  name:'Cardi B',             salary:72000,  salaryReviewNeeded:false, gender:'female', onLeave:true           },
+  { id:70,  name:'Laurence Olivier',    salary:74000,  salaryReviewNeeded:false, gender:'male'                          },
+  { id:71,  name:'Nicki Minaj',         salary:42000,  salaryReviewNeeded:true,  gender:'female'                        },
+  { id:72,  name:'Marlon Wayans',       salary:41000,  salaryReviewNeeded:false, gender:'male',   isNew:true             },
+  { id:73,  name:'Lady Gaga',           salary:71000,  salaryReviewNeeded:false, gender:'female'                        },
+  { id:74,  name:'Cillian Murphy',      salary:73000,  salaryReviewNeeded:false, gender:'male',   performanceReviewNeeded:true },
+  { id:75,  name:'Billie Eilish',       salary:40000,  salaryReviewNeeded:false, gender:'female', isNew:true             },
   // Marketing
-  { id:76,  name:'Bette Midler',        salary:165000, salaryReviewNeeded:false, gender:'female',                        roleId:10073 },
-  { id:77,  name:'Bruno Mars',          salary:96000,  salaryReviewNeeded:false, gender:'male',                          roleId:10074 },
-  { id:78,  name:'Viola Davis',         salary:62000,  salaryReviewNeeded:false, gender:'female', isNew:true,            roleId:10075 },
-  { id:79,  name:'Eminem Mathers',      salary:64000,  salaryReviewNeeded:false, gender:'male',                          roleId:10076 },
-  { id:80,  name:'Julianne Moore',      salary:44000,  salaryReviewNeeded:false, gender:'female', performanceReviewNeeded:true, roleId:10077 },
-  { id:81,  name:'Jay-Z Carter',        salary:92000,  salaryReviewNeeded:false, gender:'male',                          roleId:10078 },
-  { id:82,  name:'Chadwick Boseman',    salary:61000,  salaryReviewNeeded:false, gender:'male',   isNew:true,            roleId:10079 },
-  { id:83,  name:'Kendrick Lamar',      salary:43000,  salaryReviewNeeded:false, gender:'male',                          roleId:10080 },
-  { id:84,  name:'Lupita Nyong\'o',     salary:42000,  salaryReviewNeeded:false, gender:'female', onLeave:true,          roleId:10081 },
-  { id:85,  name:'Eddie Vedder',        salary:90000,  salaryReviewNeeded:false, gender:'male',                          roleId:10082 },
-  { id:86,  name:'Zendaya Coleman',     salary:60000,  salaryReviewNeeded:true,  gender:'female',                        roleId:10083 },
-  { id:87,  name:'Chris Martin',        salary:33000,  salaryReviewNeeded:false, gender:'male',   isNew:true,            roleId:10084 },
+  { id:76,  name:'Bette Midler',        salary:165000, salaryReviewNeeded:false, gender:'female'                        },
+  { id:77,  name:'Bruno Mars',          salary:96000,  salaryReviewNeeded:false, gender:'male'                          },
+  { id:78,  name:'Viola Davis',         salary:62000,  salaryReviewNeeded:false, gender:'female', isNew:true             },
+  { id:79,  name:'Eminem Mathers',      salary:64000,  salaryReviewNeeded:false, gender:'male'                          },
+  { id:80,  name:'Julianne Moore',      salary:44000,  salaryReviewNeeded:false, gender:'female', performanceReviewNeeded:true },
+  { id:81,  name:'Jay-Z Carter',        salary:92000,  salaryReviewNeeded:false, gender:'male'                          },
+  { id:82,  name:'Chadwick Boseman',    salary:61000,  salaryReviewNeeded:false, gender:'male',   isNew:true             },
+  { id:83,  name:'Kendrick Lamar',      salary:43000,  salaryReviewNeeded:false, gender:'male'                          },
+  { id:84,  name:'Lupita Nyong\'o',     salary:42000,  salaryReviewNeeded:false, gender:'female', onLeave:true           },
+  { id:85,  name:'Eddie Vedder',        salary:90000,  salaryReviewNeeded:false, gender:'male'                          },
+  { id:86,  name:'Zendaya Coleman',     salary:60000,  salaryReviewNeeded:true,  gender:'female'                        },
+  { id:87,  name:'Chris Martin',        salary:33000,  salaryReviewNeeded:false, gender:'male',   isNew:true             },
   // Customer Success
-  { id:88,  name:'Nicole Kidman',       salary:160000, salaryReviewNeeded:false, gender:'female',                        roleId:10085 },
-  { id:89,  name:'Thom Yorke',          salary:98000,  salaryReviewNeeded:false, gender:'male',                          roleId:10086 },
-  { id:90,  name:'Cate Winslet',        salary:95000,  salaryReviewNeeded:false, gender:'female',                        roleId:10092 },
-  { id:91,  name:'Kanye West',          salary:76000,  salaryReviewNeeded:false, gender:'male',   performanceReviewNeeded:true, roleId:10087 },
-  { id:92,  name:'Tilda Swinton',       salary:78000,  salaryReviewNeeded:false, gender:'female',                        roleId:10088 },
-  { id:93,  name:'Pharrell Williams',   salary:60000,  salaryReviewNeeded:false, gender:'male',   isNew:true,            roleId:10089 },
-  { id:94,  name:'Jessica Lange',       salary:58000,  salaryReviewNeeded:false, gender:'female',                        roleId:10090 },
-  { id:95,  name:'Jack White',          salary:96000,  salaryReviewNeeded:false, gender:'male',                          roleId:10097 },
-  { id:96,  name:'Judi Dench',          salary:44000,  salaryReviewNeeded:false, gender:'female', onLeave:true,          roleId:10091 },
-  { id:97,  name:'Dua Lipa',            salary:76000,  salaryReviewNeeded:false, gender:'female', isNew:true,            roleId:10093 },
-  { id:98,  name:'Daniel Day-Lewis',    salary:58000,  salaryReviewNeeded:false, gender:'male',                          roleId:10094 },
-  { id:99,  name:'Post Malone',         salary:56000,  salaryReviewNeeded:false, gender:'male',   performanceReviewNeeded:true, roleId:10095 },
-  { id:100, name:'Olivia Colman',       salary:44000,  salaryReviewNeeded:false, gender:'female',                        roleId:10096 },
-  { id:101, name:'Harry Styles',        salary:56000,  salaryReviewNeeded:false, gender:'male',   isNew:true,            roleId:10098 },
-  { id:102, name:'Florence Pugh',       salary:55000,  salaryReviewNeeded:false, gender:'female',                        roleId:10099 },
+  { id:88,  name:'Nicole Kidman',       salary:160000, salaryReviewNeeded:false, gender:'female'                        },
+  { id:89,  name:'Thom Yorke',          salary:98000,  salaryReviewNeeded:false, gender:'male'                          },
+  { id:90,  name:'Cate Winslet',        salary:95000,  salaryReviewNeeded:false, gender:'female'                        },
+  { id:91,  name:'Kanye West',          salary:76000,  salaryReviewNeeded:false, gender:'male',   performanceReviewNeeded:true },
+  { id:92,  name:'Tilda Swinton',       salary:78000,  salaryReviewNeeded:false, gender:'female'                        },
+  { id:93,  name:'Pharrell Williams',   salary:60000,  salaryReviewNeeded:false, gender:'male',   isNew:true             },
+  { id:94,  name:'Jessica Lange',       salary:58000,  salaryReviewNeeded:false, gender:'female'                        },
+  { id:95,  name:'Jack White',          salary:96000,  salaryReviewNeeded:false, gender:'male'                          },
+  { id:96,  name:'Judi Dench',          salary:44000,  salaryReviewNeeded:false, gender:'female', onLeave:true           },
+  { id:97,  name:'Dua Lipa',            salary:76000,  salaryReviewNeeded:false, gender:'female', isNew:true             },
+  { id:98,  name:'Daniel Day-Lewis',    salary:58000,  salaryReviewNeeded:false, gender:'male'                          },
+  { id:99,  name:'Post Malone',         salary:56000,  salaryReviewNeeded:false, gender:'male',   performanceReviewNeeded:true },
+  { id:100, name:'Olivia Colman',       salary:44000,  salaryReviewNeeded:false, gender:'female'                        },
+  { id:101, name:'Harry Styles',        salary:56000,  salaryReviewNeeded:false, gender:'male',   isNew:true             },
+  { id:102, name:'Florence Pugh',       salary:55000,  salaryReviewNeeded:false, gender:'female'                        },
   // People & HR
-  { id:103, name:'Paul McCartney',      salary:155000, salaryReviewNeeded:false, gender:'male',                          roleId:10100 },
-  { id:104, name:'Margot Robbie',       salary:92000,  salaryReviewNeeded:false, gender:'female',                        roleId:10101 },
-  { id:105, name:'Mick Fleetwood',      salary:76000,  salaryReviewNeeded:false, gender:'male',   onLeave:true,          roleId:10102 },
-  { id:106, name:'Ana de Armas',        salary:72000,  salaryReviewNeeded:false, gender:'female',                        roleId:10103 },
-  { id:107, name:'John Lennon',         salary:60000,  salaryReviewNeeded:false, gender:'male',                          roleId:10104 },
-  { id:108, name:'Saoirse Ronan',       salary:45000,  salaryReviewNeeded:false, gender:'female', isNew:true,            roleId:10105 },
-  { id:109, name:'Patti Smith',         salary:43000,  salaryReviewNeeded:true,  gender:'female', performanceReviewNeeded:true, roleId:10106 },
-  { id:110, name:'Anya Taylor-Joy',     salary:42000,  salaryReviewNeeded:false, gender:'female', isNew:true,            roleId:10107 },
+  { id:103, name:'Paul McCartney',      salary:155000, salaryReviewNeeded:false, gender:'male'                          },
+  { id:104, name:'Margot Robbie',       salary:92000,  salaryReviewNeeded:false, gender:'female'                        },
+  { id:105, name:'Mick Fleetwood',      salary:76000,  salaryReviewNeeded:false, gender:'male',   onLeave:true           },
+  { id:106, name:'Ana de Armas',        salary:72000,  salaryReviewNeeded:false, gender:'female'                        },
+  { id:107, name:'John Lennon',         salary:60000,  salaryReviewNeeded:false, gender:'male'                          },
+  { id:108, name:'Saoirse Ronan',       salary:45000,  salaryReviewNeeded:false, gender:'female', isNew:true             },
+  { id:109, name:'Patti Smith',         salary:43000,  salaryReviewNeeded:true,  gender:'female', performanceReviewNeeded:true },
+  { id:110, name:'Anya Taylor-Joy',     salary:42000,  salaryReviewNeeded:false, gender:'female', isNew:true             },
   // Finance
-  { id:111, name:'Roger Waters',        salary:158000, salaryReviewNeeded:false, gender:'male',                          roleId:10108 },
-  { id:112, name:'Cynthia Erivo',       salary:93000,  salaryReviewNeeded:false, gender:'female',                        roleId:10109 },
-  { id:113, name:'David Gilmour',       salary:78000,  salaryReviewNeeded:false, gender:'male',   performanceReviewNeeded:true, roleId:10110 },
-  { id:114, name:'Regina King',         salary:58000,  salaryReviewNeeded:false, gender:'female',                        roleId:10111 },
-  { id:115, name:'Ozzy Osbourne',       salary:56000,  salaryReviewNeeded:false, gender:'male',   onLeave:true,          roleId:10112 },
-  { id:116, name:'Zoe Saldana',         salary:44000,  salaryReviewNeeded:true,  gender:'female',                        roleId:10113 },
+  { id:111, name:'Roger Waters',        salary:158000, salaryReviewNeeded:false, gender:'male'                          },
+  { id:112, name:'Cynthia Erivo',       salary:93000,  salaryReviewNeeded:false, gender:'female'                        },
+  { id:113, name:'David Gilmour',       salary:78000,  salaryReviewNeeded:false, gender:'male',   performanceReviewNeeded:true },
+  { id:114, name:'Regina King',         salary:58000,  salaryReviewNeeded:false, gender:'female'                        },
+  { id:115, name:'Ozzy Osbourne',       salary:56000,  salaryReviewNeeded:false, gender:'male',   onLeave:true           },
+  { id:116, name:'Zoe Saldana',         salary:44000,  salaryReviewNeeded:true,  gender:'female'                        },
   // Legal
-  { id:117, name:'Stevie Nicks',        salary:162000, salaryReviewNeeded:false, gender:'female',                        roleId:10114 },
-  { id:118, name:'Michelle Yeoh',       salary:100000, salaryReviewNeeded:false, gender:'female', isNew:true,            roleId:10115 },
-  { id:119, name:'Eddie Van Halen',     salary:78000,  salaryReviewNeeded:false, gender:'male',                          roleId:10116 },
-  { id:120, name:'Salma Hayek',         salary:76000,  salaryReviewNeeded:false, gender:'female',                        roleId:10117 },
+  { id:117, name:'Stevie Nicks',        salary:162000, salaryReviewNeeded:false, gender:'female'                        },
+  { id:118, name:'Michelle Yeoh',       salary:100000, salaryReviewNeeded:false, gender:'female', isNew:true             },
+  { id:119, name:'Eddie Van Halen',     salary:78000,  salaryReviewNeeded:false, gender:'male'                          },
+  { id:120, name:'Salma Hayek',         salary:76000,  salaryReviewNeeded:false, gender:'female'                        },
 ];
 const DEFAULT_PERSONS = persons.map(p => ({ id: p.id, gender: p.gender }));
 
-// roleAssignments replaces person.roleId as the join between persons and roles.
-// Each entry: { personId, roleId, percentage } where percentage is 1–100.
+// roleAssignments is the authoritative join between persons and roles.
+// Each entry: { id, personId, roleId, percentage } where percentage is 1–100.
 // A role may have at most one person; a person may have many roles.
-let roleAssignments = persons
-  .filter(p => p.roleId != null)
-  .map(p => ({ personId: p.id, roleId: p.roleId, percentage: 100 }));
+const _seedAssignmentPairs = [
+  [1,9001],[2,9002],[3,9003],[4,9004],[5,9005],[6,9006],
+  [7,10001],[8,10002],[9,10003],[10,10004],[11,10005],[12,10006],[13,10007],[14,10008],[15,10009],
+  [16,10010],[17,10011],[18,10012],[19,10013],[20,10014],[21,10015],[22,10016],[23,10017],[24,10018],
+  [25,10019],[26,10020],[27,10021],[28,10022],[29,10023],[30,10024],[31,10025],[32,10026],[33,10027],
+  [34,10028],[35,10029],
+  [36,10033],[37,10034],[38,10038],[39,10035],[40,10039],[41,10042],[42,10036],[43,10040],[44,10043],
+  [45,10044],[46,10037],[47,10041],
+  [48,10045],[49,10046],[50,10047],[51,10048],[52,10049],[53,10050],[54,10051],[55,10052],
+  [56,10053],[57,10054],[58,10062],[59,10069],[60,10055],[61,10056],[62,10057],[63,10058],[64,10059],
+  [65,10060],[66,10061],[67,10063],[68,10064],[69,10065],[70,10066],[71,10067],[72,10068],[73,10070],
+  [74,10071],[75,10072],
+  [76,10073],[77,10074],[78,10075],[79,10076],[80,10077],[81,10078],[82,10079],[83,10080],[84,10081],
+  [85,10082],[86,10083],[87,10084],
+  [88,10085],[89,10086],[90,10092],[91,10087],[92,10088],[93,10089],[94,10090],[95,10097],[96,10091],
+  [97,10093],[98,10094],[99,10095],[100,10096],[101,10098],[102,10099],
+  [103,10100],[104,10101],[105,10102],[106,10103],[107,10104],[108,10105],[109,10106],[110,10107],
+  [111,10108],[112,10109],[113,10110],[114,10111],[115,10112],[116,10113],
+  [117,10114],[118,10115],[119,10116],[120,10117],
+];
+let roleAssignments = _seedAssignmentPairs.map(([personId, roleId], i) => ({ id: i + 1, personId, roleId, percentage: 100 }));
 
 // ── Level & Title Config ──────────────────────────────────────────────────────
 
@@ -1311,7 +1329,7 @@ function getUnassignedPersons() {
 }
 
 function getDirectorRole(deptId) {
-  return roles.find(r => r.department === deptId && r.managerRoleId === null && !r.teamId) || null;
+  return roles.find(r => r.departmentId === deptId && r.managerRoleId === null && !r.teamId) || null;
 }
 
 function getTeamsForDept(deptId) { return teams.filter(t => t.departmentId === deptId); }
@@ -1331,7 +1349,7 @@ function getTeamRootRoles(teamId) {
 function nextTeamId() { return teams.length ? Math.max(...teams.map(t => t.id)) + 1 : 1; }
 
 function getChildRoles(managerRoleId, deptId) {
-  return roles.filter(r => r.managerRoleId === managerRoleId && r.department === deptId);
+  return roles.filter(r => r.managerRoleId === managerRoleId && r.departmentId === deptId);
 }
 
 function getDescendantRoleIds(roleId) {
@@ -1346,23 +1364,24 @@ function getDescendantRoleIds(roleId) {
 
 function getReachableRoleIds(deptId) {
   const reachable = new Set();
-  const roots = roles.filter(r => r.department === deptId && r.managerRoleId === null);
+  const roots = roles.filter(r => r.departmentId === deptId && r.managerRoleId === null);
   const queue = roots.map(r => r.id);
   while (queue.length) {
     const id = queue.shift();
     if (reachable.has(id)) continue;
     reachable.add(id);
-    roles.filter(r => r.managerRoleId === id && r.department === deptId).forEach(r => queue.push(r.id));
+    roles.filter(r => r.managerRoleId === id && r.departmentId === deptId).forEach(r => queue.push(r.id));
   }
   return reachable;
 }
 
 function getOrphanedRoles(deptId) {
   const reachable = getReachableRoleIds(deptId);
-  return roles.filter(r => r.department === deptId && !reachable.has(r.id));
+  return roles.filter(r => r.departmentId === deptId && !reachable.has(r.id));
 }
 
 function nextRoleId() { return roles.length > 0 ? Math.max(...roles.map(r => r.id)) + 1 : 10001; }
+function nextRoleAssignmentId() { return roleAssignments.length > 0 ? Math.max(...roleAssignments.map(a => a.id ?? 0)) + 1 : 1; }
 function nextPersonId() {
   const allIds = [...persons.map(p => p.id), ...snapshots.flatMap(s => s.data.persons.map(p => p.id))];
   return allIds.length > 0 ? Math.max(...allIds) + 1 : 1;
@@ -1515,7 +1534,7 @@ function renderCard(role, isOrphaned = false) {
         const p = persons.find(x => x.id === state.draggedPersonId);
         if (p && !getAssignmentForRole(role.id)) {
           roleAssignments = roleAssignments.filter(a => a.personId !== p.id);
-          roleAssignments.push({ personId: p.id, roleId: role.id, percentage: 100 });
+          roleAssignments.push({ id: nextRoleAssignmentId(), personId: p.id, roleId: role.id, percentage: 100 });
         }
         state.draggedPersonId = null;
         render();
@@ -1526,7 +1545,7 @@ function renderCard(role, isOrphaned = false) {
         if (descendants.has(role.id)) { state.draggedRoleId = null; render(); return; }
         const savedId = state.draggedRoleId;
         state.draggedRoleId = null;
-        if (dragged.department === role.department) {
+        if (dragged.departmentId === role.departmentId) {
           dragged.managerRoleId = role.id;
           render();
         } else {
@@ -1590,7 +1609,7 @@ function renderCard(role, isOrphaned = false) {
         if (descendants.has(role.id)) { state.draggedRoleId = null; render(); return; }
         const savedId = state.draggedRoleId;
         state.draggedRoleId = null;
-        if (dragged.department === role.department) {
+        if (dragged.departmentId === role.departmentId) {
           dragged.managerRoleId = role.id;
           render();
         } else {
@@ -1613,7 +1632,7 @@ function renderCard(role, isOrphaned = false) {
         // Guard against cycles: target must not be a descendant of dragged role
         const descendants = getDescendantRoleIds(draggedRoleId);
         if (descendants.has(role.id)) { render(); return; }
-        if (draggedRole.department === role.department) {
+        if (draggedRole.departmentId === role.departmentId) {
           draggedRole.managerRoleId = role.id;
           render();
         } else {
@@ -1629,7 +1648,7 @@ function renderCard(role, isOrphaned = false) {
       const targetPerson = getPersonForRole(role.id);
       state.pendingDrop = {
         draggedPersonId: state.draggedPersonId,
-        department: role.department,
+        department: role.departmentId,
         managerRoleId: role.id,
         teamId: role.teamId ?? null,
         modalTitle: `Create role under ${targetPerson && !targetPerson.noLongerHired ? targetPerson.name : 'Employee #' + (targetPerson ? targetPerson.id : '?')}`,
@@ -1744,7 +1763,7 @@ function dropRoleOnDept(deptId, overrideRoleId) {
   const roleId = overrideRoleId ?? state.draggedRoleId;
   state.draggedRoleId = null;
   const dragged = roles.find(r => r.id === roleId);
-  if (!dragged || dragged.department === deptId) { render(); return; }
+  if (!dragged || dragged.departmentId === deptId) { render(); return; }
   openReparentRoleModal(roleId, null, deptId);
   render();
 }
@@ -1755,10 +1774,10 @@ function renderDeptColumn(dept) {
   col.dataset.dept = dept.id;
   col.style.setProperty('--dept-color', dept.color);
 
-  const deptRoles = roles.filter(r => r.department === dept.id);
+  const deptRoles = roles.filter(r => r.departmentId === dept.id);
   const vacantCount = deptRoles.filter(r => !getPersonForRole(r.id)).length;
   const totalSalary = roleAssignments
-    .filter(a => { const r = roles.find(x => x.id === a.roleId); return r && r.department === dept.id; })
+    .filter(a => { const r = roles.find(x => x.id === a.roleId); return r && r.departmentId === dept.id; })
     .reduce((s, a) => { const p = persons.find(x => x.id === a.personId); return s + (p ? (p.salary || 0) * a.percentage / 100 : 0); }, 0);
 
   const header = document.createElement('div');
@@ -1783,13 +1802,13 @@ function renderDeptColumn(dept) {
 
   header.addEventListener('dragover', e => {
     if (state.draggedPersonId !== null) { e.preventDefault(); col.classList.add('drop-active'); }
-    else if (state.draggedRoleId !== null) { const dragged = roles.find(r => r.id === state.draggedRoleId); if (dragged && dragged.department !== dept.id) { e.preventDefault(); col.classList.add('drop-active'); } }
+    else if (state.draggedRoleId !== null) { const dragged = roles.find(r => r.id === state.draggedRoleId); if (dragged && dragged.departmentId !== dept.id) { e.preventDefault(); col.classList.add('drop-active'); } }
   });
   header.addEventListener('dragleave', e => { if (!col.contains(e.relatedTarget)) col.classList.remove('drop-active'); });
   header.addEventListener('drop', e => { e.preventDefault(); col.classList.remove('drop-active'); if (state.draggedRoleId !== null) dropRoleOnDept(dept.id); else dropOnDept(dept.id); });
   col.addEventListener('dragover', e => {
     if (state.draggedPersonId !== null) { e.preventDefault(); col.classList.add('drop-active'); }
-    else if (state.draggedRoleId !== null) { const dragged = roles.find(r => r.id === state.draggedRoleId); if (dragged && dragged.department !== dept.id) { e.preventDefault(); col.classList.add('drop-active'); } }
+    else if (state.draggedRoleId !== null) { const dragged = roles.find(r => r.id === state.draggedRoleId); if (dragged && dragged.departmentId !== dept.id) { e.preventDefault(); col.classList.add('drop-active'); } }
   });
   col.addEventListener('dragleave', e => { if (!col.contains(e.relatedTarget)) col.classList.remove('drop-active'); });
   col.addEventListener('drop', e => { e.preventDefault(); col.classList.remove('drop-active'); if (state.draggedRoleId !== null) dropRoleOnDept(dept.id); else dropOnDept(dept.id); });
@@ -1812,7 +1831,7 @@ function renderDeptColumn(dept) {
 
   if (deptTeams.length > 0) {
     // Render dept-level roles (teamId null) as "General" section first
-    const deptRootRoles = roles.filter(r => r.department === dept.id && r.managerRoleId === null && !r.teamId);
+    const deptRootRoles = roles.filter(r => r.departmentId === dept.id && r.managerRoleId === null && !r.teamId);
     if (deptRootRoles.length > 0) {
       const genHeader = document.createElement('div');
       genHeader.className = 'team-subheader first-team';
@@ -1904,7 +1923,7 @@ function renderDeptColumn(dept) {
     });
   } else {
     // No teams — render all root roles (managerRoleId === null)
-    const rootRoles = roles.filter(r => r.department === dept.id && r.managerRoleId === null && !r.teamId);
+    const rootRoles = roles.filter(r => r.departmentId === dept.id && r.managerRoleId === null && !r.teamId);
     rootRoles.forEach(rootRole => {
       const rootNode = document.createElement('div');
       rootNode.className = 'tree-node';
@@ -2000,7 +2019,7 @@ function renderFilterBar() {
   const bar = document.getElementById('filter-bar');
   bar.querySelectorAll('.filter-pill').forEach(p => p.remove());
   departments.forEach(dept => {
-    const deptRoles = roles.filter(r => r.department === dept.id);
+    const deptRoles = roles.filter(r => r.departmentId === dept.id);
     const vacantCount = deptRoles.filter(r => !getPersonForRole(r.id)).length;
     const pill = document.createElement('button');
     pill.className = 'filter-pill' + (hiddenDepts.has(dept.id) ? ' hidden-dept' : '');
@@ -2081,9 +2100,22 @@ function switchModalTab(tab) {
   document.getElementById('modal-cancel-btn').textContent = (tab === 'role' && !isRoleEditing) ? 'Close' : 'Cancel';
 }
 
+function getTitlesForDept(deptId) {
+  // TITLES may be keyed by numeric id (new) or by slug string (legacy).
+  // Try the given key first, then fall back to the dept's name-slug.
+  if (TITLES[deptId]) return TITLES[deptId];
+  const dept = departments.find(d => d.id === deptId);
+  if (dept) {
+    const slug = slugify(dept.name);
+    if (TITLES[slug]) return TITLES[slug];
+  }
+  return null;
+}
+
 function rebuildRoleTitleDropdown(levelId, deptId, currentTitle) {
   const titleSel = document.getElementById('modal-role-title');
-  const titles = (TITLES[deptId] && TITLES[deptId][levelId]) || [];
+  const deptTitles = getTitlesForDept(deptId);
+  const titles = (deptTitles && deptTitles[levelId]) || [];
   titleSel.innerHTML = '';
   if (titles.length === 0) {
     const opt = document.createElement('option');
@@ -2141,7 +2173,7 @@ function rebuildSecondaryManagersUI(roleId) {
     if (matches.length === 0) { suggestionsEl.style.display = 'none'; return; }
     matches.forEach(r => {
       const p = getPersonForRole(r.id);
-      const deptName = departments.find(d => d.id === r.department)?.name || '';
+      const deptName = departments.find(d => d.id === r.departmentId)?.name || '';
       const item = document.createElement('div');
       item.className = 'secondary-suggestion';
       item.textContent = `${p.name} · ${r.title} (${deptName})`;
@@ -2168,7 +2200,7 @@ function appendSecondaryManagerItem(listEl, roleId, editingRoleId) {
   const r = roles.find(x => x.id === roleId);
   if (!r) return;
   const p = getPersonForRole(roleId);
-  const deptName = departments.find(d => d.id === r.department)?.name || '';
+  const deptName = departments.find(d => d.id === r.departmentId)?.name || '';
   const item = document.createElement('div');
   item.className = 'secondary-mgr-item';
   item.dataset.roleId = roleId;
@@ -2193,7 +2225,7 @@ function rebuildRoleManagerDropdown(roleId, deptId, currentManagerRoleId) {
   noMgr.value = ''; noMgr.textContent = '\u2014 None (Director) \u2014';
   if (currentManagerRoleId === null) noMgr.selected = true;
   managerSel.appendChild(noMgr);
-  roles.filter(r => r.department === deptId && r.id !== roleId && !descendants.has(r.id)).forEach(r => {
+  roles.filter(r => r.departmentId === deptId && r.id !== roleId && !descendants.has(r.id)).forEach(r => {
     const opt = document.createElement('option');
     opt.value = r.id;
     const p = getPersonForRole(r.id);
@@ -2262,7 +2294,7 @@ function openCombinedModal(roleId, defaultTab) {
       assignments.forEach(a => {
         const r = roles.find(x => x.id === a.roleId);
         if (!r) return;
-        const dept = departments.find(d => d.id === r.department);
+        const dept = departments.find(d => d.id === r.departmentId);
         const row = document.createElement('div');
         row.style.cssText = 'display:flex;align-items:center;gap:6px;margin-bottom:6px;';
 
@@ -2291,7 +2323,7 @@ function openCombinedModal(roleId, defaultTab) {
         });
 
         row.append(titleSpan, lvlBadge);
-        if (dept && dept.id !== (role ? role.department : '')) {
+        if (dept && dept.id !== (role ? role.departmentId : null)) {
           const deptSpan = document.createElement('span');
           deptSpan.style.cssText = 'font-size:11px;color:var(--text-muted);flex-shrink:0';
           deptSpan.textContent = dept.name;
@@ -2327,13 +2359,13 @@ function openCombinedModal(roleId, defaultTab) {
     departments.forEach(d => {
       const opt = document.createElement('option');
       opt.value = d.id; opt.textContent = d.name;
-      if (d.id === role.department) opt.selected = true;
+      if (d.id === role.departmentId) opt.selected = true;
       deptSel.appendChild(opt);
     });
-    rebuildRoleTitleDropdown(role.level, role.department, role.title);
-    rebuildRoleManagerDropdown(roleId, role.department, role.managerRoleId);
+    rebuildRoleTitleDropdown(role.level, role.departmentId, role.title);
+    rebuildRoleManagerDropdown(roleId, role.departmentId, role.managerRoleId);
     rebuildSecondaryManagersUI(roleId);
-    rebuildRoleTeamDropdown(role.department, role.teamId || null, 'modal-role-team');
+    rebuildRoleTeamDropdown(role.departmentId, role.teamId || null, 'modal-role-team');
     document.getElementById('modal-role-person-name').textContent = person ? person.name : 'Vacant';
     const assignBtn = document.getElementById('modal-role-assign-btn');
     assignBtn.style.display = (!person && !settings.viewOnly) ? '' : 'none';
@@ -2342,8 +2374,8 @@ function openCombinedModal(roleId, defaultTab) {
     const levelEntry = LEVELS.find(l => l.id === role.level);
     document.getElementById('modal-role-level-view').textContent = levelEntry ? levelEntry.label : role.level;
     document.getElementById('modal-role-title-view').textContent = role.title || '—';
-    const deptObj = departments.find(d => d.id === role.department);
-    document.getElementById('modal-role-dept-view').textContent = deptObj ? deptObj.name : (role.department || '—');
+    const deptObj = departments.find(d => d.id === role.departmentId);
+    document.getElementById('modal-role-dept-view').textContent = deptObj ? deptObj.name : '—';
     const mgrObj = role.managerRoleId ? roles.find(r => r.id === role.managerRoleId) : null;
     document.getElementById('modal-role-manager-view').textContent = mgrObj ? mgrObj.title : 'None (top level)';
     const teamObj = role.teamId ? teams.find(t => t.id === role.teamId) : null;
@@ -2429,9 +2461,9 @@ function saveModal() {
       role.title = document.getElementById('modal-role-title').value;
       const deptSelVal = document.getElementById('modal-role-dept').value;
       const deptObj = departments.find(d => String(d.id) === deptSelVal);
-      const newDept = deptObj ? deptObj.id : deptSelVal; // preserve original type (string 'engineering' or number 101)
-      if (String(newDept) !== String(role.department)) {
-        role.department = newDept;
+      const newDept = deptObj ? deptObj.id : (isNaN(Number(deptSelVal)) ? deptSelVal : Number(deptSelVal));
+      if (newDept !== role.departmentId) {
+        role.departmentId = newDept;
         const newDirector = getDirectorRole(newDept);
         role.managerRoleId = newDirector ? newDirector.id : null;
       }
@@ -2603,7 +2635,7 @@ function openAssignPersonPicker(roleId) {
       const pct = Math.min(100, Math.max(1, parseInt(pctInput.value, 10) || 100));
       const newTotal = totalAlloc + pct;
       if (newTotal > 100 && !confirm(`${person.name} will be ${newTotal}% allocated (over 100%). Continue?`)) return;
-      roleAssignments.push({ personId: person.id, roleId: assigningRoleId, percentage: pct });
+      roleAssignments.push({ id: nextRoleAssignmentId(), personId: person.id, roleId: assigningRoleId, percentage: pct });
       closeAssignPersonModal(); render();
     });
     return row;
@@ -2682,7 +2714,7 @@ function populateAddToRoleList(personId, deptFilter) {
   const vacantRoles = roles.filter(r =>
     !assignedRoleIds.has(r.id) &&
     !getAssignmentForRole(r.id) &&
-    (!deptFilter || r.department === deptFilter)
+    (!deptFilter || r.departmentId === deptFilter)
   );
 
   if (vacantRoles.length === 0) {
@@ -2691,7 +2723,7 @@ function populateAddToRoleList(personId, deptFilter) {
   }
 
   vacantRoles.forEach(r => {
-    const dept = departments.find(d => d.id === r.department);
+    const dept = departments.find(d => d.id === r.departmentId);
     const row = document.createElement('div');
     row.className = 'add-to-role-row';
     row.dataset.roleId = r.id;
@@ -2709,7 +2741,7 @@ function populateAddToRoleList(personId, deptFilter) {
     row.innerHTML = `
       <div style="flex:1;min-width:0">
         <div style="font-size:12.5px;font-weight:600;color:var(--text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.title}</div>
-        <div style="font-size:11px;color:var(--text-muted)">${dept ? dept.name : r.department} · <span class="level-badge ${levelTierClass(r.level)}" style="font-size:10px;padding:1px 4px">${r.level}</span></div>
+        <div style="font-size:11px;color:var(--text-muted)">${dept ? dept.name : '?'} · <span class="level-badge ${levelTierClass(r.level)}" style="font-size:10px;padding:1px 4px">${r.level}</span></div>
       </div>
     `;
     row.appendChild(pctInput);
@@ -2739,7 +2771,7 @@ function saveAddToRoleModal() {
     const person = persons.find(p => p.id === addToRolePersonId);
     if (!confirm(`${person ? person.name : 'This person'} will be ${newTotal}% allocated (over 100%). Continue?`)) return;
   }
-  roleAssignments.push({ personId: addToRolePersonId, roleId: addToRoleSelectedRoleId, percentage: pct });
+  roleAssignments.push({ id: nextRoleAssignmentId(), personId: addToRolePersonId, roleId: addToRoleSelectedRoleId, percentage: pct });
   closeAddToRoleModal();
   render();
 }
@@ -2879,12 +2911,15 @@ function openDeptModal() {
 
 function closeDeptModal() { document.getElementById('dept-modal-backdrop').classList.remove('visible'); }
 
+function nextDepartmentId() {
+  return departments.length ? Math.max(...departments.map(d => d.id)) + 1 : 1;
+}
+
 function saveDeptModal() {
   const name = document.getElementById('dept-name-input').value.trim();
   const warn = document.getElementById('dept-modal-warning');
   if (!name) { warn.textContent = 'Name is required.'; warn.classList.add('visible'); document.getElementById('dept-name-input').focus(); return; }
-  let id = slugify(name) || 'dept';
-  if (departments.find(d => d.id === id)) { let n = 2; while (departments.find(d => d.id === id + '-' + n)) n++; id = id + '-' + n; }
+  const id = nextDepartmentId();
   departments.push({ id, name, color: selectedDeptColor || DEPT_COLOR_PALETTE[0], description: document.getElementById('dept-desc-input').value.trim(), headRoleId: null });
   closeDeptModal(); render();
 }
@@ -2898,10 +2933,12 @@ document.getElementById('dept-name-input').addEventListener('keydown', e => { if
 // ── Add Role Modal ────────────────────────────────────────────────────────────
 
 function addRoleRebuildTitleDropdown() {
-  const deptId = document.getElementById('add-role-dept').value;
+  const deptIdRaw = document.getElementById('add-role-dept').value;
+  const deptId = isNaN(Number(deptIdRaw)) ? deptIdRaw : Number(deptIdRaw);
   const levelId = document.getElementById('add-role-level').value;
   const titleSel = document.getElementById('add-role-title');
-  const titles = (TITLES[deptId] && TITLES[deptId][levelId]) || [];
+  const deptTitles = getTitlesForDept(deptId);
+  const titles = (deptTitles && deptTitles[levelId]) || [];
   titleSel.innerHTML = '';
   if (titles.length === 0) {
     const opt = document.createElement('option'); opt.value = ''; opt.textContent = '\u2014 No predefined titles \u2014';
@@ -2912,12 +2949,13 @@ function addRoleRebuildTitleDropdown() {
 }
 
 function addRoleRebuildManagerDropdown() {
-  const deptId = document.getElementById('add-role-dept').value;
+  const deptIdRaw = document.getElementById('add-role-dept').value;
+  const deptId = isNaN(Number(deptIdRaw)) ? deptIdRaw : Number(deptIdRaw);
   const managerSel = document.getElementById('add-role-manager');
   managerSel.innerHTML = '';
   const noMgr = document.createElement('option'); noMgr.value = ''; noMgr.textContent = '\u2014 None (Director level) \u2014';
   managerSel.appendChild(noMgr);
-  roles.filter(r => r.department === deptId).forEach(r => {
+  roles.filter(r => r.departmentId === deptId).forEach(r => {
     const opt = document.createElement('option'); opt.value = r.id;
     const p = getPersonForRole(r.id);
     const team = r.teamId ? teams.find(t => t.id === r.teamId) : null;
@@ -2929,7 +2967,9 @@ function addRoleRebuildManagerDropdown() {
 }
 
 function addRoleRebuildTeamDropdown() {
-  rebuildRoleTeamDropdown(document.getElementById('add-role-dept').value, null, 'add-role-team');
+  const deptIdRaw = document.getElementById('add-role-dept').value;
+  const deptId = isNaN(Number(deptIdRaw)) ? deptIdRaw : Number(deptIdRaw);
+  rebuildRoleTeamDropdown(deptId, null, 'add-role-team');
 }
 
 function openAddRoleModal(defaultDeptId) {
@@ -2959,7 +2999,9 @@ function saveAddRoleModal() {
   if (!titleVal) { warn.textContent = 'Title is required.'; warn.classList.add('visible'); return; }
   const mgrVal = document.getElementById('add-role-manager').value;
   const teamVal = document.getElementById('add-role-team').value;
-  roles.push({ id: nextRoleId(), title: titleVal, level: document.getElementById('add-role-level').value, department: document.getElementById('add-role-dept').value, managerRoleId: mgrVal ? parseInt(mgrVal, 10) : null, teamId: teamVal ? parseInt(teamVal, 10) : null });
+  const deptRawVal = document.getElementById('add-role-dept').value;
+  const deptNumVal = isNaN(Number(deptRawVal)) ? deptRawVal : Number(deptRawVal);
+  roles.push({ id: nextRoleId(), title: titleVal, level: document.getElementById('add-role-level').value, departmentId: deptNumVal, managerRoleId: mgrVal ? parseInt(mgrVal, 10) : null, teamId: teamVal ? parseInt(teamVal, 10) : null });
   closeAddRoleModal(); render();
 }
 
@@ -2978,12 +3020,12 @@ function openAddPersonModal(preselectedRoleId) {
   const noRole = document.createElement('option'); noRole.value = ''; noRole.textContent = '\u2014 None (unassigned) \u2014';
   roleSel.appendChild(noRole);
   const vacantRoles = roles.filter(r => !getPersonForRole(r.id));
-  vacantRoles.sort((a, b) => a.department.localeCompare(b.department) || a.title.localeCompare(b.title));
+  vacantRoles.sort((a, b) => { const da = departments.find(d => d.id === a.departmentId); const db = departments.find(d => d.id === b.departmentId); return (da ? da.name : '').localeCompare(db ? db.name : '') || a.title.localeCompare(b.title); });
   vacantRoles.forEach(r => {
     const opt = document.createElement('option'); opt.value = r.id;
-    const dept = departments.find(d => d.id === r.department);
+    const dept = departments.find(d => d.id === r.departmentId);
     const team = r.teamId ? teams.find(t => t.id === r.teamId) : null;
-    opt.textContent = `${dept ? dept.name : r.department}: ${r.title}${team ? ` [${team.name}]` : ''} (${r.level})`;
+    opt.textContent = `${dept ? dept.name : '?'}: ${r.title}${team ? ` [${team.name}]` : ''} (${r.level})`;
     if (r.id === preselectedRoleId) opt.selected = true;
     roleSel.appendChild(opt);
   });
@@ -3011,7 +3053,7 @@ function saveAddPersonModal() {
   const gender = genderBtn.dataset.gender;
   const newId = nextPersonId();
   persons.push({ id: newId, name, salary, gender, salaryReviewNeeded: false, performanceReviewNeeded: false, isNew: false, onLeave: false });
-  if (roleId) roleAssignments.push({ personId: newId, roleId, percentage: 100 });
+  if (roleId) roleAssignments.push({ id: nextRoleAssignmentId(), personId: newId, roleId, percentage: 100 });
   closeAddPersonModal(); render();
 }
 
@@ -3073,7 +3115,8 @@ function buildTitleSection(deptId) {
   const container = document.getElementById('dept-settings-titles-body');
   container.innerHTML = '';
   LEVELS.forEach(lvl => {
-    const titles = (TITLES[deptId] && TITLES[deptId][lvl.id]) || [];
+    const deptTitles = getTitlesForDept(deptId);
+    const titles = (deptTitles && deptTitles[lvl.id]) || [];
     const band = SALARY_BANDS[lvl.id];
     const bandLabel = band ? `${formatSalary(band.min).replace('/mo','')} \u2013 ${formatSalary(band.max)}` : '';
     const group = document.createElement('div'); group.className = 'title-level-group';
@@ -3126,7 +3169,7 @@ function openDeptSettingsModal(deptId) {
     if (!p) return;
     const opt = document.createElement('option');
     opt.value = r.id;
-    const deptName = departments.find(d => d.id === r.department)?.name || '';
+    const deptName = departments.find(d => d.id === r.departmentId)?.name || '';
     opt.textContent = `${p.name} · ${r.title} (${deptName})`;
     if (r.id === dept.headRoleId) opt.selected = true;
     headSelect.appendChild(opt);
@@ -3136,7 +3179,7 @@ function openDeptSettingsModal(deptId) {
   document.getElementById('dept-settings-modal-backdrop').classList.add('visible');
   setTimeout(() => document.getElementById('dept-settings-name').focus(), 50);
   const deleteBtn = document.getElementById('dept-settings-delete-btn');
-  const deptRolesForDelete = roles.filter(r => r.department === deptId);
+  const deptRolesForDelete = roles.filter(r => r.departmentId === deptId);
   deleteBtn.disabled = false;
   deleteBtn.onclick = () => {
     if (deptRolesForDelete.length > 0) {
@@ -3151,7 +3194,7 @@ function openDeptSettingsModal(deptId) {
       persons.splice(0, persons.length, ...persons.filter(p => !ghostsToRemove.has(p.id)));
       // Remove assignments for this dept's roles — live employees become unassigned
       roleAssignments.splice(0, roleAssignments.length, ...roleAssignments.filter(a => !deptRoleIds.has(a.roleId)));
-      roles.splice(0, roles.length, ...roles.filter(r => r.department !== deptId));
+      roles.splice(0, roles.length, ...roles.filter(r => r.departmentId !== deptId));
     } else {
       if (!confirm(`Delete "${dept.name}"?`)) return;
     }
@@ -3281,8 +3324,8 @@ const STORAGE_KEY = 'orgchart_data_v4';
 function migrateOldFormat(saved) {
   const oldEmps = saved.employees;
   return {
-    roles: oldEmps.map(emp => ({ id: emp.id + 10000, title: emp.title, level: emp.level, department: emp.department, managerRoleId: emp.managerId !== null ? emp.managerId + 10000 : null, teamId: null })),
-    persons: oldEmps.map(emp => ({ id: emp.id, name: emp.name, salary: emp.salary, salaryReviewNeeded: emp.salaryReviewNeeded, roleId: emp.id + 10000 })),
+    roles: oldEmps.map(emp => ({ id: emp.id + 10000, title: emp.title, level: emp.level, departmentId: emp.department, managerRoleId: emp.managerId !== null ? emp.managerId + 10000 : null, teamId: null })),
+    persons: oldEmps.map(emp => ({ id: emp.id, name: emp.name, salary: emp.salary, salaryReviewNeeded: emp.salaryReviewNeeded })),
   };
 }
 
@@ -3319,6 +3362,62 @@ async function loadFromStorage() {
     if (saved.settings) Object.assign(settings, saved.settings);
     if (saved.salaryBands) Object.assign(SALARY_BANDS, saved.salaryBands);
     if (saved.snapshots) snapshots.splice(0, snapshots.length, ...saved.snapshots);
+
+    // ── Migration 1: department IDs string → numeric ──────────────────────────
+    if (departments.length && typeof departments[0].id === 'string') {
+      const slugToId = {};
+      departments.forEach((d, i) => {
+        const newId = i + 1;
+        slugToId[d.id] = newId;
+        d.id = newId;
+      });
+      // Migrate live roles and teams
+      roles.forEach(r => {
+        r.departmentId = slugToId[r.department ?? r.departmentId] ?? r.departmentId ?? null;
+        delete r.department;
+      });
+      teams.forEach(t => { t.departmentId = slugToId[t.departmentId] ?? t.departmentId; });
+      // Migrate TITLES keys from slug to numeric id
+      Object.keys(slugToId).forEach(slug => {
+        if (TITLES[slug] !== undefined) {
+          TITLES[slugToId[slug]] = TITLES[slug];
+          delete TITLES[slug];
+        }
+      });
+      // Migrate snapshot data
+      snapshots.forEach(snap => {
+        if (!snap.data) return;
+        snap.data.departments?.forEach((d, i) => {
+          if (typeof d.id === 'string') {
+            const mapped = slugToId[d.id] ?? (i + 1);
+            slugToId[d.id] = mapped;
+            d.id = mapped;
+          }
+        });
+        snap.data.roles?.forEach(r => {
+          r.departmentId = slugToId[r.department ?? r.departmentId] ?? r.departmentId ?? null;
+          delete r.department;
+        });
+        snap.data.teams?.forEach(t => { t.departmentId = slugToId[t.departmentId] ?? t.departmentId; });
+      });
+      saveToStorage(); // persist migrated data immediately
+    } else {
+      // Already numeric: ensure 'department' legacy field is cleaned up from roles
+      roles.forEach(r => {
+        if (r.department !== undefined && r.departmentId === undefined) {
+          r.departmentId = r.department;
+        }
+        delete r.department;
+      });
+    }
+
+    // ── Migration 2: add ids to roleAssignments that lack them ────────────────
+    let raMaxId = roleAssignments.reduce((m, a) => Math.max(m, a.id ?? 0), 0);
+    roleAssignments.forEach(a => { if (a.id == null) a.id = ++raMaxId; });
+
+    // ── Migration 3: strip deprecated roleId from persons ─────────────────────
+    persons.forEach(p => { delete p.roleId; });
+
   } catch (e) {
     throw e; // re-throw so init() can show error overlay
   }
@@ -3499,13 +3598,27 @@ async function init() {
           if (saved.roleAssignments) {
             roleAssignments.splice(0, roleAssignments.length, ...saved.roleAssignments);
           } else if (saved.persons) {
-            roleAssignments.splice(0, roleAssignments.length, ...saved.persons.filter(p => p.roleId != null).map(p => ({ personId: p.id, roleId: p.roleId, percentage: 100 })));
+            let raId = 0;
+            roleAssignments.splice(0, roleAssignments.length, ...saved.persons.filter(p => p.roleId != null).map(p => ({ id: ++raId, personId: p.id, roleId: p.roleId, percentage: 100 })));
           }
           if (saved.titles) { Object.keys(TITLES).forEach(k => delete TITLES[k]); Object.assign(TITLES, saved.titles); }
           if (saved.teams) teams.splice(0, teams.length, ...saved.teams);
           if (saved.settings) Object.assign(settings, saved.settings);
           if (saved.salaryBands) Object.assign(SALARY_BANDS, saved.salaryBands);
           if (saved.snapshots) snapshots.splice(0, snapshots.length, ...saved.snapshots);
+          // Apply same migrations as loadFromStorage
+          if (departments.length && typeof departments[0].id === 'string') {
+            const slugToId = {};
+            departments.forEach((d, i) => { const newId = i + 1; slugToId[d.id] = newId; d.id = newId; });
+            roles.forEach(r => { r.departmentId = slugToId[r.department ?? r.departmentId] ?? r.departmentId ?? null; delete r.department; });
+            teams.forEach(t => { t.departmentId = slugToId[t.departmentId] ?? t.departmentId; });
+            Object.keys(slugToId).forEach(slug => { if (TITLES[slug] !== undefined) { TITLES[slugToId[slug]] = TITLES[slug]; delete TITLES[slug]; } });
+          } else {
+            roles.forEach(r => { if (r.department !== undefined && r.departmentId === undefined) r.departmentId = r.department; delete r.department; });
+          }
+          let raMaxId2 = roleAssignments.reduce((m, a) => Math.max(m, a.id ?? 0), 0);
+          roleAssignments.forEach(a => { if (a.id == null) a.id = ++raMaxId2; });
+          persons.forEach(p => { delete p.roleId; });
         } catch (e) {}
       }
       saveToStorage(); // persist defaults (or migrated data) to server
@@ -3595,14 +3708,15 @@ function saveDropCreateRoleModal() {
   const teamVal = document.getElementById('drop-create-role-team').value;
   const resolvedTeamId = teamVal ? parseInt(teamVal, 10) : (pendingTeamId ?? null);
 
-  const newRole = { id: nextRoleId(), title, level, department, managerRoleId, teamId: resolvedTeamId };
+  const newRole = { id: nextRoleId(), title, level, departmentId: department, managerRoleId, teamId: resolvedTeamId };
   roles.push(newRole);
   roleAssignments = roleAssignments.filter(a => a.personId !== draggedPersonId);
-  roleAssignments.push({ personId: draggedPersonId, roleId: newRole.id, percentage: 100 });
+  roleAssignments.push({ id: nextRoleAssignmentId(), personId: draggedPersonId, roleId: newRole.id, percentage: 100 });
 
-  if (TITLES[department]) {
-    if (!TITLES[department][level]) TITLES[department][level] = [];
-    if (!TITLES[department][level].includes(title)) TITLES[department][level].push(title);
+  const deptTitles = getTitlesForDept(department);
+  if (deptTitles) {
+    if (!deptTitles[level]) deptTitles[level] = [];
+    if (!deptTitles[level].includes(title)) deptTitles[level].push(title);
   }
 
   closeDropCreateRoleModal();
@@ -3625,7 +3739,7 @@ function openReparentRoleModal(draggedRoleId, targetRoleId, targetDeptId) {
 
   state.pendingReparent = { roleId: draggedRoleId, newManagerRoleId: targetRoleId ?? null };
 
-  const resolvedDeptId = targetDeptId ?? targetRole?.department;
+  const resolvedDeptId = targetDeptId ?? targetRole?.departmentId;
   const targetDept = departments.find(d => d.id === resolvedDeptId);
   document.getElementById('reparent-role-modal-title').textContent = `Moving role to ${targetDept ? targetDept.name : resolvedDeptId}`;
   document.getElementById('reparent-role-title').value = draggedRole.title;
@@ -3654,7 +3768,8 @@ function openReparentRoleModal(draggedRoleId, targetRoleId, targetDeptId) {
 }
 
 function reparentRoleRebuildTeamDropdown() {
-  const deptId = document.getElementById('reparent-role-dept').value;
+  const deptIdRaw = document.getElementById('reparent-role-dept').value;
+  const deptId = isNaN(Number(deptIdRaw)) ? deptIdRaw : Number(deptIdRaw);
   const teamGroup = document.getElementById('reparent-role-team-group');
   const teamSel = document.getElementById('reparent-role-team');
   const deptTeams = getTeamsForDept(deptId);
@@ -3689,7 +3804,8 @@ function saveReparentRoleModal() {
 
   role.title = title;
   role.level = document.getElementById('reparent-role-level').value;
-  role.department = document.getElementById('reparent-role-dept').value;
+  const reparentDeptRaw = document.getElementById('reparent-role-dept').value;
+  role.departmentId = isNaN(Number(reparentDeptRaw)) ? reparentDeptRaw : Number(reparentDeptRaw);
   const teamVal = document.getElementById('reparent-role-team').value;
   role.teamId = teamVal ? parseInt(teamVal, 10) : null;
   role.managerRoleId = newManagerRoleId;
@@ -4053,6 +4169,7 @@ function runImport(rows, mapping, mode, dryRun = false, valueTransforms = {}) {
   function nextTeamId() { return wTeams.length > 0 ? Math.max(...wTeams.map(t => t.id)) + 1 : 200; }
   function nextWRoleId() { return wRoles.length > 0 ? Math.max(...wRoles.map(r => r.id)) + 1 : 10001; }
   function nextWPersonId() { return wPersons.length > 0 ? Math.max(...wPersons.map(p => p.id)) + 1 : 1; }
+  function nextWAssignmentId() { return wAssignments.length > 0 ? Math.max(...wAssignments.map(a => a.id ?? 0)) + 1 : 1; }
 
   if (!dryRun && mode === 'replace') {
     wPersons.splice(0, wPersons.length);
@@ -4105,9 +4222,9 @@ function runImport(rows, mapping, mode, dryRun = false, valueTransforms = {}) {
 
     if (roleTitle && deptId) {
       // Find a matching role that hasn't already been claimed by a prior row in this import
-      let role = wRoles.find(r => r.title.toLowerCase() === roleTitle.toLowerCase() && r.department === deptId && !claimedRoleIds.has(r.id));
+      let role = wRoles.find(r => r.title.toLowerCase() === roleTitle.toLowerCase() && r.departmentId === deptId && !claimedRoleIds.has(r.id));
       if (!role) {
-        role = { id: nextWRoleId(), title: roleTitle, level: level || 'L3', department: deptId, managerRoleId: null, teamId: team ? team.id : null, secondaryManagerRoleIds: [] };
+        role = { id: nextWRoleId(), title: roleTitle, level: level || 'L3', departmentId: deptId, managerRoleId: null, teamId: team ? team.id : null, secondaryManagerRoleIds: [] };
         wRoles.push(role);
         result.rolesCreated++;
       } else if (team) {
@@ -4139,7 +4256,7 @@ function runImport(rows, mapping, mode, dryRun = false, valueTransforms = {}) {
         const role = wRoles.find(r => r.id === roleId);
         const mgrRole = wRoles.find(r => r.id === mgrRoleId);
         if (role && mgrRole) {
-          if (mgrRole.department === role.department) {
+          if (mgrRole.departmentId === role.departmentId) {
             role.managerRoleId = mgrRoleId;
           } else {
             result.infoTopLevel++;
@@ -4178,7 +4295,7 @@ function runImport(rows, mapping, mode, dryRun = false, valueTransforms = {}) {
         const role = wRoles.find(r => r.id === roleId);
         const mgrRole = wRoles.find(r => r.id === mgrRoleId);
         if (role && mgrRole) {
-          if (mgrRole.department === role.department) {
+          if (mgrRole.departmentId === role.departmentId) {
             role.managerRoleId = mgrRoleId;
           } else {
             result.infoTopLevel++;
@@ -4253,7 +4370,7 @@ function runImport(rows, mapping, mode, dryRun = false, valueTransforms = {}) {
     const roleId = rowRoleIds[idx];
     if (roleId !== undefined) {
       const alreadyAssigned = wAssignments.find(a => a.personId === person.id && a.roleId === roleId);
-      if (!alreadyAssigned) wAssignments.push({ personId: person.id, roleId, percentage: 100 });
+      if (!alreadyAssigned) wAssignments.push({ id: nextWAssignmentId(), personId: person.id, roleId, percentage: 100 });
     }
   });
 

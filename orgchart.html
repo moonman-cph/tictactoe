@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -7,1613 +7,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="orgchart.css">
 
-  :root {
-    --bg: #f5f4f0;
-    --surface: #ffffff;
-    --border: #e6e4df;
-    --border-hover: #c9c6be;
-    --text-primary: #111110;
-    --text-secondary: #57534e;
-    --text-muted: #a8a29e;
-    --accent: #2563eb;
-    --accent-light: #eff6ff;
-    --accent-border: #93c5fd;
-    --drop-bg: #eff6ff;
-    --radius: 10px;
-    --shadow-sm: 0 1px 2px rgba(0,0,0,0.05), 0 1px 4px rgba(0,0,0,0.03);
-    --shadow-md: 0 4px 16px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04);
-    --nav-bg: #1c1917;
-  }
-
-  body {
-    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
-    background: var(--bg);
-    color: var(--text-primary);
-    height: 100vh;
-    overflow: hidden;
-    display: flex;
-    flex-direction: row;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  /* ── App Content Wrapper ─────────────────────────────────────── */
-  #app-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-    overflow: hidden;
-  }
-
-  /* ── Left Nav ────────────────────────────────────────────────── */
-  /* ── Left Nav ────────────────────────────────────────────────── */
-  #left-nav {
-    width: 220px;
-    flex-shrink: 0;
-    background: linear-gradient(180deg, #0f3d4a 0%, #0a2e3a 100%);
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    overflow: hidden;
-  }
-
-  #nav-logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 18px 16px 14px;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-    flex-shrink: 0;
-  }
-  .nav-logo-icon {
-    width: 28px;
-    height: 28px;
-    background: #e8622a;
-    border-radius: 7px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    box-shadow: 0 2px 8px rgba(232,98,42,0.4);
-  }
-  .nav-logo-name { font-size: 15px; font-weight: 700; color: white; letter-spacing: -0.2px; }
-
-  #nav-body {
-    flex: 1;
-    overflow-y: auto;
-    padding: 12px 0 8px;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-  }
-
-  .nav-section { padding: 4px 0; }
-  .nav-section-label {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.8px;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.3);
-    padding: 8px 20px 4px;
-  }
-
-  .nav-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 9px 16px 9px 18px;
-    margin: 1px 8px;
-    border-radius: 7px;
-    cursor: pointer;
-    user-select: none;
-    color: rgba(255,255,255,0.65);
-    font-size: 13px;
-    font-weight: 500;
-    transition: background 0.12s, color 0.12s;
-    border-left: 2.5px solid transparent;
-    text-decoration: none;
-  }
-  .nav-item:hover {
-    background: rgba(255,255,255,0.08);
-    color: rgba(255,255,255,0.95);
-  }
-  .nav-item.active {
-    background: rgba(255,255,255,0.13);
-    color: white;
-    border-left-color: rgba(255,255,255,0.7);
-    font-weight: 600;
-  }
-  .nav-item svg { flex-shrink: 0; opacity: 0.75; }
-  .nav-item.active svg, .nav-item:hover svg { opacity: 1; }
-
-  .nav-spacer { flex: 1; }
-
-  #nav-footer {
-    flex-shrink: 0;
-    padding: 12px 16px;
-    border-top: 1px solid rgba(255,255,255,0.08);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
-  }
-  #nav-footer:hover { background: rgba(255,255,255,0.06); }
-  .nav-user-avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: #e8622a;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 11px;
-    font-weight: 700;
-    color: white;
-    flex-shrink: 0;
-    box-shadow: 0 2px 6px rgba(232,98,42,0.35);
-  }
-  .nav-user-info { min-width: 0; }
-  .nav-user-name {
-    font-size: 12.5px;
-    font-weight: 600;
-    color: rgba(255,255,255,0.9);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .nav-user-role {
-    font-size: 11px;
-    color: rgba(255,255,255,0.38);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  /* ── Header ─────────────────────────────────────────────────── */
-  #app-header {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 0 24px;
-    height: 56px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-shrink: 0;
-  }
-  #app-header h1 {
-    font-size: 15px;
-    font-weight: 700;
-    letter-spacing: -0.2px;
-    color: var(--text-primary);
-  }
-  .header-divider {
-    width: 1px;
-    height: 18px;
-    background: var(--border);
-    margin: 0 4px;
-  }
-  .header-meta {
-    font-size: 12.5px;
-    color: var(--text-muted);
-    font-weight: 400;
-  }
-  .header-spacer { flex: 1; }
-  .header-badge {
-    font-size: 11.5px;
-    font-weight: 500;
-    color: var(--text-secondary);
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 3px 10px;
-  }
-
-  /* ── Main ───────────────────────────────────────────────────── */
-  #main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    padding: 20px 20px 16px;
-    gap: 14px;
-    overflow: auto;
-  }
-
-  #columns {
-    display: flex;
-    gap: 16px;
-    align-items: flex-start;
-    flex: 1;
-    overflow-x: auto;
-    padding-bottom: 8px;
-    min-width: 0;
-  }
-
-  /* ── Department Column ──────────────────────────────────────── */
-  .dept-column {
-    flex: 1 1 540px;
-    min-width: 450px;
-    max-width: 780px;
-    background: var(--surface);
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-    border-top: 3px solid var(--dept-color, var(--border));
-    box-shadow: var(--shadow-sm);
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    transition: box-shadow 0.18s, border-color 0.18s, flex-basis 0.18s ease;
-  }
-  .dept-column.drop-active {
-    border-color: var(--accent-border);
-    box-shadow: 0 0 0 3px rgba(90,103,216,0.12), var(--shadow-md);
-  }
-
-  .dept-header {
-    padding: 13px 16px 12px;
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    border-bottom: 1px solid var(--border);
-    user-select: none;
-    cursor: default;
-    background: var(--surface);
-  }
-  .dept-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 2px;
-    flex-shrink: 0;
-  }
-  .dept-name {
-    font-size: 13px;
-    font-weight: 650;
-    color: var(--text-primary);
-    letter-spacing: -0.1px;
-    flex: 1;
-  }
-  .dept-count {
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--text-muted);
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 1px 8px;
-    line-height: 1.6;
-  }
-  .dept-column.drop-active .dept-header {
-    background: var(--drop-bg);
-  }
-
-  /* ── Tree ───────────────────────────────────────────────────── */
-  .dept-tree {
-    padding: 12px 12px 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-  }
-
-  .tree-node {
-    position: relative;
-  }
-
-  .tree-children {
-    margin-left: 18px;
-    padding-left: 14px;
-    border-left: 1.5px solid #e4e7ec;
-  }
-  .tree-collapse-btn {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 18px; height: 14px; margin-bottom: 3px;
-    background: none; border: 1px solid var(--border);
-    border-radius: 3px; cursor: pointer;
-    font-size: 8px; color: var(--text-muted); flex-shrink: 0;
-  }
-  .tree-collapse-btn:hover { border-color: var(--accent); color: var(--accent); }
-  .collapsed-ghost {
-    font-size: 11px; color: var(--text-muted);
-    border: 1.5px dashed var(--border); border-radius: 6px;
-    padding: 4px 10px; margin: 2px 0;
-    cursor: pointer; text-align: center;
-  }
-  .collapsed-ghost:hover { border-color: var(--accent); color: var(--accent); }
-  .team-collapse-btn {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 16px; height: 14px;
-    background: none; border: 1px solid var(--border);
-    border-radius: 3px; cursor: pointer;
-    font-size: 8px; color: var(--text-muted); flex-shrink: 0;
-  }
-  .team-collapse-btn:hover { border-color: var(--accent); color: var(--accent); }
-  .tree-children .tree-node,
-  .dept-tree > .tree-node + .tree-node {
-    margin-top: 5px;
-  }
-
-  /* ── Unassigned Section ─────────────────────────────────────── */
-  .unassigned-section {
-    margin-top: 10px;
-    border-top: 1px dashed var(--border);
-    padding-top: 10px;
-  }
-  .unassigned-label {
-    font-size: 10.5px;
-    font-weight: 600;
-    letter-spacing: 0.4px;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    margin-bottom: 7px;
-    padding: 0 2px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .unassigned-label::before {
-    content: '';
-    display: inline-block;
-    width: 14px;
-    height: 14px;
-    background: #fef3c7;
-    border: 1px solid #fcd34d;
-    border-radius: 4px;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23d97706'%3E%3Cpath d='M8 1.5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 018 1.5zm0 9a1 1 0 100 2 1 1 0 000-2z'/%3E%3C/svg%3E");
-    background-size: 10px;
-    background-repeat: no-repeat;
-    background-position: center;
-    flex-shrink: 0;
-  }
-  .unassigned-cards {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-  }
-
-  /* ── Team Sub-header ───────────────────────────────────────── */
-  .team-subheader {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 2px 4px;
-    margin-top: 10px;
-    border-top: 1px solid var(--border);
-  }
-  .team-subheader.first-team {
-    margin-top: 0;
-    border-top: none;
-  }
-  .team-subheader-name {
-    flex: 1;
-    font-size: 10.5px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: var(--text-muted);
-  }
-  .team-subheader.drop-target {
-    background: var(--drop-bg);
-    border-radius: 6px;
-    outline: 2px dashed var(--accent);
-    outline-offset: -2px;
-  }
-  .team-external-ref {
-    font-size: 10.5px;
-    color: var(--text-muted);
-    padding: 3px 10px;
-    border-left: 2px dashed var(--border);
-    margin: 4px 0 2px 10px;
-    font-style: italic;
-  }
-  .dept-head-ref {
-    font-size: 10.5px;
-    color: var(--text-muted);
-    padding: 3px 10px;
-    border-left: 2px dashed var(--border);
-    margin: 4px 4px 8px;
-    font-style: italic;
-  }
-  .matrix-icon {
-    font-size: 13px;
-    color: var(--text-muted);
-    flex-shrink: 0;
-    cursor: default;
-    opacity: 0.6;
-    transition: opacity 0.12s;
-  }
-  .emp-card:hover .matrix-icon { opacity: 1; }
-  #modal-role-secondary-suggestions {
-    display: none;
-    position: absolute;
-    left: 0; right: 0;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    max-height: 160px;
-    overflow-y: auto;
-    z-index: 200;
-    box-shadow: 0 4px 12px rgba(0,0,0,.12);
-  }
-  .secondary-suggestion {
-    padding: 6px 10px;
-    font-size: 12px;
-    cursor: pointer;
-  }
-  .secondary-suggestion:hover { background: var(--hover-bg, #f3f4f6); }
-
-  /* ── CSV Import Modal ───────────────────────────────────────── */
-  #import-modal-backdrop {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(16,24,40,0.45);
-    z-index: 1000;
-    align-items: center;
-    justify-content: center;
-  }
-  #import-modal-panel {
-    background: var(--surface);
-    border-radius: 14px;
-    width: 100%;
-    max-width: 560px;
-    max-height: 90vh;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 20px 60px rgba(16,24,40,0.18);
-    margin: 0 16px;
-    overflow: hidden;
-  }
-  .import-steps {
-    display: flex;
-    gap: 0;
-    padding: 16px 24px 0;
-    border-bottom: 1px solid var(--border);
-  }
-  .import-step {
-    flex: 1;
-    text-align: center;
-    padding: 0 4px 12px;
-    font-size: 11.5px;
-    font-weight: 600;
-    color: var(--text-muted);
-    border-bottom: 2px solid transparent;
-    margin-bottom: -1px;
-  }
-  .import-step.active { color: var(--accent); border-bottom-color: var(--accent); }
-  .import-step.done { color: var(--text-secondary); }
-  .import-panel { display: none; padding: 20px 24px; flex: 1; overflow-y: auto; }
-  .import-panel.active { display: block; }
-  .import-drop-zone {
-    border: 2px dashed var(--border);
-    border-radius: 10px;
-    padding: 36px 24px;
-    text-align: center;
-    cursor: pointer;
-    transition: border-color 0.15s, background 0.15s;
-  }
-  .import-drop-zone:hover, .import-drop-zone.dragover {
-    border-color: var(--accent);
-    background: var(--accent-light);
-  }
-  .import-drop-zone svg { opacity: 0.4; margin-bottom: 10px; }
-  .import-drop-label { font-size: 13px; color: var(--text-secondary); margin-bottom: 4px; }
-  .import-drop-sub { font-size: 11.5px; color: var(--text-muted); }
-  .import-col-preview {
-    display: flex; flex-wrap: wrap; gap: 5px; margin-top: 14px;
-  }
-  .import-col-chip {
-    background: var(--bg); border: 1px solid var(--border); border-radius: 5px;
-    padding: 2px 8px; font-size: 11px; color: var(--text-secondary);
-  }
-  .import-map-group { margin-bottom: 16px; }
-  .import-map-group-label {
-    font-size: 11px; font-weight: 700; text-transform: uppercase;
-    letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 8px;
-  }
-  .import-map-row {
-    display: flex; align-items: center; gap: 10px; margin-bottom: 7px;
-  }
-  .import-map-label {
-    width: 130px; flex-shrink: 0; font-size: 12.5px; color: var(--text-secondary);
-  }
-  .import-map-label span { font-size: 10px; color: #ef4444; margin-left: 2px; }
-  .import-mode-option {
-    display: flex; align-items: flex-start; gap: 10px;
-    border: 1.5px solid var(--border); border-radius: 8px;
-    padding: 11px 14px; margin-bottom: 8px; cursor: pointer;
-    transition: border-color 0.12s, background 0.12s;
-  }
-  .import-mode-option.selected {
-    border-color: var(--accent); background: var(--accent-light);
-  }
-  .import-mode-option input[type=radio] { margin-top: 2px; flex-shrink: 0; }
-  .import-mode-title { font-size: 13px; font-weight: 600; color: var(--text-primary); }
-  .import-mode-desc { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; }
-  .import-replace-warn {
-    display: none; background: #fef3c7; border: 1px solid #fcd34d;
-    border-radius: 6px; padding: 8px 12px; font-size: 12px; color: #92400e; margin-top: 8px;
-  }
-  .import-preview-row {
-    display: flex; align-items: center; gap: 8px;
-    padding: 5px 0; font-size: 13px; border-bottom: 1px solid var(--border);
-  }
-  .import-preview-row:last-child { border-bottom: none; }
-  .import-preview-icon { font-size: 14px; flex-shrink: 0; }
-  .import-footer {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 14px 24px; border-top: 1px solid var(--border); flex-shrink: 0;
-  }
-  .import-section-label {
-    font-size: 10.5px; font-weight: 700; text-transform: uppercase;
-    letter-spacing: 0.08em; color: var(--text-muted);
-    margin: 14px 0 6px; padding-bottom: 4px;
-    border-bottom: 1px solid var(--border);
-  }
-  .import-preview-row.ok   { color: var(--text-primary); }
-  .import-preview-row.info { color: var(--text-secondary); }
-  .import-preview-row.warn { color: #92400e; }
-  .import-preview-row.skip { color: #b91c1c; }
-  .import-show-more {
-    font-size: 11.5px; color: var(--accent); cursor: pointer; padding: 3px 0; margin-top: 2px;
-  }
-  .import-show-more:hover { text-decoration: underline; }
-  .imap-sample {
-    font-size: 11px; color: var(--text-muted);
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    padding-left: 2px;
-  }
-  .imap-vmap-btn {
-    font-size: 11px; padding: 2px 7px;
-    border: 1px solid var(--border); border-radius: 4px;
-    background: var(--bg); color: var(--accent); cursor: pointer;
-    white-space: nowrap; flex-shrink: 0;
-  }
-  .imap-vmap-btn:hover { background: var(--accent-light); }
-  .imap-field-wrap { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-  .imap-field-top { display: flex; align-items: center; gap: 8px; }
-  .imap-field-top select { flex: 1; }
-  .imap-vmap-panel {
-    margin: 2px 0 8px 130px;
-    padding: 8px 10px;
-    background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
-  }
-  .imap-vmap-row {
-    display: flex; align-items: center; gap: 8px; margin-bottom: 5px;
-  }
-  .imap-vmap-row:last-child { margin-bottom: 0; }
-  .imap-vmap-source {
-    font-size: 12px; font-family: monospace; color: var(--text-secondary);
-    min-width: 80px; flex-shrink: 0;
-  }
-  .imap-vmap-arrow { color: var(--text-muted); font-size: 12px; flex-shrink: 0; }
-  .imap-vmap-target { flex: 1; }
-  .import-ignored-cols {
-    font-size: 12px; color: var(--text-muted); line-height: 1.6; margin: 2px 0 4px;
-  }
-
-  /* ── Team Settings Items ────────────────────────────────────── */
-  .team-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-bottom: 4px;
-  }
-  .team-item .form-control { flex: 1; }
-
-  /* ── Employee Card ──────────────────────────────────────────── */
-  .emp-card {
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    padding: 8px 10px;
-    border-radius: 8px;
-    border: 1.5px solid var(--border);
-    cursor: pointer;
-    user-select: none;
-    background: var(--surface);
-    transition: background 0.12s, border-color 0.12s, box-shadow 0.12s, opacity 0.12s;
-    position: relative;
-  }
-  .emp-card:hover {
-    background: #fafaf9;
-    border-color: var(--border-hover);
-    box-shadow: var(--shadow-sm);
-  }
-  .emp-card.selected {
-    background: var(--accent-light);
-    border-color: var(--accent-border);
-    box-shadow: 0 0 0 3px rgba(90,103,216,0.1);
-  }
-  .emp-card.dragging {
-    opacity: 0.35;
-    pointer-events: none;
-  }
-  .emp-card.drop-target {
-    border-color: var(--accent);
-    border-style: dashed;
-    background: var(--drop-bg);
-    box-shadow: 0 0 0 3px rgba(90,103,216,0.14);
-  }
-  .emp-card.orphaned {
-    border-color: #fcd34d;
-    background: #fffbeb;
-  }
-  .emp-card.orphaned:hover {
-    background: #fef9e7;
-    border-color: #f59e0b;
-  }
-
-  /* ── Avatar ─────────────────────────────────────────────────── */
-  .avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 11px;
-    font-weight: 700;
-    color: white;
-    flex-shrink: 0;
-    letter-spacing: 0.3px;
-  }
-
-  /* ── Card Info ──────────────────────────────────────────────── */
-  .emp-info { flex: 1; min-width: 0; }
-  .emp-name {
-    font-size: 12.5px;
-    font-weight: 600;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    color: var(--text-primary);
-    letter-spacing: -0.1px;
-  }
-  .emp-title {
-    font-size: 11px;
-    color: var(--text-muted);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin-top: 1px;
-    font-weight: 400;
-  }
-
-  /* ── Level Badge ─────────────────────────────────────────────── */
-  .level-badge {
-    font-size: 10px;
-    font-weight: 650;
-    padding: 2px 6px;
-    border-radius: 5px;
-    flex-shrink: 0;
-    letter-spacing: 0.2px;
-  }
-  .level-badge.tier-gray   { background: #f4f4f5; color: #71717a; }
-  .level-badge.tier-sky    { background: #eff6ff; color: #1d4ed8; }
-  .level-badge.tier-violet { background: #f0fdf4; color: #15803d; }
-  .level-badge.tier-indigo { background: #faf5ff; color: #7c3aed; }
-
-  /* ── Drag Handle ─────────────────────────────────────────────── */
-  .drag-handle {
-    color: #d0d5dd;
-    font-size: 13px;
-    flex-shrink: 0;
-    line-height: 1;
-    transition: color 0.12s;
-    cursor: grab;
-  }
-  .emp-card:hover .drag-handle { color: #98a2b3; }
-  .emp-card:active .drag-handle { cursor: grabbing; }
-  .drag-handle-role {
-    font-size: 13px; color: var(--text-muted); cursor: grab;
-    position: absolute; bottom: 4px; right: 4px;
-    opacity: 0; transition: opacity 0.15s;
-    line-height: 1; user-select: none;
-  }
-  .emp-card:hover .drag-handle-role { opacity: 1; }
-  .drag-handle-role:active { cursor: grabbing; }
-  #settings-currency-dkk.active, #settings-currency-eur.active,
-  .add-gender-btn.active {
-    background: var(--accent-light) !important;
-    border-color: var(--accent) !important;
-    color: var(--accent) !important;
-    font-weight: 600 !important;
-  }
-
-  /* ── Status Bar ─────────────────────────────────────────────── */
-  #status-bar {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 9px 16px;
-    font-size: 12.5px;
-    color: var(--text-secondary);
-    box-shadow: var(--shadow-sm);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-shrink: 0;
-    transition: border-color 0.2s;
-  }
-  #status-bar.has-selection {
-    border-color: var(--accent-border);
-    background: var(--accent-light);
-  }
-  .status-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: #d0d5dd;
-    flex-shrink: 0;
-    transition: background 0.2s;
-  }
-  #status-bar.has-selection .status-dot { background: var(--accent); }
-  #status-text { font-weight: 550; }
-  .status-hint {
-    margin-left: auto;
-    font-size: 11.5px;
-    color: var(--text-muted);
-    font-weight: 400;
-  }
-  .status-sep { color: #d0d5dd; margin: 0 2px; }
-
-  /* ── Drag Ghost ─────────────────────────────────────────────── */
-  #drag-ghost {
-    position: fixed;
-    top: -200px;
-    left: -200px;
-    pointer-events: none;
-    z-index: 9999;
-    background: var(--text-primary);
-    color: white;
-    padding: 5px 11px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 600;
-    box-shadow: 0 4px 14px rgba(16,24,40,0.25);
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-    gap: 7px;
-  }
-  #drag-ghost .ghost-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: #a5b4fc;
-    flex-shrink: 0;
-  }
-
-  /* ── Edit Modal ──────────────────────────────────────────────── */
-  #modal-backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.4);
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.18s ease;
-  }
-  #modal-backdrop.visible {
-    opacity: 1;
-    pointer-events: all;
-  }
-  #modal-panel {
-    background: var(--surface);
-    border-radius: 14px;
-    width: 100%;
-    max-width: 440px;
-    box-shadow: 0 20px 60px rgba(16,24,40,0.18), 0 4px 16px rgba(16,24,40,0.08);
-    transform: translateY(10px) scale(0.98);
-    transition: transform 0.18s ease, opacity 0.18s ease;
-    opacity: 0;
-    margin: 0 16px;
-  }
-  #modal-backdrop.visible #modal-panel {
-    transform: translateY(0) scale(1);
-    opacity: 1;
-  }
-  .modal-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 18px 20px 14px;
-    border-bottom: 1px solid var(--border);
-  }
-  .modal-title {
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--text-primary);
-    letter-spacing: -0.2px;
-  }
-  .modal-close {
-    width: 28px;
-    height: 28px;
-    border: none;
-    background: none;
-    cursor: pointer;
-    color: var(--text-muted);
-    font-size: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 6px;
-    line-height: 1;
-    transition: background 0.12s, color 0.12s;
-  }
-  .modal-close:hover { background: var(--bg); color: var(--text-primary); }
-  .modal-body {
-    padding: 18px 20px 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-  }
-  .form-label {
-    font-size: 11.5px;
-    font-weight: 600;
-    color: var(--text-secondary);
-    letter-spacing: 0.1px;
-  }
-  .form-control {
-    width: 100%;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 9px 12px;
-    font-size: 13px;
-    font-family: inherit;
-    color: var(--text-primary);
-    background: var(--surface);
-    outline: none;
-    transition: border-color 0.12s, box-shadow 0.12s;
-  }
-  .form-control:focus {
-    border-color: var(--accent-border);
-    box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
-  }
-  select.form-control {
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M2.5 4.5L6 8L9.5 4.5' stroke='%2398a2b3' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 11px center;
-    padding-right: 30px;
-    cursor: pointer;
-  }
-  .modal-warning {
-    background: #fffbeb;
-    border: 1px solid #fcd34d;
-    border-radius: 8px;
-    padding: 10px 12px;
-    font-size: 12px;
-    color: #92400e;
-    line-height: 1.5;
-    display: none;
-  }
-  .modal-warning.visible { display: block; }
-  .modal-footer {
-    display: none;
-    justify-content: flex-end;
-    gap: 8px;
-    padding: 12px 20px 18px;
-    border-top: 1px solid var(--border);
-  }
-  #modal-panel.has-changes .modal-footer { display: flex; }
-  .btn {
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 600;
-    font-family: inherit;
-    cursor: pointer;
-    transition: background 0.12s, border-color 0.12s, box-shadow 0.12s;
-    outline: none;
-    border: 1.5px solid transparent;
-  }
-  .btn-ghost {
-    background: none;
-    border-color: var(--border);
-    color: var(--text-secondary);
-  }
-  .btn-ghost:hover { background: var(--bg); border-color: var(--border-hover); }
-  .btn-primary {
-    background: #2563eb;
-    color: white;
-    border-color: #2563eb;
-  }
-  .btn-primary:hover { background: #1d4ed8; border-color: #1d4ed8; box-shadow: 0 1px 4px rgba(37,99,235,0.3); }
-
-  /* ── Modal Avatar ────────────────────────────────────────────── */
-  .modal-avatar-area {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-bottom: 8px;
-    position: relative;
-  }
-  #modal-avatar {
-    width: 72px;
-    height: 72px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 22px;
-    font-weight: 700;
-    color: white;
-    letter-spacing: 0.5px;
-  }
-  .modal-avatar-badge {
-    position: absolute;
-    bottom: 0;
-    right: calc(50% - 36px - 2px);
-    width: 20px;
-    height: 20px;
-    background: #fef3c7;
-    border: 1.5px solid #f59e0b;
-    border-radius: 50%;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    font-size: 11px;
-  }
-  .modal-avatar-badge.visible { display: flex; }
-
-  /* ── Modal View / Edit Mode ─────────────────────────────────── */
-  .form-edit { display: none; }
-  .form-view {
-    font-size: 13px;
-    color: var(--text-primary);
-    padding: 8px 2px 6px;
-    min-height: 37px;
-    line-height: 1.5;
-  }
-  #modal-panel.editing .form-edit { display: block; }
-  #modal-panel.editing .form-view { display: none; }
-  #modal-panel.editing #modal-edit-btn { display: none; }
-
-  /* Role modal view/edit lock */
-  #modal-panel .role-edit { display: none; }
-  .role-view {
-    font-size: 13px;
-    color: var(--text-primary);
-    padding: 8px 2px 6px;
-    min-height: 37px;
-    line-height: 1.5;
-  }
-  #modal-panel.role-editing .role-edit { display: block; }
-  #modal-panel.role-editing .role-view { display: none; }
-  #modal-panel.role-editing #modal-role-edit-btn {
-    background: var(--accent, #4f6ef7);
-    color: #fff;
-    border-color: var(--accent, #4f6ef7);
-  }
-  #modal-panel.role-editing #modal-role-edit-btn-view { display: none; }
-  #modal-panel.role-editing #modal-role-edit-btn-active { display: flex; }
-
-  .modal-edit-btn {
-    padding: 4px 12px;
-    font-size: 12px;
-    border-radius: 6px;
-  }
-
-  /* ── Card Warning Icon ───────────────────────────────────────── */
-  .card-warn-icon {
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    opacity: 0.85;
-  }
-  .card-warn-icon:hover { opacity: 1; }
-
-  /* ── Hide-salaries mode ───────────────────────────────────────── */
-  body.hide-salaries .emp-salary,
-  body.hide-salaries .dept-salary,
-  body.hide-salaries #modal-comp-group { display: none; }
-  body.hide-levels .level-badge { display: none; }
-
-  /* ── View-only mode ────────────────────────────────────────────── */
-  body.view-only #snapshots-nav-btn,
-  body.view-only #add-dept-btn,
-  body.view-only #add-role-btn,
-  body.view-only #add-emp-btn,
-  body.view-only .dept-add-role-btn,
-  body.view-only .dept-settings-btn,
-  body.view-only #modal-person-fire-btn,
-  body.view-only #modal-person-remove-btn,
-  body.view-only #modal-comp-group,
-  body.view-only #modal-review-toggle,
-  body.view-only #modal-flag-performance,
-  body.view-only #modal-flag-new,
-  body.view-only #modal-flag-onleave,
-  body.view-only #modal-role-edit-btn,
-  body.view-only .drag-handle,
-  body.view-only .drag-handle-role,
-  body.view-only .add-person-btn,
-  body.view-only .add-dept-col,
-  body.view-only .emp-salary,
-  body.view-only .dept-salary,
-  body.view-only .card-salary-warn { display: none; }
-
-  body.view-only .assign-pct-input { pointer-events: none; opacity: 0.55; }
-
-  /* ── Salary card styles ───────────────────────────────────────── */
-  .emp-salary {
-    font-size: 11px;
-    color: var(--text-muted);
-    margin-top: 2px;
-    font-weight: 400;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .person-flag-badge {
-    display: inline-block;
-    margin-top: 3px;
-    font-size: 9.5px;
-    font-weight: 700;
-    letter-spacing: 0.3px;
-    text-transform: uppercase;
-    border-radius: 4px;
-    padding: 1px 5px;
-    line-height: 1.5;
-    border: 1px solid;
-  }
-  .person-flag-badge.amber { background: #fef3c7; color: #b45309; border-color: #fcd34d; }
-  .person-flag-badge.red   { background: #fee2e2; color: #b91c1c; border-color: #fca5a5; }
-  .person-flag-badge.green { background: #dcfce7; color: #15803d; border-color: #86efac; }
-  .person-flag-badge.blue  { background: #dbeafe; color: #1d4ed8; border-color: #93c5fd; }
-
-  .card-salary-warn {
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    opacity: 0.85;
-  }
-  .card-salary-warn:hover { opacity: 1; }
-
-  /* ── Modal compensation section ──────────────────────────────── */
-  .modal-comp-section {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 12px 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-  .modal-comp-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 12.5px;
-  }
-  .modal-comp-label { color: var(--text-secondary); font-weight: 500; }
-  .modal-comp-value { color: var(--text-primary); font-weight: 600; font-variant-numeric: tabular-nums; }
-  .modal-comp-value.out-of-band { color: #b45309; }
-  .modal-band-bar {
-    height: 5px;
-    border-radius: 3px;
-    background: var(--border);
-    position: relative;
-    margin-top: 2px;
-    overflow: visible;
-  }
-  .modal-band-fill {
-    position: absolute;
-    top: 0; bottom: 0;
-    border-radius: 3px;
-    background: var(--accent);
-  }
-  .modal-band-fill.out-of-band { background: #f59e0b; }
-
-  .modal-review-toggle {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 14px;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    cursor: pointer;
-    user-select: none;
-    transition: border-color 0.12s, background 0.12s;
-  }
-  .modal-review-toggle:hover { border-color: var(--border-hover); background: #f4f5f8; }
-  .modal-review-toggle.active {
-    background: var(--flag-bg, #fffbeb);
-    border-color: var(--flag-border, #fcd34d);
-  }
-  .modal-review-toggle-label {
-    font-size: 12.5px;
-    font-weight: 600;
-    color: var(--text-secondary);
-  }
-  .modal-review-toggle.active .modal-review-toggle-label { color: var(--flag-text, #b45309); }
-  .modal-review-toggle-check {
-    width: 18px; height: 18px;
-    border-radius: 4px;
-    border: 1.5px solid var(--border);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 11px;
-    flex-shrink: 0;
-    background: white;
-    color: transparent;
-    transition: border-color 0.12s, background 0.12s, color 0.12s;
-  }
-  .modal-review-toggle.active .modal-review-toggle-check {
-    background: var(--flag-check, #f59e0b);
-    border-color: var(--flag-check, #f59e0b);
-    color: white;
-  }
-  .flag-amber  { --flag-bg: #fffbeb; --flag-border: #fcd34d; --flag-text: #b45309; --flag-check: #f59e0b; }
-  .flag-red    { --flag-bg: #fee2e2; --flag-border: #fca5a5; --flag-text: #b91c1c; --flag-check: #ef4444; }
-  .flag-green  { --flag-bg: #dcfce7; --flag-border: #86efac; --flag-text: #15803d; --flag-check: #22c55e; }
-  .flag-blue   { --flag-bg: #dbeafe; --flag-border: #93c5fd; --flag-text: #1d4ed8; --flag-check: #3b82f6; }
-  .flag-purple { --flag-bg: #f5f3ff; --flag-border: #c4b5fd; --flag-text: #6d28d9; --flag-check: #7c3aed; }
-
-
-  /* ── Flag chips (compact person flags) ─────────────────────── */
-  .modal-flags-row { display: flex; flex-wrap: wrap; gap: 6px; }
-  .flag-chip {
-    font-size: 11px; font-weight: 600;
-    padding: 4px 9px; border-radius: 20px;
-    border: 1.5px solid var(--border);
-    cursor: pointer; color: var(--text-muted); background: none;
-    transition: background 0.12s, border-color 0.12s, color 0.12s;
-    user-select: none;
-  }
-  .flag-chip:hover { background: #f4f5f8; border-color: var(--border-hover); }
-  .flag-chip.active { background: var(--flag-bg); border-color: var(--flag-border); color: var(--flag-text); }
-
-  /* ── Employee ID in modal ───────────────────────────────────── */
-  .modal-emp-id {
-    font-size: 11px;
-    color: var(--text-muted);
-    margin-top: 4px;
-    font-variant-numeric: tabular-nums;
-    text-align: center;
-  }
-
-  /* ── Department header actions ──────────────────────────────── */
-  .btn-danger-ghost {
-    background: none;
-    border: 1px solid transparent;
-    color: #ef4444;
-    cursor: pointer;
-    border-radius: 6px;
-    padding: 6px 12px;
-    font-size: 13px;
-    transition: border-color 0.12s, background 0.12s;
-  }
-  .btn-danger-ghost:hover { border-color: #ef4444; background: #fee2e2; }
-
-  /* ── Department creation modal ──────────────────────────────── */
-  #dept-modal-backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.4);
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.18s ease;
-  }
-  #dept-modal-backdrop.visible { opacity: 1; pointer-events: all; }
-  #dept-modal-panel {
-    background: var(--surface);
-    border-radius: 14px;
-    width: 100%;
-    max-width: 360px;
-    box-shadow: 0 20px 60px rgba(16,24,40,0.18), 0 4px 16px rgba(16,24,40,0.08);
-    transform: translateY(10px) scale(0.98);
-    transition: transform 0.18s ease, opacity 0.18s ease;
-    opacity: 0;
-    margin: 0 16px;
-  }
-  #dept-modal-backdrop.visible #dept-modal-panel { transform: translateY(0) scale(1); opacity: 1; }
-  .dept-color-swatches { display: flex; gap: 8px; flex-wrap: wrap; padding: 4px 0; }
-  .dept-color-swatch {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    cursor: pointer;
-    border: 2.5px solid transparent;
-    transition: border-color 0.12s, transform 0.12s;
-    flex-shrink: 0;
-  }
-  .dept-color-swatch:hover { transform: scale(1.12); }
-  .dept-color-swatch.selected { border-color: var(--text-primary); transform: scale(1.08); }
-
-  /* ── Header action buttons ───────────────────────────────────── */
-  .header-btn {
-    font-size: 12px;
-    font-weight: 600;
-    padding: 6px 12px;
-    border-radius: 7px;
-    border: 1.5px solid var(--border);
-    background: var(--surface);
-    color: var(--text-secondary);
-    cursor: pointer;
-    transition: background 0.12s, border-color 0.12s;
-    font-family: inherit;
-    white-space: nowrap;
-  }
-  .header-btn:hover { background: var(--bg); border-color: var(--border-hover); }
-  .header-btn.primary { background: #2563eb; color: white; border-color: #2563eb; }
-  .header-btn.primary:hover { background: #1d4ed8; border-color: #1d4ed8; }
-  #header-search {
-    font-size: 12px;
-    font-family: inherit;
-    padding: 6px 10px 6px 30px;
-    border-radius: 7px;
-    border: 1.5px solid var(--border);
-    background: var(--bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E") no-repeat 9px center;
-    color: var(--text-primary);
-    width: 180px;
-    outline: none;
-    transition: border-color 0.12s, box-shadow 0.12s;
-  }
-  #header-search::placeholder { color: var(--text-muted); }
-  #header-search:focus { border-color: var(--accent-border); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
-
-  #filter-bar {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 0 24px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    flex-shrink: 0;
-  }
-  #filter-bar-label {
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--text-muted);
-    margin-right: 4px;
-    white-space: nowrap;
-  }
-  .filter-pill {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 11.5px;
-    font-weight: 500;
-    padding: 3px 9px;
-    border-radius: 20px;
-    border: 1.5px solid var(--border);
-    background: var(--surface);
-    color: var(--text-secondary);
-    cursor: pointer;
-    transition: opacity 0.12s, background 0.12s, border-color 0.12s;
-    white-space: nowrap;
-    font-family: inherit;
-  }
-  .filter-pill .pill-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-  .filter-pill:hover { background: var(--bg); border-color: var(--border-hover); }
-  .filter-pill.hidden-dept {
-    opacity: 0.4;
-    background: var(--bg);
-  }
-  #dnd-toggle-wrap {
-    margin-left: auto;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-  }
-  #dnd-toggle-label {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    cursor: pointer;
-    user-select: none;
-  }
-  #dnd-toggle-text {
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--text-muted);
-    white-space: nowrap;
-  }
-  body.view-only #dnd-toggle-wrap { display: none; }
-
-  /* Department salary total — subtitle inside name-wrap */
-  .dept-salary {
-    font-size: 10.5px;
-    font-weight: 500;
-    color: var(--text-muted);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin-top: 1px;
-  }
-
-  /* Add Employee modal backdrop/panel (reuses existing modal class styles) */
-  #add-emp-modal-backdrop {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 1000;
-    display: flex; align-items: center; justify-content: center;
-    opacity: 0; pointer-events: none; transition: opacity 0.18s ease;
-  }
-  #add-emp-modal-backdrop.visible { opacity: 1; pointer-events: all; }
-  #add-emp-modal-panel {
-    background: var(--surface); border-radius: 14px; width: 100%; max-width: 440px;
-    box-shadow: 0 20px 60px rgba(16,24,40,0.18), 0 4px 16px rgba(16,24,40,0.08);
-    transform: translateY(10px) scale(0.98);
-    transition: transform 0.18s ease, opacity 0.18s ease;
-    opacity: 0; margin: 0 16px;
-  }
-  #add-emp-modal-backdrop.visible #add-emp-modal-panel { transform: translateY(0) scale(1); opacity: 1; }
-
-  #drop-create-role-modal-backdrop {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 1000;
-    display: flex; align-items: center; justify-content: center;
-    opacity: 0; pointer-events: none; transition: opacity 0.18s ease;
-  }
-  #drop-create-role-modal-backdrop.visible { opacity: 1; pointer-events: all; }
-  #drop-create-role-modal-panel {
-    background: var(--surface); border-radius: 14px; width: 100%; max-width: 420px;
-    box-shadow: 0 20px 60px rgba(16,24,40,0.18), 0 4px 16px rgba(16,24,40,0.08);
-    transform: translateY(10px) scale(0.98);
-    transition: transform 0.18s ease, opacity 0.18s ease;
-    opacity: 0; margin: 0 16px;
-  }
-  #drop-create-role-modal-backdrop.visible #drop-create-role-modal-panel { transform: translateY(0) scale(1); opacity: 1; }
-
-  #reparent-role-modal-backdrop {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 1000;
-    display: flex; align-items: center; justify-content: center;
-    opacity: 0; pointer-events: none; transition: opacity 0.18s ease;
-  }
-  #reparent-role-modal-backdrop.visible { opacity: 1; pointer-events: all; }
-  #reparent-role-modal-panel {
-    background: var(--surface); border-radius: 14px; width: 100%; max-width: 420px;
-    box-shadow: 0 20px 60px rgba(16,24,40,0.18), 0 4px 16px rgba(16,24,40,0.08);
-    transform: translateY(10px) scale(0.98);
-    transition: transform 0.18s ease, opacity 0.18s ease;
-    opacity: 0; margin: 0 16px;
-  }
-  #reparent-role-modal-backdrop.visible #reparent-role-modal-panel { transform: translateY(0) scale(1); opacity: 1; }
-
-  /* FTE badge on partial / over-allocated cards */
-  .fte-badge {
-    font-size: 10px; font-weight: 700; padding: 1px 5px; border-radius: 3px;
-    background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; flex-shrink: 0;
-  }
-  .fte-badge.over {
-    background: #fee2e2; color: #991b1b; border-color: #fca5a5;
-  }
-  /* Assign person picker */
-  .assign-pct-input {
-    width: 52px; padding: 4px 6px; border: 1px solid var(--border);
-    border-radius: 6px; font-size: 12px; text-align: center; font-family: inherit;
-  }
-  .assign-person-row { gap: 8px; }
-
-  /* Department Head banner */
-  .dept-head-banner {
-    margin: 0 0 12px 0;
-    padding: 10px 12px;
-    background: rgba(15,23,42,0.05);
-    border: 1.5px dashed rgba(15,23,42,0.25);
-    border-radius: var(--radius);
-  }
-  .dept-head-banner-label {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.6px;
-    text-transform: uppercase;
-    color: #475467;
-    margin-bottom: 7px;
-  }
-  .dept-head-banner .emp-card {
-    cursor: pointer;
-    border: none;
-    background: transparent;
-    box-shadow: none;
-    padding: 0;
-    margin: 0;
-  }
-  .dept-head-banner .emp-card:hover { background: rgba(15,23,42,0.04); }
-  .dept-head-banner-from {
-    font-size: 10px;
-    color: var(--text-muted);
-    margin-top: 3px;
-    padding-left: 2px;
-  }
-
-  /* Department Settings modal */
-  #dept-settings-modal-backdrop {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 1000;
-    display: flex; align-items: center; justify-content: center;
-    opacity: 0; pointer-events: none; transition: opacity 0.18s ease;
-  }
-  #dept-settings-modal-backdrop.visible { opacity: 1; pointer-events: all; }
-  #dept-settings-modal-panel {
-    background: var(--surface); border-radius: 14px; width: 100%; max-width: 500px;
-    max-height: 88vh; display: flex; flex-direction: column;
-    box-shadow: 0 20px 60px rgba(16,24,40,0.18), 0 4px 16px rgba(16,24,40,0.08);
-    transform: translateY(10px) scale(0.98);
-    transition: transform 0.18s ease, opacity 0.18s ease;
-    opacity: 0; margin: 0 16px;
-  }
-  #dept-settings-modal-backdrop.visible #dept-settings-modal-panel {
-    transform: translateY(0) scale(1); opacity: 1;
-  }
-  #dept-settings-modal-panel .modal-body { overflow-y: auto; flex: 1; }
-
-  /* Title editor section */
-  .title-section-divider {
-    border: none; border-top: 1px solid var(--border); margin: 4px 0 12px;
-  }
-  .title-section-heading {
-    font-size: 11px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
-    color: var(--text-muted); margin-bottom: 10px;
-  }
-  .title-level-group { margin-bottom: 14px; }
-  .title-level-header {
-    display: flex; align-items: baseline; gap: 8px; margin-bottom: 6px;
-  }
-  .title-level-label { font-size: 12px; font-weight: 600; color: var(--text-secondary); }
-  .title-level-band {
-    font-size: 11px; color: var(--text-muted);
-    font-variant-numeric: tabular-nums;
-  }
-  .title-item-list { display: flex; flex-direction: column; gap: 4px; margin-bottom: 6px; }
-  .title-item {
-    display: flex; align-items: center; gap: 6px;
-    padding: 5px 8px; border-radius: 6px; background: var(--bg);
-    border: 1px solid var(--border);
-  }
-  .title-text { flex: 1; font-size: 12.5px; color: var(--text-primary); }
-  .title-remove-btn {
-    flex-shrink: 0; width: 18px; height: 18px; border-radius: 4px; border: none;
-    background: transparent; color: var(--text-muted); cursor: pointer; font-size: 11px;
-    display: flex; align-items: center; justify-content: center; line-height: 1;
-    transition: background 0.1s, color 0.1s;
-  }
-  .title-remove-btn:hover { background: #fee2e2; color: #ef4444; }
-  .title-add-row { display: flex; gap: 6px; }
-  .title-add-row .form-control { font-size: 12.5px; padding: 6px 10px; }
-  .title-add-row .btn { flex-shrink: 0; padding: 6px 12px; font-size: 12px; white-space: nowrap; }
-
-  /* Gear icon on dept header */
-  .dept-settings-btn {
-    flex-shrink: 0; width: 22px; height: 22px; border-radius: 5px; border: none;
-    background: transparent; color: var(--text-muted); cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    opacity: 0; transition: opacity 0.1s, background 0.1s;
-  }
-  .dept-header:hover .dept-settings-btn { opacity: 1; }
-  .dept-settings-btn:hover { background: var(--bg); color: var(--text-secondary); }
-
-  /* ── Vacant card ─────────────────────────────────────────────── */
-  .emp-card.vacant { border-style: dashed; border-color: #d0d5dd; background: #f9fafb; opacity: 0.75; cursor: pointer; }
-  .emp-card.vacant .emp-name { color: var(--text-muted); font-style: italic; }
-  .emp-card.vacant.drop-target { border-color: var(--accent); background: var(--drop-bg); opacity: 1; }
-
-  /* ── Modal tabs ──────────────────────────────────────────────── */
-  .modal-tabs { display: flex; border-bottom: 1px solid var(--border); padding: 0 20px; flex-shrink: 0; }
-  .modal-tab {
-    padding: 10px 16px; border: none; background: none; cursor: pointer;
-    font-size: 13px; font-weight: 600; color: var(--text-secondary);
-    border-bottom: 2.5px solid transparent; margin-bottom: -1px;
-    font-family: inherit; transition: color 0.12s, border-color 0.12s;
-  }
-  .modal-tab:hover { color: var(--text-primary); }
-  .modal-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
-
-  /* ── Add-role button on dept header ─────────────────────────── */
-  .dept-add-role-btn {
-    flex-shrink: 0; width: 22px; height: 22px; border: none; background: none;
-    cursor: pointer; color: var(--text-muted); display: flex; align-items: center;
-    justify-content: center; border-radius: 4px; opacity: 0;
-    transition: opacity 0.15s, background 0.12s; padding: 0; margin-left: 4px;
-    font-size: 18px; font-weight: 400; line-height: 1; font-family: inherit;
-  }
-  .dept-header:hover .dept-add-role-btn { opacity: 1; }
-  .dept-add-role-btn:hover { background: var(--bg); color: var(--text-secondary); }
-
-  /* ── Add to role modal ───────────────────────────────────────── */
-  #add-to-role-modal-backdrop {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 1000;
-    display: flex; align-items: center; justify-content: center;
-    opacity: 0; pointer-events: none; transition: opacity 0.18s ease;
-  }
-  #add-to-role-modal-backdrop.visible { opacity: 1; pointer-events: all; }
-  #add-to-role-modal-panel {
-    background: var(--surface); border-radius: 14px; width: 100%; max-width: 400px;
-    box-shadow: 0 20px 60px rgba(16,24,40,0.18), 0 4px 16px rgba(16,24,40,0.08);
-    transform: translateY(10px) scale(0.98);
-    transition: transform 0.18s ease, opacity 0.18s ease;
-    opacity: 0; margin: 0 16px;
-  }
-  #add-to-role-modal-backdrop.visible #add-to-role-modal-panel { transform: translateY(0) scale(1); opacity: 1; }
-  .add-to-role-row {
-    display: flex; align-items: center; gap: 8px; padding: 7px 10px;
-    border-radius: 7px; cursor: pointer; transition: background 0.1s;
-  }
-  .add-to-role-row:hover { background: var(--bg); }
-  .add-to-role-row.selected { background: var(--accent-light); }
-
-  /* ── Assign person picker ────────────────────────────────────── */
-  #assign-person-modal-backdrop {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 1000;
-    display: flex; align-items: center; justify-content: center;
-    opacity: 0; pointer-events: none; transition: opacity 0.18s ease;
-  }
-  #assign-person-modal-backdrop.visible { opacity: 1; pointer-events: all; }
-  #assign-person-modal-panel {
-    background: var(--surface); border-radius: 14px; width: 100%; max-width: 380px;
-    box-shadow: 0 20px 60px rgba(16,24,40,0.18), 0 4px 16px rgba(16,24,40,0.08);
-    transform: translateY(10px) scale(0.98);
-    transition: transform 0.18s ease, opacity 0.18s ease;
-    opacity: 0; margin: 0 16px;
-  }
-  #assign-person-modal-backdrop.visible #assign-person-modal-panel { transform: translateY(0) scale(1); opacity: 1; }
-  .assign-person-row {
-    display: flex; align-items: center; gap: 10px; padding: 9px 12px;
-    border-radius: 8px; cursor: pointer; transition: background 0.1s;
-  }
-  .assign-person-row:hover { background: var(--bg); }
-
-  /* ── Add Role modal ──────────────────────────────────────────── */
-  #add-role-modal-backdrop {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 1000;
-    display: flex; align-items: center; justify-content: center;
-    opacity: 0; pointer-events: none; transition: opacity 0.18s ease;
-  }
-  #add-role-modal-backdrop.visible { opacity: 1; pointer-events: all; }
-  #add-role-modal-panel {
-    background: var(--surface); border-radius: 14px; width: 100%; max-width: 440px;
-    box-shadow: 0 20px 60px rgba(16,24,40,0.18), 0 4px 16px rgba(16,24,40,0.08);
-    transform: translateY(10px) scale(0.98);
-    transition: transform 0.18s ease, opacity 0.18s ease;
-    opacity: 0; margin: 0 16px;
-  }
-  #add-role-modal-backdrop.visible #add-role-modal-panel { transform: translateY(0) scale(1); opacity: 1; }
-
-  /* ── Snapshots modal ─────────────────────────────────────── */
-  #snapshots-modal-backdrop {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 1000;
-    display: flex; align-items: center; justify-content: center;
-    opacity: 0; pointer-events: none; transition: opacity 0.18s ease;
-  }
-  #snapshots-modal-backdrop.visible { opacity: 1; pointer-events: all; }
-  #snapshots-modal-panel {
-    background: var(--surface); border-radius: 14px; width: 100%; max-width: 420px;
-    box-shadow: 0 20px 60px rgba(16,24,40,0.18), 0 4px 16px rgba(16,24,40,0.08);
-    transform: translateY(10px) scale(0.98);
-    transition: transform 0.18s ease, opacity 0.18s ease;
-    opacity: 0; margin: 0 16px; max-height: 80vh; display: flex; flex-direction: column;
-  }
-  #snapshots-modal-backdrop.visible #snapshots-modal-panel { transform: translateY(0) scale(1); opacity: 1; }
-  #snapshots-list { overflow-y: auto; }
-  .snapshot-item {
-    display: flex; align-items: center; gap: 10px; padding: 10px 12px;
-    border-radius: 8px; border: 1px solid var(--border); margin-bottom: 6px;
-  }
-  .snapshot-item-info { flex: 1; min-width: 0; }
-  .snapshot-item-label { font-size: 13px; font-weight: 600; color: var(--text-primary); }
-  .snapshot-item-date { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
-  .snapshot-item-actions { display: flex; gap: 6px; flex-shrink: 0; }
-</style>
 </head>
 <body>
 
-<div id="loading-overlay" style="position:fixed;inset:0;background:#fff;display:flex;align-items:center;justify-content:center;font-family:inherit;color:#6b7280;z-index:9999;font-size:1.1rem;">Loading…</div>
+<div id="loading-overlay" style="position:fixed;inset:0;background:#fff;display:flex;align-items:center;justify-content:center;font-family:inherit;color:#6b7280;z-index:9999;font-size:1.1rem;">Loading�</div>
 
 <nav id="left-nav">
   <div id="nav-logo">
@@ -1758,7 +158,7 @@
   <div class="header-divider"></div>
   <span class="header-meta">Roles &amp; Employees</span>
   <div class="header-spacer"></div>
-  <input type="text" id="header-search" placeholder="Search name or title…" />
+  <input type="text" id="header-search" placeholder="Search name or title�" />
   <button class="header-btn" id="add-dept-btn">+ Department</button>
   <button class="header-btn" id="add-role-btn">+ Role</button>
   <button class="header-btn primary" id="add-emp-btn">+ Person</button>
@@ -1786,11 +186,11 @@
     <span id="status-text">No selection</span>
     <span class="status-hint">
       Click to select
-      <span class="status-sep">·</span>
+      <span class="status-sep">�</span>
       Ctrl+Click for multi-select
-      <span class="status-sep">·</span>
+      <span class="status-sep">�</span>
       Drag to reorganize
-      <span class="status-sep">·</span>
+      <span class="status-sep">�</span>
       Double-click to edit
     </span>
   </div>
@@ -1823,7 +223,7 @@
     <div class="modal-body" id="modal-body-person">
       <div class="modal-avatar-area">
         <div id="modal-avatar"></div>
-        <div id="modal-avatar-badge" class="modal-avatar-badge">⚠</div>
+        <div id="modal-avatar-badge" class="modal-avatar-badge">?</div>
         <div id="modal-person-name" style="font-size:14px;font-weight:600;color:var(--text-primary);margin-top:8px;text-align:center;"></div>
         <div id="modal-person-emp-id" class="modal-emp-id"></div>
       </div>
@@ -1892,7 +292,7 @@
           <div id="modal-role-secondary-list" style="display:flex;flex-direction:column;gap:4px;margin-bottom:6px"></div>
           <div style="position:relative">
             <input type="text" id="modal-role-secondary-search" class="form-control"
-                   placeholder="Search by name or role…" autocomplete="off"
+                   placeholder="Search by name or role�" autocomplete="off"
                    style="font-size:12px" />
             <div id="modal-role-secondary-suggestions"></div>
           </div>
@@ -1906,7 +306,7 @@
       <div class="modal-comp-section" style="font-size:12.5px;">
         Assigned to: <span id="modal-role-person-name" style="font-weight:600"></span>
       </div>
-      <button class="btn btn-ghost" id="modal-role-assign-btn" style="width:100%;margin-top:8px;display:none">Assign person…</button>
+      <button class="btn btn-ghost" id="modal-role-assign-btn" style="width:100%;margin-top:8px;display:none">Assign person�</button>
       <div class="role-edit">
         <button class="btn btn-ghost" id="modal-role-delete-btn" style="color:#ef4444;border-color:#fca5a5;width:100%;margin-top:8px;display:none">Delete role</button>
       </div>
@@ -1929,10 +329,10 @@
       <button class="modal-close" id="import-modal-close">&#x2715;</button>
     </div>
     <div class="import-steps">
-      <div class="import-step active" id="import-step-1">1 · Upload</div>
-      <div class="import-step" id="import-step-2">2 · Map fields</div>
-      <div class="import-step" id="import-step-3">3 · Options</div>
-      <div class="import-step" id="import-step-4">4 · Preview</div>
+      <div class="import-step active" id="import-step-1">1 � Upload</div>
+      <div class="import-step" id="import-step-2">2 � Map fields</div>
+      <div class="import-step" id="import-step-3">3 � Options</div>
+      <div class="import-step" id="import-step-4">4 � Preview</div>
     </div>
     <!-- Step 1: Upload -->
     <div class="import-panel active" id="import-panel-1">
@@ -1954,13 +354,13 @@
         <div class="import-map-row"><div class="import-map-label">Full name <span>*</span></div><div class="imap-field-wrap"><select class="form-control" id="imap-name"></select><span class="imap-sample" id="imap-sample-name"></span></div></div>
         <div class="import-map-row"><div class="import-map-label">Employee ID</div><div class="imap-field-wrap"><select class="form-control" id="imap-employeeId"></select><span class="imap-sample" id="imap-sample-employeeId"></span></div></div>
         <div class="import-map-row"><div class="import-map-label">Salary (monthly)</div><div class="imap-field-wrap"><select class="form-control" id="imap-salary"></select><span class="imap-sample" id="imap-sample-salary"></span></div></div>
-        <div class="import-map-row"><div class="import-map-label">Gender</div><div class="imap-field-wrap"><div class="imap-field-top"><select class="form-control" id="imap-gender"></select><button class="imap-vmap-btn" id="imap-vmap-btn-gender" style="display:none">↔ Map values</button></div><span class="imap-sample" id="imap-sample-gender"></span></div></div>
+        <div class="import-map-row"><div class="import-map-label">Gender</div><div class="imap-field-wrap"><div class="imap-field-top"><select class="form-control" id="imap-gender"></select><button class="imap-vmap-btn" id="imap-vmap-btn-gender" style="display:none">? Map values</button></div><span class="imap-sample" id="imap-sample-gender"></span></div></div>
         <div class="imap-vmap-panel" id="imap-vmap-gender" style="display:none"></div>
       </div>
       <div class="import-map-group">
         <div class="import-map-group-label">Role</div>
         <div class="import-map-row"><div class="import-map-label">Job title <span>*</span></div><div class="imap-field-wrap"><select class="form-control" id="imap-roleTitle"></select><span class="imap-sample" id="imap-sample-roleTitle"></span></div></div>
-        <div class="import-map-row"><div class="import-map-label">Level (L1–L8)</div><div class="imap-field-wrap"><div class="imap-field-top"><select class="form-control" id="imap-roleLevel"></select><button class="imap-vmap-btn" id="imap-vmap-btn-roleLevel" style="display:none">↔ Map values</button></div><span class="imap-sample" id="imap-sample-roleLevel"></span></div></div>
+        <div class="import-map-row"><div class="import-map-label">Level (L1�L8)</div><div class="imap-field-wrap"><div class="imap-field-top"><select class="form-control" id="imap-roleLevel"></select><button class="imap-vmap-btn" id="imap-vmap-btn-roleLevel" style="display:none">? Map values</button></div><span class="imap-sample" id="imap-sample-roleLevel"></span></div></div>
         <div class="imap-vmap-panel" id="imap-vmap-roleLevel" style="display:none"></div>
         <div class="import-map-row"><div class="import-map-label">Department</div><div class="imap-field-wrap"><select class="form-control" id="imap-roleDept"></select><span class="imap-sample" id="imap-sample-roleDept"></span></div></div>
         <div class="import-map-row"><div class="import-map-label">Team</div><div class="imap-field-wrap"><select class="form-control" id="imap-roleTeam"></select><span class="imap-sample" id="imap-sample-roleTeam"></span></div></div>
@@ -1985,7 +385,7 @@
         <div><div class="import-mode-title">Replace</div><div class="import-mode-desc">Remove all existing employees and roles, then import fresh from this file.</div></div>
       </label>
       <div class="import-replace-warn" id="import-replace-warn">
-        ⚠ All current employees and roles will be permanently deleted before importing.
+        ? All current employees and roles will be permanently deleted before importing.
       </div>
     </div>
     <!-- Step 4: Preview -->
@@ -1993,10 +393,10 @@
       <div id="import-preview-content"></div>
     </div>
     <div class="import-footer">
-      <button class="btn btn-ghost" id="import-back-btn" style="visibility:hidden">← Back</button>
+      <button class="btn btn-ghost" id="import-back-btn" style="visibility:hidden">? Back</button>
       <div style="display:flex;gap:8px">
         <button class="btn btn-ghost" id="import-cancel-btn">Cancel</button>
-        <button class="btn btn-primary" id="import-next-btn">Next →</button>
+        <button class="btn btn-primary" id="import-next-btn">Next ?</button>
       </div>
     </div>
   </div>
@@ -2285,7 +685,7 @@
         <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;">
           <div>
             <span style="font-size:13px;font-weight:500;color:var(--text-secondary);">Hide level badges</span>
-            <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Removes L1–L8 badges from org chart cards</div>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Removes L1�L8 badges from org chart cards</div>
           </div>
           <div id="settings-hide-levels-toggle" style="position:relative;width:36px;height:20px;flex-shrink:0;">
             <input type="checkbox" id="settings-hide-levels-cb" style="opacity:0;width:0;height:0;position:absolute;" />
@@ -2296,7 +696,7 @@
       </div>
       <div style="border-top:1px solid var(--border);margin-top:16px;padding-top:16px;">
         <button id="settings-open-paybands" style="width:100%;padding:8px 12px;border-radius:6px;border:1.5px solid var(--border);background:#fff;font-size:13px;font-weight:500;cursor:pointer;color:var(--text-secondary);text-align:left;display:flex;align-items:center;justify-content:space-between;">
-          Manage pay bands <span style="color:var(--text-muted);font-size:16px;">›</span>
+          Manage pay bands <span style="color:var(--text-muted);font-size:16px;">�</span>
         </button>
       </div>
       <div style="border-top:1px solid var(--border);margin-top:16px;padding-top:16px;">
@@ -2351,7 +751,7 @@
 </div>
 
 <script>
-// ── Data ─────────────────────────────────────────────────────────────────────
+// -- Data ---------------------------------------------------------------------
 
 const departments = [
   { id: 'executive',        name: 'Executive',        color: '#0f172a', description: 'C-Level leadership', headRoleId: null },
@@ -2367,37 +767,37 @@ const departments = [
 ];
 
 let teams = [
-  // Engineering — product teams
+  // Engineering � product teams
   { id:1,  name:'Nexus',         departmentId:'engineering' },
   { id:2,  name:'Plinger',       departmentId:'engineering' },
   { id:3,  name:'Delta Wing',    departmentId:'engineering' },
-  // Product — product teams
+  // Product � product teams
   { id:4,  name:'Nexus',         departmentId:'product' },
   { id:5,  name:'Plinger',       departmentId:'product' },
   { id:6,  name:'Delta Wing',    departmentId:'product' },
-  // Sales — regions
+  // Sales � regions
   { id:7,  name:'North America', departmentId:'sales' },
   { id:8,  name:'Europe',        departmentId:'sales' },
   { id:9,  name:'APAC',          departmentId:'sales' },
-  // Marketing — regions
+  // Marketing � regions
   { id:10, name:'North America', departmentId:'marketing' },
   { id:11, name:'Europe',        departmentId:'marketing' },
   { id:12, name:'APAC',          departmentId:'marketing' },
-  // Customer Success — regions
+  // Customer Success � regions
   { id:13, name:'North America', departmentId:'customer-success' },
   { id:14, name:'Europe',        departmentId:'customer-success' },
   { id:15, name:'APAC',          departmentId:'customer-success' },
 ];
 
 let roles = [
-  // ── Executive (9001–9006) ──────────────────────────────────────────────────
+  // -- Executive (9001�9006) --------------------------------------------------
   { id:9001, title:'Chief Executive Officer',   level:'L8', department:'executive', managerRoleId:null, teamId:null },
   { id:9002, title:'Chief Technology Officer',  level:'L8', department:'executive', managerRoleId:9001, teamId:null },
   { id:9003, title:'Chief Product Officer',     level:'L8', department:'executive', managerRoleId:9001, teamId:null },
   { id:9004, title:'Chief Financial Officer',   level:'L8', department:'executive', managerRoleId:9001, teamId:null },
   { id:9005, title:'Chief Marketing Officer',   level:'L8', department:'executive', managerRoleId:9001, teamId:null },
   { id:9006, title:'Chief People Officer',      level:'L8', department:'executive', managerRoleId:9001, teamId:null },
-  // ── Engineering — VP + one manager per product team ────────────────────────
+  // -- Engineering � VP + one manager per product team ------------------------
   { id:10001, title:'VP of Engineering',        level:'L7', department:'engineering', managerRoleId:null,  teamId:null },
   { id:10002, title:'Engineering Manager',      level:'L5', department:'engineering', managerRoleId:10001, teamId:1 },
   { id:10003, title:'Engineering Manager',      level:'L5', department:'engineering', managerRoleId:10001, teamId:2 },
@@ -2433,7 +833,7 @@ let roles = [
   { id:10030, title:'QA Engineer',              level:'L2', department:'engineering', managerRoleId:10004, teamId:3 },
   { id:10031, title:'Junior Software Engineer', level:'L1', department:'engineering', managerRoleId:10004, teamId:3 },
   { id:10032, title:'Junior Software Engineer', level:'L1', department:'engineering', managerRoleId:10004, teamId:3 },
-  // ── Product — Director + one GPM per product team ──────────────────────────
+  // -- Product � Director + one GPM per product team --------------------------
   { id:10033, title:'Director of Product',      level:'L7', department:'product', managerRoleId:null,  teamId:null },
   // Nexus
   { id:10034, title:'Group Product Manager',    level:'L5', department:'product', managerRoleId:10033, teamId:4 },
@@ -2449,7 +849,7 @@ let roles = [
   { id:10042, title:'Group Product Manager',    level:'L5', department:'product', managerRoleId:10033, teamId:6 },
   { id:10043, title:'Senior Product Manager',   level:'L4', department:'product', managerRoleId:10042, teamId:6 },
   { id:10044, title:'Product Manager',          level:'L3', department:'product', managerRoleId:10042, teamId:6 },
-  // ── Design ─────────────────────────────────────────────────────────────────
+  // -- Design -----------------------------------------------------------------
   { id:10045, title:'Director of Design',       level:'L7', department:'design', managerRoleId:null,  teamId:null },
   { id:10046, title:'Design Manager',           level:'L5', department:'design', managerRoleId:10045, teamId:null },
   { id:10047, title:'Design Manager',           level:'L5', department:'design', managerRoleId:10045, teamId:null },
@@ -2458,7 +858,7 @@ let roles = [
   { id:10050, title:'UX Designer',              level:'L2', department:'design', managerRoleId:10046, teamId:null },
   { id:10051, title:'Senior Visual Designer',   level:'L3', department:'design', managerRoleId:10047, teamId:null },
   { id:10052, title:'Visual Designer',          level:'L2', department:'design', managerRoleId:10047, teamId:null },
-  // ── Sales — VP + one regional manager per territory ────────────────────────
+  // -- Sales � VP + one regional manager per territory ------------------------
   { id:10053, title:'VP of Sales',              level:'L7', department:'sales', managerRoleId:null,  teamId:null },
   // North America
   { id:10054, title:'Regional Sales Manager',   level:'L5', department:'sales', managerRoleId:10053, teamId:7 },
@@ -2482,7 +882,7 @@ let roles = [
   { id:10070, title:'Account Executive',        level:'L4', department:'sales', managerRoleId:10069, teamId:9 },
   { id:10071, title:'Account Executive',        level:'L4', department:'sales', managerRoleId:10069, teamId:9 },
   { id:10072, title:'Sales Development Rep',    level:'L2', department:'sales', managerRoleId:10069, teamId:9 },
-  // ── Marketing — Director + one regional manager per territory ──────────────
+  // -- Marketing � Director + one regional manager per territory --------------
   { id:10073, title:'Director of Marketing',         level:'L7', department:'marketing', managerRoleId:null,  teamId:null },
   // North America
   { id:10074, title:'Regional Marketing Manager',    level:'L5', department:'marketing', managerRoleId:10073, teamId:10 },
@@ -2498,7 +898,7 @@ let roles = [
   { id:10082, title:'Regional Marketing Manager',    level:'L5', department:'marketing', managerRoleId:10073, teamId:12 },
   { id:10083, title:'Senior Marketing Manager',      level:'L3', department:'marketing', managerRoleId:10082, teamId:12 },
   { id:10084, title:'Marketing Coordinator',         level:'L1', department:'marketing', managerRoleId:10082, teamId:12 },
-  // ── Customer Success — Director + one CS manager per territory ─────────────
+  // -- Customer Success � Director + one CS manager per territory -------------
   { id:10085, title:'Director of Customer Success',    level:'L7', department:'customer-success', managerRoleId:null,  teamId:null },
   // North America
   { id:10086, title:'CS Manager',                      level:'L5', department:'customer-success', managerRoleId:10085, teamId:13 },
@@ -2517,7 +917,7 @@ let roles = [
   { id:10097, title:'CS Manager',                      level:'L5', department:'customer-success', managerRoleId:10085, teamId:15 },
   { id:10098, title:'Customer Success Manager',        level:'L3', department:'customer-success', managerRoleId:10097, teamId:15 },
   { id:10099, title:'Customer Success Manager',        level:'L3', department:'customer-success', managerRoleId:10097, teamId:15 },
-  // ── People & HR ────────────────────────────────────────────────────────────
+  // -- People & HR ------------------------------------------------------------
   { id:10100, title:'Director of People',              level:'L7', department:'hr', managerRoleId:null,  teamId:null },
   { id:10101, title:'HR Manager',                      level:'L5', department:'hr', managerRoleId:10100, teamId:null },
   { id:10102, title:'Senior HR Business Partner',      level:'L4', department:'hr', managerRoleId:10101, teamId:null },
@@ -2526,14 +926,14 @@ let roles = [
   { id:10105, title:'HR Specialist',                   level:'L2', department:'hr', managerRoleId:10102, teamId:null },
   { id:10106, title:'Recruiter',                       level:'L2', department:'hr', managerRoleId:10104, teamId:null },
   { id:10107, title:'People Operations Specialist',    level:'L2', department:'hr', managerRoleId:10101, teamId:null },
-  // ── Finance ────────────────────────────────────────────────────────────────
+  // -- Finance ----------------------------------------------------------------
   { id:10108, title:'Director of Finance',             level:'L7', department:'finance', managerRoleId:null,  teamId:null },
   { id:10109, title:'Finance Manager',                 level:'L5', department:'finance', managerRoleId:10108, teamId:null },
   { id:10110, title:'Senior Financial Analyst',        level:'L4', department:'finance', managerRoleId:10109, teamId:null },
   { id:10111, title:'Financial Analyst',               level:'L3', department:'finance', managerRoleId:10109, teamId:null },
   { id:10112, title:'Financial Analyst',               level:'L3', department:'finance', managerRoleId:10109, teamId:null },
   { id:10113, title:'Finance Analyst',                 level:'L2', department:'finance', managerRoleId:10109, teamId:null },
-  // ── Legal ──────────────────────────────────────────────────────────────────
+  // -- Legal ------------------------------------------------------------------
   { id:10114, title:'General Counsel',                 level:'L7', department:'legal', managerRoleId:null,  teamId:null },
   { id:10115, title:'Senior Counsel',                  level:'L5', department:'legal', managerRoleId:10114, teamId:null },
   { id:10116, title:'Counsel',                         level:'L4', department:'legal', managerRoleId:10115, teamId:null },
@@ -2578,7 +978,7 @@ let persons = [
   { id:33,  name:'Nina Simone',         salary:47000,  salaryReviewNeeded:false, gender:'female',                        roleId:10027 },
   { id:34,  name:'Marlon Wayans',       salary:45000,  salaryReviewNeeded:false, gender:'male',                          roleId:10028 },
   { id:35,  name:'Ray Charles',         salary:50000,  salaryReviewNeeded:false, gender:'male',                          roleId:10029 },
-  // Product  (roles 10030–10032 in Delta Wing are vacant)
+  // Product  (roles 10030�10032 in Delta Wing are vacant)
   { id:36,  name:'Denzel Washington',   salary:155000, salaryReviewNeeded:false, gender:'male',                          roleId:10033 },
   { id:37,  name:'Beyonce Knowles',     salary:110000, salaryReviewNeeded:false, gender:'female',                        roleId:10034 },
   { id:38,  name:'Robert De Niro',      salary:105000, salaryReviewNeeded:false, gender:'male',                          roleId:10038 },
@@ -2675,23 +1075,23 @@ let persons = [
 const DEFAULT_PERSONS = persons.map(p => ({ id: p.id, gender: p.gender }));
 
 // roleAssignments replaces person.roleId as the join between persons and roles.
-// Each entry: { personId, roleId, percentage } where percentage is 1–100.
+// Each entry: { personId, roleId, percentage } where percentage is 1�100.
 // A role may have at most one person; a person may have many roles.
 let roleAssignments = persons
   .filter(p => p.roleId != null)
   .map(p => ({ personId: p.id, roleId: p.roleId, percentage: 100 }));
 
-// ── Level & Title Config ──────────────────────────────────────────────────────
+// -- Level & Title Config ------------------------------------------------------
 
 const LEVELS = [
-  { id: 'L1', label: 'L1 · Junior' },
-  { id: 'L2', label: 'L2 · Mid' },
-  { id: 'L3', label: 'L3 · Senior' },
-  { id: 'L4', label: 'L4 · Lead / Specialist' },
-  { id: 'L5', label: 'L5 · Manager' },
-  { id: 'L6', label: 'L6 · Senior Manager' },
-  { id: 'L7', label: 'L7 · Director' },
-  { id: 'L8', label: 'L8 · VP / Head' },
+  { id: 'L1', label: 'L1 � Junior' },
+  { id: 'L2', label: 'L2 � Mid' },
+  { id: 'L3', label: 'L3 � Senior' },
+  { id: 'L4', label: 'L4 � Lead / Specialist' },
+  { id: 'L5', label: 'L5 � Manager' },
+  { id: 'L6', label: 'L6 � Senior Manager' },
+  { id: 'L7', label: 'L7 � Director' },
+  { id: 'L8', label: 'L8 � VP / Head' },
 ];
 
 const PERSON_FLAGS = [
@@ -2805,7 +1205,7 @@ const TITLES = {
   },
 };
 
-// ── State ─────────────────────────────────────────────────────────────────────
+// -- State ---------------------------------------------------------------------
 
 const state = {
   selectedRoleIds: new Set(),
@@ -2825,7 +1225,7 @@ let hiddenDepts = new Set();
 let collapsedManagers = new Set(); // role IDs whose direct reports are collapsed
 let collapsedTeams = new Set();    // team IDs (or '__general__<deptId>') whose contents are collapsed
 
-// ── Utilities ─────────────────────────────────────────────────────────────────
+// -- Utilities -----------------------------------------------------------------
 
 function getInitials(name) {
   return name.split(' ').map(p => p[0]).join('').slice(0, 2).toUpperCase();
@@ -2856,7 +1256,7 @@ function levelTierClass(levelId) {
 function getLevelNum(levelId) { return parseInt(levelId.slice(1), 10); }
 
 function formatSalary(n) {
-  if (settings.currency === 'EUR') return '€' + n.toLocaleString('en-US') + '/mo';
+  if (settings.currency === 'EUR') return '�' + n.toLocaleString('en-US') + '/mo';
   return n.toLocaleString('da-DK') + ' kr/mo';
 }
 
@@ -2874,7 +1274,7 @@ function nextAvailableColor() {
   return DEPT_COLOR_PALETTE.find(c => !used.has(c)) || DEPT_COLOR_PALETTE[0];
 }
 
-// ── Role / Person helpers ─────────────────────────────────────────────────────
+// -- Role / Person helpers -----------------------------------------------------
 
 function getPersonForRole(roleId) {
   const a = roleAssignments.find(a => a.roleId === roleId);
@@ -2982,7 +1382,7 @@ function hasLevelMismatch(roleId) {
   return false;
 }
 
-// ── Rendering ─────────────────────────────────────────────────────────────────
+// -- Rendering -----------------------------------------------------------------
 
 function renderCard(role, isOrphaned = false) {
   const person = getPersonForRole(role.id);
@@ -3038,7 +1438,7 @@ function renderCard(role, isOrphaned = false) {
   if (isPartial || isOver) {
     const fteBadge = document.createElement('span');
     fteBadge.className = 'fte-badge' + (isOver ? ' over' : '');
-    fteBadge.textContent = isOver ? `${totalAlloc}% ⚠` : `${assignment.percentage}%`;
+    fteBadge.textContent = isOver ? `${totalAlloc}% ?` : `${assignment.percentage}%`;
     fteBadge.title = isOver
       ? `Over-allocated: ${totalAlloc}% total across all roles`
       : `${assignment.percentage}% FTE on this role`;
@@ -3239,12 +1639,12 @@ function renderCard(role, isOrphaned = false) {
       const smRole = roles.find(r => r.id === smId);
       if (!smRole) return null;
       const smPerson = getPersonForRole(smId);
-      return `⤷ ${smPerson ? smPerson.name : smRole.title} · ${smRole.title}`;
+      return `? ${smPerson ? smPerson.name : smRole.title} � ${smRole.title}`;
     }).filter(Boolean).join('\n');
     const icon = document.createElement('div');
     icon.className = 'matrix-icon';
     icon.title = tooltipLines;
-    icon.textContent = '⤷';
+    icon.textContent = '?';
     card.appendChild(icon);
   }
 
@@ -3262,7 +1662,7 @@ function renderTree(managerRoleId, deptId, excludeTeamRoles = false, restrictToT
   if (managerRoleId !== null && collapsedManagers.has(managerRoleId)) {
     const ghost = document.createElement('div');
     ghost.className = 'collapsed-ghost';
-    ghost.textContent = `▶ ${children.length} direct report${children.length !== 1 ? 's' : ''} hidden — click to expand`;
+    ghost.textContent = `? ${children.length} direct report${children.length !== 1 ? 's' : ''} hidden � click to expand`;
     ghost.addEventListener('click', () => { collapsedManagers.delete(managerRoleId); render(); });
     container.appendChild(ghost);
     return container;
@@ -3271,7 +1671,7 @@ function renderTree(managerRoleId, deptId, excludeTeamRoles = false, restrictToT
   if (managerRoleId !== null) {
     const toggleBtn = document.createElement('button');
     toggleBtn.className = 'tree-collapse-btn';
-    toggleBtn.textContent = '▼';
+    toggleBtn.textContent = '?';
     toggleBtn.title = 'Collapse direct reports';
     toggleBtn.addEventListener('click', e => { e.stopPropagation(); collapsedManagers.add(managerRoleId); render(); });
     container.appendChild(toggleBtn);
@@ -3395,7 +1795,7 @@ function renderDeptColumn(dept) {
       const person = getPersonForRole(headRole.id);
       const ref = document.createElement('div');
       ref.className = 'dept-head-ref';
-      ref.textContent = `↑ ${person ? person.name : headRole.title} · ${headRole.title}`;
+      ref.textContent = `? ${person ? person.name : headRole.title} � ${headRole.title}`;
       tree.appendChild(ref);
     }
   }
@@ -3415,7 +1815,7 @@ function renderDeptColumn(dept) {
       const genKey = '__general__' + dept.id;
       const genCollapseBtn = document.createElement('button');
       genCollapseBtn.className = 'team-collapse-btn';
-      genCollapseBtn.textContent = collapsedTeams.has(genKey) ? '▶' : '▼';
+      genCollapseBtn.textContent = collapsedTeams.has(genKey) ? '?' : '?';
       genCollapseBtn.title = collapsedTeams.has(genKey) ? 'Expand' : 'Collapse';
       genCollapseBtn.addEventListener('click', e => {
         e.stopPropagation();
@@ -3427,7 +1827,7 @@ function renderDeptColumn(dept) {
       if (collapsedTeams.has(genKey)) {
         const ghost = document.createElement('div');
         ghost.className = 'collapsed-ghost';
-        ghost.textContent = `▶ ${deptRootRoles.length} role${deptRootRoles.length !== 1 ? 's' : ''} hidden — click to expand`;
+        ghost.textContent = `? ${deptRootRoles.length} role${deptRootRoles.length !== 1 ? 's' : ''} hidden � click to expand`;
         ghost.addEventListener('click', () => { collapsedTeams.delete(genKey); render(); });
         tree.appendChild(ghost);
       } else {
@@ -3453,7 +1853,7 @@ function renderDeptColumn(dept) {
       if (teamRoleCount > 0) {
         const btn = document.createElement('button');
         btn.className = 'team-collapse-btn';
-        btn.textContent = collapsedTeams.has(team.id) ? '▶' : '▼';
+        btn.textContent = collapsedTeams.has(team.id) ? '?' : '?';
         btn.title = collapsedTeams.has(team.id) ? 'Expand team' : 'Collapse team';
         btn.addEventListener('click', e => {
           e.stopPropagation();
@@ -3469,7 +1869,7 @@ function renderDeptColumn(dept) {
       if (collapsedTeams.has(team.id)) {
         const ghost = document.createElement('div');
         ghost.className = 'collapsed-ghost';
-        ghost.textContent = `▶ ${teamRoleCount} role${teamRoleCount !== 1 ? 's' : ''} hidden — click to expand`;
+        ghost.textContent = `? ${teamRoleCount} role${teamRoleCount !== 1 ? 's' : ''} hidden � click to expand`;
         ghost.addEventListener('click', () => { collapsedTeams.delete(team.id); render(); });
         tree.appendChild(ghost);
       } else {
@@ -3481,7 +1881,7 @@ function renderDeptColumn(dept) {
               const mgrPerson = getPersonForRole(externalMgr.id);
               const indicator = document.createElement('div');
               indicator.className = 'team-external-ref';
-              indicator.textContent = `↑ Reports to: ${mgrPerson ? mgrPerson.name : externalMgr.title}`;
+              indicator.textContent = `? Reports to: ${mgrPerson ? mgrPerson.name : externalMgr.title}`;
               tree.appendChild(indicator);
             }
           }
@@ -3495,7 +1895,7 @@ function renderDeptColumn(dept) {
       }
     });
   } else {
-    // No teams — render all root roles (managerRoleId === null)
+    // No teams � render all root roles (managerRoleId === null)
     const rootRoles = roles.filter(r => r.department === dept.id && r.managerRoleId === null && !r.teamId);
     rootRoles.forEach(rootRole => {
       const rootNode = document.createElement('div');
@@ -3660,7 +2060,7 @@ function rebuildRoleTeamDropdown(deptId, currentTeamId, elementId) {
   });
 }
 
-// ── Combined Edit Modal ───────────────────────────────────────────────────────
+// -- Combined Edit Modal -------------------------------------------------------
 
 function switchModalTab(tab) {
   document.querySelectorAll('.modal-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
@@ -3703,11 +2103,11 @@ function rebuildSecondaryManagersUI(roleId) {
   const secIds = (role?.secondaryManagerRoleIds) || [];
 
   const viewEl = document.getElementById('modal-role-secondary-view');
-  viewEl.textContent = secIds.length === 0 ? '—' : secIds.map(id => {
+  viewEl.textContent = secIds.length === 0 ? '�' : secIds.map(id => {
     const r = roles.find(x => x.id === id);
     if (!r) return '';
     const p = getPersonForRole(id);
-    return `${p ? p.name : r.title} · ${r.title}`;
+    return `${p ? p.name : r.title} � ${r.title}`;
   }).filter(Boolean).join(', ');
 
   const listEl = document.getElementById('modal-role-secondary-list');
@@ -3736,7 +2136,7 @@ function rebuildSecondaryManagersUI(roleId) {
       const deptName = departments.find(d => d.id === r.department)?.name || '';
       const item = document.createElement('div');
       item.className = 'secondary-suggestion';
-      item.textContent = `${p.name} · ${r.title} (${deptName})`;
+      item.textContent = `${p.name} � ${r.title} (${deptName})`;
       item.onmousedown = e => {
         e.preventDefault();
         appendSecondaryManagerItem(listEl, r.id, roleId);
@@ -3767,10 +2167,10 @@ function appendSecondaryManagerItem(listEl, roleId, editingRoleId) {
   item.style.cssText = 'display:flex;align-items:center;gap:6px;font-size:12px;padding:2px 0';
   const label = document.createElement('span');
   label.style.flex = '1';
-  label.textContent = `${p ? p.name : r.title} · ${r.title} (${deptName})`;
+  label.textContent = `${p ? p.name : r.title} � ${r.title} (${deptName})`;
   const removeBtn = document.createElement('button');
   removeBtn.type = 'button';
-  removeBtn.textContent = '×';
+  removeBtn.textContent = '�';
   removeBtn.style.cssText = 'border:none;background:none;cursor:pointer;color:var(--text-muted);font-size:14px;padding:0 2px';
   removeBtn.onclick = () => item.remove();
   item.append(label, removeBtn);
@@ -3933,13 +2333,13 @@ function openCombinedModal(roleId, defaultTab) {
     // Populate view-mode text spans
     const levelEntry = LEVELS.find(l => l.id === role.level);
     document.getElementById('modal-role-level-view').textContent = levelEntry ? levelEntry.label : role.level;
-    document.getElementById('modal-role-title-view').textContent = role.title || '—';
+    document.getElementById('modal-role-title-view').textContent = role.title || '�';
     const deptObj = departments.find(d => d.id === role.department);
-    document.getElementById('modal-role-dept-view').textContent = deptObj ? deptObj.name : (role.department || '—');
+    document.getElementById('modal-role-dept-view').textContent = deptObj ? deptObj.name : (role.department || '�');
     const mgrObj = role.managerRoleId ? roles.find(r => r.id === role.managerRoleId) : null;
     document.getElementById('modal-role-manager-view').textContent = mgrObj ? mgrObj.title : 'None (top level)';
     const teamObj = role.teamId ? teams.find(t => t.id === role.teamId) : null;
-    document.getElementById('modal-role-team-view').textContent = teamObj ? teamObj.name : '—';
+    document.getElementById('modal-role-team-view').textContent = teamObj ? teamObj.name : '�';
   }
 
   document.getElementById('modal-title-text').textContent = hasPerson ? person.name : (role ? role.title + ' (Vacant)' : 'Edit');
@@ -4154,7 +2554,7 @@ document.getElementById('modal-role-delete-btn').addEventListener('click', () =>
 document.getElementById('modal-save-btn').addEventListener('click', saveModal);
 document.getElementById('modal-backdrop').addEventListener('click', e => { if (e.target === document.getElementById('modal-backdrop')) closeModal(); });
 
-// ── Assign Person Picker ──────────────────────────────────────────────────────
+// -- Assign Person Picker ------------------------------------------------------
 
 let assigningRoleId = null;
 
@@ -4174,7 +2574,7 @@ function openAssignPersonPicker(roleId) {
   function renderPersonRow(person) {
     const totalAlloc = getTotalAllocationForPerson(person.id);
     const suggested = Math.max(1, Math.min(100, 100 - totalAlloc));
-    const freeLabel = totalAlloc > 0 ? ` · ${100 - totalAlloc}% free` : '';
+    const freeLabel = totalAlloc > 0 ? ` � ${100 - totalAlloc}% free` : '';
     const row = document.createElement('div');
     row.className = 'assign-person-row';
     row.style.cssText = 'display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:default;border-radius:8px;transition:background 0.12s';
@@ -4233,7 +2633,7 @@ document.getElementById('assign-person-close-btn').addEventListener('click', clo
 document.getElementById('assign-person-modal-backdrop').addEventListener('click', e => { if (e.target === document.getElementById('assign-person-modal-backdrop')) closeAssignPersonModal(); });
 document.getElementById('assign-person-create-btn').addEventListener('click', () => { closeAssignPersonModal(); openAddPersonModal(assigningRoleId); });
 
-// ── Add to Role Modal ──────────────────────────────────────────────────────────
+// -- Add to Role Modal ----------------------------------------------------------
 
 let addToRolePersonId = null;
 let addToRoleSelectedRoleId = null;
@@ -4301,7 +2701,7 @@ function populateAddToRoleList(personId, deptFilter) {
     row.innerHTML = `
       <div style="flex:1;min-width:0">
         <div style="font-size:12.5px;font-weight:600;color:var(--text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.title}</div>
-        <div style="font-size:11px;color:var(--text-muted)">${dept ? dept.name : r.department} · <span class="level-badge ${levelTierClass(r.level)}" style="font-size:10px;padding:1px 4px">${r.level}</span></div>
+        <div style="font-size:11px;color:var(--text-muted)">${dept ? dept.name : r.department} � <span class="level-badge ${levelTierClass(r.level)}" style="font-size:10px;padding:1px 4px">${r.level}</span></div>
       </div>
     `;
     row.appendChild(pctInput);
@@ -4347,7 +2747,7 @@ document.getElementById('add-to-role-cancel-btn').addEventListener('click', clos
 document.getElementById('add-to-role-save-btn').addEventListener('click', saveAddToRoleModal);
 document.getElementById('add-to-role-modal-backdrop').addEventListener('click', e => { if (e.target === document.getElementById('add-to-role-modal-backdrop')) closeAddToRoleModal(); });
 
-// ── Snapshots ──────────────────────────────────────────────────────────────────
+// -- Snapshots ------------------------------------------------------------------
 
 function renderSnapshotList() {
   const list = document.getElementById('snapshots-list');
@@ -4411,17 +2811,17 @@ function restoreSnapshot(snapId) {
 
   const restored = JSON.parse(JSON.stringify(snap.data.persons)).map(p => ({ ...p, noLongerHired: false }));
 
-  // Persons in snapshot but not in current → fired since; show anonymised in their old role
+  // Persons in snapshot but not in current ? fired since; show anonymised in their old role
   restored.forEach(p => { if (!currentPersonIds.has(p.id)) p.noLongerHired = true; });
 
-  // Persons in current but not in snapshot → hired after snapshot; add to unassigned
-  // Only active (non-ghost) persons are preserved — ghosts come from snapshot data, not current state
+  // Persons in current but not in snapshot ? hired after snapshot; add to unassigned
+  // Only active (non-ghost) persons are preserved � ghosts come from snapshot data, not current state
   persons.filter(p => !p.noLongerHired).forEach(p => { if (!snapPersonIds.has(p.id)) restored.push({ ...p }); });
 
   persons.splice(0, persons.length, ...restored);
 
   // Restore assignments from snapshot (noLongerHired persons keep their slot)
-  // Exclude only post-snapshot hires — they go to unassigned
+  // Exclude only post-snapshot hires � they go to unassigned
   const postHireIds = new Set(restored.filter(p => !snapPersonIds.has(p.id)).map(p => p.id));
   roleAssignments.splice(0, roleAssignments.length,
     ...JSON.parse(JSON.stringify(snap.data.roleAssignments)).filter(a => !postHireIds.has(a.personId)));
@@ -4446,7 +2846,7 @@ document.getElementById('snapshots-list').addEventListener('click', e => {
   }
 });
 
-// ── Department Modal ──────────────────────────────────────────────────────────
+// -- Department Modal ----------------------------------------------------------
 
 let selectedDeptColor = null;
 
@@ -4487,7 +2887,7 @@ document.getElementById('dept-modal-save-btn').addEventListener('click', saveDep
 document.getElementById('dept-modal-backdrop').addEventListener('click', e => { if (e.target === document.getElementById('dept-modal-backdrop')) closeDeptModal(); });
 document.getElementById('dept-name-input').addEventListener('keydown', e => { if (e.key === 'Enter') saveDeptModal(); });
 
-// ── Add Role Modal ────────────────────────────────────────────────────────────
+// -- Add Role Modal ------------------------------------------------------------
 
 function addRoleRebuildTitleDropdown() {
   const deptId = document.getElementById('add-role-dept').value;
@@ -4562,7 +2962,7 @@ document.getElementById('add-role-modal-backdrop').addEventListener('click', e =
 document.getElementById('add-role-dept').addEventListener('change', () => { addRoleRebuildTitleDropdown(); addRoleRebuildManagerDropdown(); addRoleRebuildTeamDropdown(); });
 document.getElementById('add-role-level').addEventListener('change', addRoleRebuildTitleDropdown);
 
-// ── Add Person Modal ──────────────────────────────────────────────────────────
+// -- Add Person Modal ----------------------------------------------------------
 
 function openAddPersonModal(preselectedRoleId) {
   const roleSel = document.getElementById('add-emp-role');
@@ -4623,7 +3023,7 @@ document.getElementById('add-emp-gender-group').addEventListener('click', e => {
   if (!isActive) btn.classList.add('active');
 });
 
-// ── Department Settings Modal ─────────────────────────────────────────────────
+// -- Department Settings Modal -------------------------------------------------
 
 let editingDeptId = null;
 let selectedSettingsColor = null;
@@ -4712,14 +3112,14 @@ function openDeptSettingsModal(deptId) {
   document.getElementById('dept-settings-warning').classList.remove('visible');
   // Populate Responsible Person dropdown
   const headSelect = document.getElementById('dept-settings-head-role');
-  headSelect.innerHTML = '<option value="">— None —</option>';
+  headSelect.innerHTML = '<option value="">� None �</option>';
   roles.forEach(r => {
     const p = getPersonForRole(r.id);
     if (!p) return;
     const opt = document.createElement('option');
     opt.value = r.id;
     const deptName = departments.find(d => d.id === r.department)?.name || '';
-    opt.textContent = `${p.name} · ${r.title} (${deptName})`;
+    opt.textContent = `${p.name} � ${r.title} (${deptName})`;
     if (r.id === dept.headRoleId) opt.selected = true;
     headSelect.appendChild(opt);
   });
@@ -4741,7 +3141,7 @@ function openDeptSettingsModal(deptId) {
           .filter(pid => persons.find(p => p.id === pid)?.noLongerHired)
       );
       persons.splice(0, persons.length, ...persons.filter(p => !ghostsToRemove.has(p.id)));
-      // Remove assignments for this dept's roles — live employees become unassigned
+      // Remove assignments for this dept's roles � live employees become unassigned
       roleAssignments.splice(0, roleAssignments.length, ...roleAssignments.filter(a => !deptRoleIds.has(a.roleId)));
       roles.splice(0, roles.length, ...roles.filter(r => r.department !== deptId));
     } else {
@@ -4803,7 +3203,7 @@ document.getElementById('dept-settings-save-btn').addEventListener('click', save
 document.getElementById('dept-settings-modal-backdrop').addEventListener('click', e => { if (e.target === document.getElementById('dept-settings-modal-backdrop')) closeDeptSettingsModal(); });
 document.getElementById('dept-settings-name').addEventListener('keydown', e => { if (e.key === 'Enter') saveDeptSettingsModal(); });
 
-// ── Misc Event Wiring ─────────────────────────────────────────────────────────
+// -- Misc Event Wiring ---------------------------------------------------------
 
 document.getElementById('clear-employees-btn').addEventListener('click', e => {
   e.preventDefault();
@@ -4866,7 +3266,7 @@ document.addEventListener('keydown', e => {
   }
 });
 
-// ── Persistence ───────────────────────────────────────────────────────────────
+// -- Persistence ---------------------------------------------------------------
 
 const STORAGE_KEY = 'orgchart_data_v4';
 
@@ -4895,7 +3295,7 @@ async function loadFromStorage() {
     const res = await fetch('/api/data');
     if (!res.ok) throw new Error('Server returned ' + res.status);
     const saved = await res.json();
-    if (!saved || !saved.departments) return; // empty — will seed defaults
+    if (!saved || !saved.departments) return; // empty � will seed defaults
     if (saved.departments) departments.splice(0, departments.length, ...saved.departments.map(d => ({ ...d, headRoleId: d.headRoleId ?? null })));
     if (saved.roles) roles.splice(0, roles.length, ...saved.roles.map(r => ({ ...r, teamId: r.teamId || null, secondaryManagerRoleIds: r.secondaryManagerRoleIds || [] })));
     if (saved.persons) persons.splice(0, persons.length, ...saved.persons.map(p => ({ ...p })));
@@ -4916,7 +3316,7 @@ async function loadFromStorage() {
   }
 }
 
-// ── Settings modal ────────────────────────────────────────────────────────────
+// -- Settings modal ------------------------------------------------------------
 
 function applySalaryVisibility() {
   document.body.classList.toggle('hide-salaries', !!settings.hideSalaries);
@@ -5030,7 +3430,7 @@ document.getElementById('settings-modal-backdrop').addEventListener('click', e =
     document.getElementById('settings-modal-backdrop').style.display = 'none';
 });
 
-// ── Pay-bands modal ───────────────────────────────────────────────────────────
+// -- Pay-bands modal -----------------------------------------------------------
 
 function openPaybandsModal() {
   document.getElementById('settings-modal-backdrop').style.display = 'none';
@@ -5073,7 +3473,7 @@ document.getElementById('paybands-save-btn').addEventListener('click', () => {
   render();
 });
 
-// ── Init ──────────────────────────────────────────────────────────────────────
+// -- Init ----------------------------------------------------------------------
 
 async function init() {
   const overlay = document.getElementById('loading-overlay');
@@ -5126,7 +3526,7 @@ async function init() {
 }
 init();
 
-// ── Drop Create Role Modal ────────────────────────────────────────────────────
+// -- Drop Create Role Modal ----------------------------------------------------
 
 function openDropCreateRoleModal(draggedPerson, context) {
   const dept = departments.find(d => d.id === context.department);
@@ -5151,7 +3551,7 @@ function openDropCreateRoleModal(draggedPerson, context) {
   const deptTeams = getTeamsForDept(context.department);
   if (deptTeams.length) {
     teamSel.innerHTML = '';
-    const none = document.createElement('option'); none.value = ''; none.textContent = '— None —';
+    const none = document.createElement('option'); none.value = ''; none.textContent = '� None �';
     teamSel.appendChild(none);
     deptTeams.forEach(t => {
       const opt = document.createElement('option'); opt.value = t.id; opt.textContent = t.name;
@@ -5206,7 +3606,7 @@ document.getElementById('drop-create-role-save-btn').addEventListener('click', s
 document.getElementById('drop-create-role-modal-backdrop').addEventListener('click', e => { if (e.target === document.getElementById('drop-create-role-modal-backdrop')) closeDropCreateRoleModal(); });
 document.getElementById('drop-create-role-title').addEventListener('keydown', e => { if (e.key === 'Enter') saveDropCreateRoleModal(); });
 
-// ── Reparent Role Modal ───────────────────────────────────────────────────────
+// -- Reparent Role Modal -------------------------------------------------------
 
 function openReparentRoleModal(draggedRoleId, targetRoleId, targetDeptId) {
   const draggedRole = roles.find(r => r.id === draggedRoleId);
@@ -5251,7 +3651,7 @@ function reparentRoleRebuildTeamDropdown() {
   const deptTeams = getTeamsForDept(deptId);
   if (deptTeams.length) {
     teamSel.innerHTML = '';
-    const none = document.createElement('option'); none.value = ''; none.textContent = '— None —';
+    const none = document.createElement('option'); none.value = ''; none.textContent = '� None �';
     teamSel.appendChild(none);
     deptTeams.forEach(t => {
       const opt = document.createElement('option'); opt.value = t.id; opt.textContent = t.name;
@@ -5295,15 +3695,15 @@ document.getElementById('reparent-role-save-btn').addEventListener('click', save
 document.getElementById('reparent-role-modal-backdrop').addEventListener('click', e => { if (e.target === document.getElementById('reparent-role-modal-backdrop')) closeReparentRoleModal(); });
 document.getElementById('reparent-role-dept').addEventListener('change', reparentRoleRebuildTeamDropdown);
 
-// ── CSV Import ────────────────────────────────────────────────────────────────
+// -- CSV Import ----------------------------------------------------------------
 
 const IMPORT_MAPPING_KEY = 'orgchart_import_mapping_v1';
 
 const IMPORT_TARGET_FIELDS = [
   { id: 'name',        hints: ['name','full name','employee name','fullname','person','navn'] },
   { id: 'employeeId',  hints: ['id','emp id','employee id','staff id','medarbejder id','nr','number'] },
-  { id: 'salary',      hints: ['salary','pay','løn','wage','monthly','compensation','comp'] },
-  { id: 'gender',      hints: ['gender','køn','sex'], enumValues: ['male','female','other'] },
+  { id: 'salary',      hints: ['salary','pay','l�n','wage','monthly','compensation','comp'] },
+  { id: 'gender',      hints: ['gender','k�n','sex'], enumValues: ['male','female','other'] },
   { id: 'roleTitle',   hints: ['title','job title','role','position','jobtitle','stilling','job'] },
   { id: 'roleLevel',   hints: ['level','grade','rang','tier'], enumValues: ['L1','L2','L3','L4','L5','L6','L7','L8'] },
   { id: 'roleDept',    hints: ['department','dept','afdeling','division','team dept'] },
@@ -5323,7 +3723,7 @@ let importState = {
   valueTransforms: {},
 };
 
-// ── CSV parser ──
+// -- CSV parser --
 function parseCSV(text) {
   const lines = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
   const nonEmpty = lines.filter(l => l.trim() !== '');
@@ -5353,7 +3753,7 @@ function parseCSV(text) {
   return { headers, rows };
 }
 
-// ── Auto-suggest mapping ──
+// -- Auto-suggest mapping --
 function autoSuggestMapping(headers) {
   const saved = loadImportMapping();
   const mapping = {};
@@ -5380,7 +3780,7 @@ function saveImportMapping(mapping) {
   localStorage.setItem(IMPORT_MAPPING_KEY, JSON.stringify(clean));
 }
 
-// ── Modal open/close ──
+// -- Modal open/close --
 function openImportModal() {
   importState = { step: 1, headers: [], rows: [], mapping: {}, mode: 'append', preview: null, valueTransforms: {} };
   document.getElementById('import-file-input').value = '';
@@ -5393,7 +3793,7 @@ function closeImportModal() {
   document.getElementById('import-modal-backdrop').style.display = 'none';
 }
 
-// ── Step indicator ──
+// -- Step indicator --
 function setImportStep(n) {
   importState.step = n;
   [1,2,3,4].forEach(i => {
@@ -5405,10 +3805,10 @@ function setImportStep(n) {
   const backBtn = document.getElementById('import-back-btn');
   const nextBtn = document.getElementById('import-next-btn');
   backBtn.style.visibility = n > 1 ? 'visible' : 'hidden';
-  if (n !== 4) nextBtn.textContent = 'Next →'; // Step 4 label set by buildPreview()
+  if (n !== 4) nextBtn.textContent = 'Next ?'; // Step 4 label set by buildPreview()
 }
 
-// ── Step 1: file handling ──
+// -- Step 1: file handling --
 function handleImportFile(file) {
   if (!file || !file.name.match(/\.csv$/i)) { alert('Please select a .csv file.'); return; }
   const reader = new FileReader();
@@ -5418,7 +3818,7 @@ function handleImportFile(file) {
     importState.headers = parsed.headers;
     importState.rows = parsed.rows;
     // Show preview
-    document.getElementById('import-row-count').textContent = `${parsed.rows.length} rows · ${parsed.headers.length} columns detected`;
+    document.getElementById('import-row-count').textContent = `${parsed.rows.length} rows � ${parsed.headers.length} columns detected`;
     const chips = document.getElementById('import-col-chips');
     chips.innerHTML = '';
     parsed.headers.forEach(h => {
@@ -5439,7 +3839,7 @@ dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover
 dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('dragover'); if (e.dataTransfer.files[0]) handleImportFile(e.dataTransfer.files[0]); });
 document.getElementById('import-file-input').addEventListener('change', e => { if (e.target.files[0]) handleImportFile(e.target.files[0]); });
 
-// ── Step 2: populate mapping selects ──
+// -- Step 2: populate mapping selects --
 function updateSampleHint(fieldId) {
   const sel = document.getElementById(`imap-${fieldId}`);
   const el = document.getElementById(`imap-sample-${fieldId}`);
@@ -5486,11 +3886,11 @@ function renderValueMapPanel(fieldId) {
 
   let html = '';
   for (const srcVal of allValues) {
-    const optionsHtml = `<option value="">— as-is</option>` +
+    const optionsHtml = `<option value="">� as-is</option>` +
       field.enumValues.map(ev => `<option value="${ev}" ${transforms[srcVal] === ev ? 'selected' : ''}>${ev}</option>`).join('');
     html += `<div class="imap-vmap-row">
       <span class="imap-vmap-source">"${srcVal}"</span>
-      <span class="imap-vmap-arrow">→</span>
+      <span class="imap-vmap-arrow">?</span>
       <select class="form-control imap-vmap-target" data-src="${srcVal}">${optionsHtml}</select>
     </div>`;
   }
@@ -5510,7 +3910,7 @@ function populateMappingStep() {
   importState.mapping = autoSuggestMapping(importState.headers);
   IMPORT_TARGET_FIELDS.forEach(field => {
     const sel = document.getElementById(`imap-${field.id}`);
-    sel.innerHTML = '<option value="">— skip</option>';
+    sel.innerHTML = '<option value="">� skip</option>';
     importState.headers.forEach(h => {
       const opt = document.createElement('option');
       opt.value = h; opt.textContent = h;
@@ -5533,7 +3933,7 @@ function readMappingFromUI() {
   return m;
 }
 
-// ── Step 3: mode options ──
+// -- Step 3: mode options --
 document.querySelectorAll('input[name="import-mode"]').forEach(radio => {
   radio.addEventListener('change', () => {
     importState.mode = radio.value;
@@ -5544,7 +3944,7 @@ document.querySelectorAll('input[name="import-mode"]').forEach(radio => {
   });
 });
 
-// ── Step 4: dry-run preview ──
+// -- Step 4: dry-run preview --
 function buildPreview() {
   const result = runImport(importState.rows, importState.mapping, importState.mode, true, importState.valueTransforms);
   importState.preview = result;
@@ -5553,7 +3953,7 @@ function buildPreview() {
   const hasIssues = result.warnings.length > 0 || result.skipped.length > 0;
 
   // Update button label
-  document.getElementById('import-next-btn').textContent = hasIssues ? 'Import anyway →' : 'Import →';
+  document.getElementById('import-next-btn').textContent = hasIssues ? 'Import anyway ?' : 'Import ?';
 
   function row(cls, icon, text) {
     return `<div class="import-preview-row ${cls}"><span class="import-preview-icon">${icon}</span><span style="font-size:13px">${text}</span></div>`;
@@ -5564,51 +3964,51 @@ function buildPreview() {
 
   let html = '';
 
-  // ── Summary ──
+  // -- Summary --
   html += section('Summary');
-  html += row('ok', '📋', `${total} row${total !== 1 ? 's' : ''} in file`);
-  if (result.personsCreated > 0) html += row('ok', '✓', `${result.personsCreated} employee${result.personsCreated !== 1 ? 's' : ''} will be added`);
-  if (result.personsUpdated > 0) html += row('ok', '✓', `${result.personsUpdated} employee${result.personsUpdated !== 1 ? 's' : ''} will be updated`);
-  if (result.rolesCreated   > 0) html += row('ok', '✓', `${result.rolesCreated} new role${result.rolesCreated !== 1 ? 's' : ''} will be created`);
-  if (result.deptsCreated   > 0) html += row('ok', '✓', `${result.deptsCreated} new department${result.deptsCreated !== 1 ? 's' : ''} will be created`);
-  if (result.teamsCreated   > 0) html += row('ok', '✓', `${result.teamsCreated} new team${result.teamsCreated !== 1 ? 's' : ''} will be created`);
-  if (importState.mode === 'replace') html += row('warn', '⚠', 'All existing employees and roles will be deleted first');
+  html += row('ok', '??', `${total} row${total !== 1 ? 's' : ''} in file`);
+  if (result.personsCreated > 0) html += row('ok', '?', `${result.personsCreated} employee${result.personsCreated !== 1 ? 's' : ''} will be added`);
+  if (result.personsUpdated > 0) html += row('ok', '?', `${result.personsUpdated} employee${result.personsUpdated !== 1 ? 's' : ''} will be updated`);
+  if (result.rolesCreated   > 0) html += row('ok', '?', `${result.rolesCreated} new role${result.rolesCreated !== 1 ? 's' : ''} will be created`);
+  if (result.deptsCreated   > 0) html += row('ok', '?', `${result.deptsCreated} new department${result.deptsCreated !== 1 ? 's' : ''} will be created`);
+  if (result.teamsCreated   > 0) html += row('ok', '?', `${result.teamsCreated} new team${result.teamsCreated !== 1 ? 's' : ''} will be created`);
+  if (importState.mode === 'replace') html += row('warn', '?', 'All existing employees and roles will be deleted first');
 
-  // ── Info ──
+  // -- Info --
   if (result.infoTopLevel > 0) {
     html += section('Info');
-    html += row('info', 'ℹ', `${result.infoTopLevel} employee${result.infoTopLevel !== 1 ? 's have' : ' has'} no manager — will be placed at top level`);
+    html += row('info', '?', `${result.infoTopLevel} employee${result.infoTopLevel !== 1 ? 's have' : ' has'} no manager � will be placed at top level`);
   }
 
-  // ── Warnings ──
+  // -- Warnings --
   const allWarnings = [...result.warnings];
   if (result.missingGender > 0) allWarnings.push(`${result.missingGender} employee${result.missingGender !== 1 ? 's have' : ' has'} no gender data (will be blank)`);
   if (result.missingSalary > 0) allWarnings.push(`${result.missingSalary} employee${result.missingSalary !== 1 ? 's have' : ' has'} no salary data (will be 0)`);
-  if (result.unmatchedLevels > 0) allWarnings.push(`${result.unmatchedLevels} row${result.unmatchedLevels !== 1 ? 's have' : ' has'} unrecognised level values (e.g. "A", "B") — defaulting to L3`);
+  if (result.unmatchedLevels > 0) allWarnings.push(`${result.unmatchedLevels} row${result.unmatchedLevels !== 1 ? 's have' : ' has'} unrecognised level values (e.g. "A", "B") � defaulting to L3`);
   if (allWarnings.length > 0) {
     html += section(`Warnings (${allWarnings.length})`);
     const MAX_VISIBLE = 8;
-    allWarnings.slice(0, MAX_VISIBLE).forEach(w => { html += row('warn', '⚠', w); });
+    allWarnings.slice(0, MAX_VISIBLE).forEach(w => { html += row('warn', '?', w); });
     if (allWarnings.length > MAX_VISIBLE) {
-      html += `<div class="import-show-more" id="import-show-more-btn">… show ${allWarnings.length - MAX_VISIBLE} more</div>`;
+      html += `<div class="import-show-more" id="import-show-more-btn">� show ${allWarnings.length - MAX_VISIBLE} more</div>`;
       html += `<div id="import-warnings-extra" style="display:none">` +
-        allWarnings.slice(MAX_VISIBLE).map(w => row('warn', '⚠', w)).join('') +
+        allWarnings.slice(MAX_VISIBLE).map(w => row('warn', '?', w)).join('') +
         `</div>`;
     }
   }
 
-  // ── Skipped ──
+  // -- Skipped --
   if (result.skipped.length > 0) {
     html += section(`Skipped (${result.skipped.length})`);
-    result.skipped.forEach(s => { html += row('skip', '✗', s); });
+    result.skipped.forEach(s => { html += row('skip', '?', s); });
   }
 
-  // ── Ignored columns ──
+  // -- Ignored columns --
   const mappedCols = new Set(Object.values(importState.mapping).filter(Boolean));
   const ignoredCols = importState.headers.filter(h => !mappedCols.has(h));
   if (ignoredCols.length > 0) {
     html += section(`Ignored columns (${ignoredCols.length})`);
-    html += `<div class="import-ignored-cols">${ignoredCols.join(' · ')}</div>`;
+    html += `<div class="import-ignored-cols">${ignoredCols.join(' � ')}</div>`;
   }
 
   el.innerHTML = html;
@@ -5623,7 +4023,7 @@ function buildPreview() {
   }
 }
 
-// ── Core import engine ──
+// -- Core import engine --
 function runImport(rows, mapping, mode, dryRun = false, valueTransforms = {}) {
   const result = { personsCreated: 0, personsUpdated: 0, rolesCreated: 0, deptsCreated: 0, teamsCreated: 0, skipped: [], warnings: [], infoTopLevel: 0, missingGender: 0, missingSalary: 0, unmatchedLevels: 0 };
   const get = (row, field) => {
@@ -5672,8 +4072,8 @@ function runImport(rows, mapping, mode, dryRun = false, valueTransforms = {}) {
     }
   });
 
-  // Phase 3: ensure roles, track rowIndex→roleId
-  // claimedRoleIds prevents two CSV rows from sharing the same role object —
+  // Phase 3: ensure roles, track rowIndex?roleId
+  // claimedRoleIds prevents two CSV rows from sharing the same role object �
   // each row gets its own role so every imported person is individually visible.
   const rowRoleIds = {};
   const claimedRoleIds = new Set();
@@ -5723,7 +4123,7 @@ function runImport(rows, mapping, mode, dryRun = false, valueTransforms = {}) {
       if (!mgrName) { result.infoTopLevel++; return; }
       const mgrRoleId = nameToRoleId[mgrName.toLowerCase()];
       if (mgrRoleId === undefined) {
-        result.warnings.push(`Row ${idx + 2} · ${get(row, 'name') || '?'} — manager "${mgrName}" not found`);
+        result.warnings.push(`Row ${idx + 2} � ${get(row, 'name') || '?'} � manager "${mgrName}" not found`);
         return;
       }
       if (mgrRoleId !== roleId) {
@@ -5762,7 +4162,7 @@ function runImport(rows, mapping, mode, dryRun = false, valueTransforms = {}) {
       if (!mgrEmpId) { result.infoTopLevel++; return; }
       const mgrRoleId = empIdToRoleId[mgrEmpId.toLowerCase()];
       if (mgrRoleId === undefined) {
-        result.warnings.push(`Row ${idx + 2} · ${get(row, 'name') || '?'} — manager ID "${mgrEmpId}" not found`);
+        result.warnings.push(`Row ${idx + 2} � ${get(row, 'name') || '?'} � manager ID "${mgrEmpId}" not found`);
         return;
       }
       if (mgrRoleId !== roleId) {
@@ -5798,7 +4198,7 @@ function runImport(rows, mapping, mode, dryRun = false, valueTransforms = {}) {
       if (roleId === undefined || !dottedEmpId) return;
       const dottedRoleId = empIdToRoleId2[dottedEmpId.toLowerCase()];
       if (dottedRoleId === undefined) {
-        result.warnings.push(`Row ${idx + 2} · ${get(row, 'name') || '?'} — dotted-line manager ID "${dottedEmpId}" not found`);
+        result.warnings.push(`Row ${idx + 2} � ${get(row, 'name') || '?'} � dotted-line manager ID "${dottedEmpId}" not found`);
         return;
       }
       if (dottedRoleId !== roleId) {
@@ -5864,7 +4264,7 @@ function nextAvailableColorFrom(deptList) {
   return DEPT_COLOR_PALETTE.find(c => !used.has(c)) || DEPT_COLOR_PALETTE[0];
 }
 
-// ── Navigation between steps ──
+// -- Navigation between steps --
 document.getElementById('import-next-btn').addEventListener('click', () => {
   const step = importState.step;
   if (step === 1) {
@@ -5873,7 +4273,7 @@ document.getElementById('import-next-btn').addEventListener('click', () => {
     setImportStep(2);
   } else if (step === 2) {
     importState.mapping = readMappingFromUI();
-    if (!importState.mapping.name) { alert('Please map the "Full name" field — it is required.'); return; }
+    if (!importState.mapping.name) { alert('Please map the "Full name" field � it is required.'); return; }
     setImportStep(3);
   } else if (step === 3) {
     importState.mode = document.querySelector('input[name="import-mode"]:checked').value;

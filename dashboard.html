@@ -42,6 +42,15 @@
         </svg>
         Org Chart
       </a>
+      <a class="nav-item" href="ai.html">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none"
+             stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8 1l1.5 3.5L13 6l-3.5 1.5L8 11l-1.5-3.5L3 6l3.5-1.5z"/>
+          <path d="M13 10l.8 1.8L15.5 12l-1.7.8L13 15l-.8-1.7L10.5 12l1.7-.8z" opacity="0.6"/>
+        </svg>
+        AI Assistant
+      </a>
     </div>
     <div class="nav-section">
       <div class="nav-section-label">People</div>
@@ -426,8 +435,8 @@ kpiDefs.forEach(k => {
     <span class="kpi-trend ${k.trendCls}">${k.trendTxt}</span>
     <div class="kpi-top">
       <div class="kpi-icon" style="background:${k.iconBg};color:${k.iconColor}">${k.icon}</div>
+      <div class="kpi-value">${k.value}</div>
     </div>
-    <div class="kpi-value">${k.value}</div>
     <div class="kpi-label">${k.label}</div>
     <div class="kpi-sub ${k.subCls}">${k.sub}</div>
   `;

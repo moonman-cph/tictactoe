@@ -1542,3 +1542,21 @@ body.view-only #dnd-toggle-wrap { display: none; }
 .snapshot-item-label { font-size: 13px; font-weight: 600; color: var(--text-primary); }
 .snapshot-item-date { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
 .snapshot-item-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
+/* ── Simulation Mode ──────────────────────────────────────────── */
+#sim-banner {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 24px;
+  background: #fffbeb;
+  border-bottom: 1.5px solid #fbbf24;
+  flex-shrink: 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: #92400e;
+}
+#sim-banner svg { color: #d97706; flex-shrink: 0; }
+body.sim-mode #sim-banner { display: flex; }
+body.sim-mode #app-content { border-left: 3px solid #fbbf24; }
+body.sim-mode #simulate-nav-btn { background: rgba(251,191,36,0.12); color: #d97706; }

@@ -72,6 +72,13 @@
     <div class="nav-spacer"></div>
     <div class="nav-section">
       <div class="nav-section-label">Admin</div>
+      <a class="nav-item" href="#" id="simulate-nav-btn">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 2h4M7 2v4L3 13a1 1 0 00.9 1.5h8.2A1 1 0 0013 13L9 6V2"/>
+          <path d="M5 10.5h6" opacity="0.5"/>
+        </svg>
+        Simulate
+      </a>
       <a class="nav-item" href="#" id="snapshots-nav-btn">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="8" cy="8" r="6"/><polyline points="8,4 8,8 11,10"/>
@@ -142,6 +149,18 @@
   <button class="header-btn" id="add-role-btn">+ Role</button>
   <button class="header-btn primary" id="add-emp-btn">+ Person</button>
   <div class="header-badge" id="total-badge">120 roles</div>
+</div>
+
+<div id="sim-banner">
+  <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M6 2h4M7 2v4L3 13a1 1 0 00.9 1.5h8.2A1 1 0 0013 13L9 6V2"/>
+    <path d="M5 10.5h6" opacity="0.5"/>
+  </svg>
+  <span id="sim-banner-label">Simulation Mode — changes are not saved</span>
+  <div style="display:flex;gap:8px;margin-left:auto">
+    <button id="sim-discard-btn" class="btn btn-ghost" style="padding:4px 12px;font-size:12px">Discard</button>
+    <button id="sim-apply-btn" class="btn btn-primary" style="padding:4px 12px;font-size:12px">Apply changes</button>
+  </div>
 </div>
 
 <div id="filter-bar">
@@ -1243,6 +1262,9 @@ const state = {
 let settings = { currency: 'DKK', hideSalaries: false, hideLevels: false, viewOnly: false, matrixMode: false, dragDropEnabled: true, dragMode: 'person' };
 
 let snapshots = [];
+let simMode   = false;
+let simBackup = null;
+let simLabel  = '';
 
 let hiddenDepts = new Set();
 let collapsedManagers = new Set(); // role IDs whose direct reports are collapsed
@@ -2942,6 +2964,45 @@ function restoreSnapshot(snapId) {
   render();
 }
 
+// ── Simulation Mode ────────────────────────────────────────────────────────────
+function enterSimulation() {
+  const label = prompt('Name this simulation (optional):', '');
+  if (label === null) return;
+  simLabel  = label.trim();
+  simBackup = JSON.parse(JSON.stringify({ departments, roles, persons, roleAssignments, teams }));
+  simMode   = true;
+  document.body.classList.add('sim-mode');
+  updateSimBanner();
+}
+
+function exitSimulation(apply) {
+  simMode = false;
+  document.body.classList.remove('sim-mode');
+  if (!apply && simBackup) {
+    departments.splice(0,    departments.length,    ...JSON.parse(JSON.stringify(simBackup.departments)));
+    roles.splice(0,          roles.length,          ...JSON.parse(JSON.stringify(simBackup.roles)));
+    persons.splice(0,        persons.length,        ...JSON.parse(JSON.stringify(simBackup.persons)));
+    roleAssignments.splice(0,roleAssignments.length,...JSON.parse(JSON.stringify(simBackup.roleAssignments)));
+    teams.splice(0,          teams.length,          ...JSON.parse(JSON.stringify(simBackup.teams)));
+  }
+  simBackup = null;
+  simLabel  = '';
+  updateSimBanner();
+  render();
+}
+
+function updateSimBanner() {
+  const label = document.getElementById('sim-banner-label');
+  if (!label) return;
+  label.textContent = simLabel
+    ? `Simulation: "${simLabel}" — changes are not saved`
+    : 'Simulation Mode — changes are not saved';
+}
+
+document.getElementById('simulate-nav-btn').addEventListener('click', e => { e.preventDefault(); if (!simMode) enterSimulation(); });
+document.getElementById('sim-discard-btn').addEventListener('click', () => { if (confirm('Discard simulation? All changes will be lost.')) exitSimulation(false); });
+document.getElementById('sim-apply-btn').addEventListener('click', () => { if (confirm('Apply simulation changes to the live org chart?')) exitSimulation(true); });
+
 document.getElementById('snapshots-nav-btn').addEventListener('click', e => { e.preventDefault(); openSnapshotsModal(); });
 document.getElementById('snapshots-close-btn').addEventListener('click', closeSnapshotsModal);
 document.getElementById('snapshots-modal-backdrop').addEventListener('click', e => { if (e.target === document.getElementById('snapshots-modal-backdrop')) closeSnapshotsModal(); });
@@ -3416,6 +3477,7 @@ function migrateOldFormat(saved) {
 
 let _saveTimer = null;
 function saveToStorage() {
+  if (simMode) return;
   clearTimeout(_saveTimer);
   _saveTimer = setTimeout(() => {
     fetch('/api/data', {

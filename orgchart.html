@@ -3126,7 +3126,19 @@ function freezeAsPlannedChange() {
 function unfreezeToEdit() {
   if (!plannedChange) return;
   if (!confirm(`Edit the planned change "${plannedChange.label}"? It will re-enter simulation mode.`)) return;
-  simBackup = JSON.parse(JSON.stringify({ departments, roles, persons, roleAssignments, teams }));
+  const liveBackup = JSON.parse(JSON.stringify({ departments, roles, persons, roleAssignments, teams }));
+  simBackup = liveBackup;
+
+  // ── Clear plannedChange from /api/data BEFORE entering sim mode ───────────
+  // saveToStorage() routes to /api/sim-data when simMode=true, so we must
+  // explicitly persist plannedChange:null to /api/data while simMode is still false.
+  fetch('/api/data', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ departments: liveBackup.departments, roles: liveBackup.roles,
+      persons: liveBackup.persons, roleAssignments: liveBackup.roleAssignments,
+      teams: liveBackup.teams, titles: TITLES, settings, salaryBands: SALARY_BANDS,
+      snapshots, plannedChange: null })
+  }).catch(() => {});
+
   departments.splice(0,    departments.length,    ...JSON.parse(JSON.stringify(plannedChange.data.departments)));
   roles.splice(0,          roles.length,          ...JSON.parse(JSON.stringify(plannedChange.data.roles)));
   persons.splice(0,        persons.length,        ...JSON.parse(JSON.stringify(plannedChange.data.persons)));
@@ -3140,7 +3152,6 @@ function unfreezeToEdit() {
   fetch('/api/sim-data', { method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ departments, roles, persons, roleAssignments, titles: TITLES, teams, settings, salaryBands: SALARY_BANDS, snapshots, _simLabel: simLabel })
   }).catch(() => {});
-  saveToStorage();
   updateSimBanner();
   updatePlannedChangeBanner();
   render();
@@ -3795,6 +3806,8 @@ async function loadFromStorage() {
       simLabel = simSaved._simLabel || '';
       simMode  = true;
       document.body.classList.add('sim-mode');
+      // Sim session and planned change are mutually exclusive — sim wins
+      plannedChange = null;
     }
 
   } catch (e) {

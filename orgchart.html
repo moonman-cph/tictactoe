@@ -1289,6 +1289,8 @@ const state = {
   selectedRoleIds: new Set(),
   draggedPersonId: null,
   draggedRoleId: null,
+  draggingDeptId: null,
+  deptDropTarget: null,
   pendingDrop: null,
   pendingReparent: null,
   editingRoleId: null,
@@ -1873,6 +1875,17 @@ function dropOnDept(deptId) {
   render();
 }
 
+function reorderDepartment(draggedId, targetId, position) {
+  const from = departments.findIndex(d => d.id === draggedId);
+  const to   = departments.findIndex(d => d.id === targetId);
+  if (from === -1 || to === -1 || from === to) return;
+  const [moved] = departments.splice(from, 1);
+  const insertAt = departments.findIndex(d => d.id === targetId);
+  departments.splice(position === 'before' ? insertAt : insertAt + 1, 0, moved);
+  saveToStorage();
+  render();
+}
+
 function dropRoleOnDept(deptId, overrideRoleId) {
   const roleId = overrideRoleId ?? state.draggedRoleId;
   state.draggedRoleId = null;
@@ -1900,6 +1913,9 @@ function renderDeptColumn(dept) {
   const header = document.createElement('div');
   header.className = 'dept-header';
   header.innerHTML = `
+    <div class="dept-drag-handle" draggable="true" data-dept-drag="${dept.id}" title="Drag to reorder">
+      <svg width="10" height="14" viewBox="0 0 10 14" fill="currentColor"><circle cx="3" cy="2.5" r="1.2"/><circle cx="7" cy="2.5" r="1.2"/><circle cx="3" cy="7" r="1.2"/><circle cx="7" cy="7" r="1.2"/><circle cx="3" cy="11.5" r="1.2"/><circle cx="7" cy="11.5" r="1.2"/></svg>
+    </div>
     <div class="dept-dot" style="background:${dept.color}"></div>
     <div class="dept-name-wrap" style="flex:1;min-width:0">
       <span class="dept-name">${dept.name}</span>
@@ -1917,18 +1933,82 @@ function renderDeptColumn(dept) {
 
   header.querySelector('.dept-settings-btn').addEventListener('click', e => { e.stopPropagation(); openDeptSettingsModal(dept.id); });
 
+  if (!settings.viewOnly) {
+    const handle = header.querySelector('.dept-drag-handle');
+    handle.addEventListener('dragstart', e => {
+      e.stopPropagation();
+      state.draggingDeptId = dept.id;
+      e.dataTransfer.effectAllowed = 'move';
+      setTimeout(() => col.classList.add('dept-dragging'), 0);
+    });
+    handle.addEventListener('dragend', () => {
+      state.draggingDeptId = null;
+      state.deptDropTarget = null;
+      col.classList.remove('dept-dragging');
+      render();
+    });
+  }
+
   header.addEventListener('dragover', e => {
+    if (state.draggingDeptId !== null && state.draggingDeptId !== dept.id) {
+      e.preventDefault(); e.dataTransfer.dropEffect = 'move';
+      const rect = col.getBoundingClientRect();
+      const position = dept.companyWide
+        ? (e.clientY < rect.top + rect.height / 2 ? 'before' : 'after')
+        : (e.clientX < rect.left + rect.width / 2 ? 'before' : 'after');
+      col.classList.remove('dept-drop-before', 'dept-drop-after');
+      col.classList.add(`dept-drop-${position}`);
+      state.deptDropTarget = { deptId: dept.id, position };
+      return;
+    }
     if (state.draggedPersonId !== null) { e.preventDefault(); col.classList.add('drop-active'); }
     else if (state.draggedRoleId !== null) { const dragged = roles.find(r => r.id === state.draggedRoleId); if (dragged && dragged.departmentId !== dept.id) { e.preventDefault(); col.classList.add('drop-active'); } }
   });
-  header.addEventListener('dragleave', e => { if (!col.contains(e.relatedTarget)) col.classList.remove('drop-active'); });
-  header.addEventListener('drop', e => { e.preventDefault(); col.classList.remove('drop-active'); if (state.draggedRoleId !== null) dropRoleOnDept(dept.id); else dropOnDept(dept.id); });
+  header.addEventListener('dragleave', e => {
+    if (state.draggingDeptId !== null) { if (!col.contains(e.relatedTarget)) col.classList.remove('dept-drop-before', 'dept-drop-after'); return; }
+    if (!col.contains(e.relatedTarget)) col.classList.remove('drop-active');
+  });
+  header.addEventListener('drop', e => {
+    col.classList.remove('dept-drop-before', 'dept-drop-after');
+    if (state.draggingDeptId !== null) {
+      e.preventDefault(); e.stopPropagation();
+      reorderDepartment(state.draggingDeptId, dept.id, state.deptDropTarget?.position || 'after');
+      state.draggingDeptId = null; state.deptDropTarget = null;
+      return;
+    }
+    e.preventDefault(); col.classList.remove('drop-active');
+    if (state.draggedRoleId !== null) dropRoleOnDept(dept.id); else dropOnDept(dept.id);
+  });
   col.addEventListener('dragover', e => {
+    if (state.draggingDeptId !== null && state.draggingDeptId !== dept.id) {
+      e.preventDefault(); e.dataTransfer.dropEffect = 'move';
+      const rect = col.getBoundingClientRect();
+      const position = dept.companyWide
+        ? (e.clientY < rect.top + rect.height / 2 ? 'before' : 'after')
+        : (e.clientX < rect.left + rect.width / 2 ? 'before' : 'after');
+      col.classList.remove('dept-drop-before', 'dept-drop-after');
+      col.classList.add(`dept-drop-${position}`);
+      state.deptDropTarget = { deptId: dept.id, position };
+      return;
+    }
     if (state.draggedPersonId !== null) { e.preventDefault(); col.classList.add('drop-active'); }
     else if (state.draggedRoleId !== null) { const dragged = roles.find(r => r.id === state.draggedRoleId); if (dragged && dragged.departmentId !== dept.id) { e.preventDefault(); col.classList.add('drop-active'); } }
   });
-  col.addEventListener('dragleave', e => { if (!col.contains(e.relatedTarget)) col.classList.remove('drop-active'); });
-  col.addEventListener('drop', e => { e.preventDefault(); col.classList.remove('drop-active'); if (state.draggedRoleId !== null) dropRoleOnDept(dept.id); else dropOnDept(dept.id); });
+  col.addEventListener('dragleave', e => {
+    if (state.draggingDeptId !== null) { if (!col.contains(e.relatedTarget)) col.classList.remove('dept-drop-before', 'dept-drop-after'); return; }
+    if (!col.contains(e.relatedTarget)) col.classList.remove('drop-active');
+  });
+  col.addEventListener('drop', e => {
+    col.classList.remove('dept-drop-before', 'dept-drop-after');
+    if (state.draggingDeptId !== null) {
+      e.preventDefault(); e.stopPropagation();
+      reorderDepartment(state.draggingDeptId, dept.id, state.deptDropTarget?.position || 'after');
+      state.draggingDeptId = null; state.deptDropTarget = null;
+      return;
+    }
+    e.preventDefault(); col.classList.remove('drop-active');
+    if (state.draggedRoleId !== null) dropRoleOnDept(dept.id); else dropOnDept(dept.id);
+  });
 
   const tree = document.createElement('div');
   tree.className = 'dept-tree';
@@ -2157,13 +2237,13 @@ function render() {
   const cwDepts = departments.filter(d => d.companyWide && !hiddenDepts.has(d.id));
   const regularDepts = departments.filter(d => !d.companyWide && !hiddenDepts.has(d.id));
 
-  // Top row: company-wide departments (only rendered if any exist)
-  if (cwDepts.length > 0) {
+  // Top rows: one row per company-wide department (stacked vertically)
+  cwDepts.forEach(d => {
     const cwRow = document.createElement('div');
     cwRow.className = 'columns-row cw-row';
-    cwDepts.forEach(d => cwRow.appendChild(renderDeptColumn(d)));
+    cwRow.appendChild(renderDeptColumn(d));
     columns.appendChild(cwRow);
-  }
+  });
 
   // Bottom row: regular departments + unassigned + add-dept
   const regularRow = document.createElement('div');

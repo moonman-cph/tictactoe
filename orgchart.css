@@ -171,6 +171,24 @@ body:not(.page-ready) #columns > .dept-column:nth-child(n+9) { animation-delay: 
   box-shadow: 0 0 0 3px rgba(90,103,216,0.12), var(--shadow-md);
 }
 
+/* ── Department drag-to-reorder ───────────────────────────────── */
+.dept-drag-handle {
+  cursor: grab;
+  padding: 4px 6px 4px 2px;
+  color: var(--text-muted);
+  opacity: 0;
+  flex-shrink: 0;
+  transition: opacity 0.15s;
+}
+.dept-header:hover .dept-drag-handle { opacity: 1; }
+.dept-drag-handle:active { cursor: grabbing; }
+body.view-only .dept-drag-handle { display: none; }
+.dept-column.dept-dragging { opacity: 0.4; }
+.cw-col.dept-drop-before { box-shadow: 0 -3px 0 0 #3b82f6; }
+.cw-col.dept-drop-after  { box-shadow: 0 3px 0 0 #3b82f6; }
+.dept-column:not(.cw-col).dept-drop-before { box-shadow: -3px 0 0 0 #3b82f6; }
+.dept-column:not(.cw-col).dept-drop-after  { box-shadow: 3px 0 0 0 #3b82f6; }
+
 .dept-header {
   padding: 13px 16px 12px;
   display: flex;

@@ -192,13 +192,14 @@ function avg(arr) { return arr.length ? arr.reduce((a, b) => a + b, 0) / arr.len
 async function init() {
   const overlay = document.getElementById('loading-overlay');
   let simActive = false;
+  let saved = {};
   try {
     // Check for active simulation first; fall back to live data
     const simRes = await fetch('/api/sim-data');
     const dataRes = simRes.ok ? simRes : await fetch('/api/data');
     if (!dataRes.ok) throw new Error('Server returned ' + dataRes.status);
     simActive = simRes.ok;
-    const saved = await dataRes.json();
+    saved = await dataRes.json();
     if (saved.departments) departments = saved.departments;
     if (saved.roles)       roles = saved.roles;
     if (saved.persons)     persons = saved.persons;

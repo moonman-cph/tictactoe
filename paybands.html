@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pay Bands — OrgChart</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+#app-content { overflow: hidden; }
+
+#pb-main {
+  flex: 1;
+  overflow-y: auto;
+  padding: 28px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* ── Section ────────────────────────────────────────────── */
+.pb-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.pb-section-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.pb-section-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.pb-section-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+.pb-section-body {
+  padding: 0;
+}
+
+/* ── Band table ─────────────────────────────────────────── */
+.band-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.band-table th {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 10px 16px;
+  text-align: left;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+.band-table td {
+  padding: 8px 16px;
+  vertical-align: top;
+  border-bottom: 1px solid var(--border);
+}
+.band-table tr:last-child td { border-bottom: none; }
+.band-table tr:hover td { background: var(--bg); }
+
+.band-level-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.band-input {
+  width: 100%;
+  padding: 5px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--text-primary);
+  background: var(--surface);
+  box-sizing: border-box;
+  transition: border-color 0.12s;
+}
+.band-input:focus { outline: none; border-color: var(--accent); }
+.band-input.error { border-color: #ef4444; }
+.band-textarea {
+  resize: vertical;
+  min-height: 40px;
+  max-height: 80px;
+}
+
+.band-row-error {
+  font-size: 11px;
+  color: #ef4444;
+  margin-top: 3px;
+  display: none;
+}
+.band-row-error.visible { display: block; }
+.band-row-warn {
+  font-size: 11px;
+  color: #d97706;
+  margin-top: 3px;
+  display: none;
+}
+.band-row-warn.visible { display: block; }
+
+.band-save-btn {
+  padding: 5px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  transition: all 0.12s;
+}
+.band-save-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+.band-save-btn.saved { background: #dcfce7; color: #166534; border-color: #86efac; }
+
+/* ── Toggle ─────────────────────────────────────────────── */
+.pb-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.pb-toggle-label { font-size: 13px; font-weight: 500; color: var(--text-secondary); }
+.pb-toggle-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+.toggle-track {
+  position: relative; width: 36px; height: 20px; flex-shrink: 0; cursor: pointer;
+}
+.toggle-track input { opacity: 0; width: 0; height: 0; position: absolute; }
+.toggle-bg {
+  position: absolute; inset: 0; border-radius: 20px;
+  background: var(--border); transition: background 0.15s;
+}
+.toggle-bg.on { background: var(--accent); }
+.toggle-thumb {
+  position: absolute; top: 3px; left: 3px; width: 14px; height: 14px;
+  border-radius: 50%; background: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2); transition: transform 0.15s;
+}
+.toggle-thumb.on { transform: translateX(16px); }
+
+/* ── Multipliers section ────────────────────────────────── */
+#multipliers-body { padding: 0; }
+#multipliers-hidden { padding: 20px; color: var(--text-muted); font-size: 13px; }
+
+.mult-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.mult-table th {
+  font-size: 11px; font-weight: 600; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.05em;
+  padding: 10px 16px; text-align: left;
+  background: var(--bg); border-bottom: 1px solid var(--border);
+}
+.mult-table td {
+  padding: 8px 16px; border-bottom: 1px solid var(--border);
+  font-size: 13px; vertical-align: middle;
+}
+.mult-table tr:last-child td { border-bottom: none; }
+
+.mult-input {
+  width: 80px;
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--text-primary);
+  background: var(--surface);
+}
+.mult-input:focus { outline: none; border-color: var(--accent); }
+.mult-cur-input {
+  width: 56px;
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 13px;
+  text-transform: uppercase;
+}
+.mult-cur-input:focus { outline: none; border-color: var(--accent); }
+
+.mult-eff {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.mult-remove-btn {
+  background: none; border: none; cursor: pointer;
+  color: var(--text-muted); font-size: 16px; padding: 0 4px;
+  border-radius: 4px; transition: color 0.12s;
+}
+.mult-remove-btn:hover { color: #ef4444; }
+
+#add-country-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 16px; border-top: 1px solid var(--border);
+  background: var(--bg); flex-wrap: wrap;
+}
+#add-country-row select, #add-country-row input {
+  padding: 5px 8px; border: 1px solid var(--border);
+  border-radius: 6px; font-family: inherit; font-size: 13px;
+  background: var(--surface); color: var(--text-primary);
+}
+#add-country-row select:focus, #add-country-row input:focus {
+  outline: none; border-color: var(--accent);
+}
+#add-mult-country { min-width: 160px; }
+#add-mult-multiplier { width: 80px; }
+#add-mult-currency { width: 64px; text-transform: uppercase; }
+
+/* ── Audit trail ────────────────────────────────────────── */
+.audit-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.audit-table th {
+  font-size: 11px; font-weight: 600; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.05em;
+  padding: 10px 16px; text-align: left;
+  background: var(--bg); border-bottom: 1px solid var(--border);
+}
+.audit-table td {
+  padding: 9px 16px; border-bottom: 1px solid var(--border);
+  font-size: 13px; color: var(--text-secondary);
+}
+.audit-table tr:last-child td { border-bottom: none; }
+
+.audit-when { white-space: nowrap; color: var(--text-muted); font-size: 12px; }
+.audit-entity { font-weight: 600; color: var(--text-primary); font-size: 12px; }
+.audit-field { font-size: 12px; color: var(--text-secondary); }
+.audit-val-old { color: #991b1b; }
+.audit-val-new { color: #166534; }
+.audit-val-null { color: var(--text-muted); font-style: italic; }
+.audit-empty { padding: 24px; text-align: center; color: var(--text-muted); font-size: 13px; }
+
+/* ── Level preview bar ──────────────────────────────────── */
+#preview-bar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 16px; border-bottom: 1px solid var(--border);
+  background: var(--bg); font-size: 13px; color: var(--text-secondary);
+}
+#preview-bar select {
+  padding: 4px 8px; border: 1px solid var(--border); border-radius: 6px;
+  font-family: inherit; font-size: 13px; background: var(--surface);
+}
+#preview-bar select:focus { outline: none; border-color: var(--accent); }
+
+/* ── App header ─────────────────────────────────────────── */
+#app-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 0 20px; height: 52px;
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+#app-header h1 { font-size: 16px; font-weight: 700; }
+.header-divider { width: 1px; height: 18px; background: var(--border); }
+.header-meta { font-size: 13px; color: var(--text-muted); }
+
+/* ── Saving indicator ───────────────────────────────────── */
+#pb-save-indicator {
+  font-size: 12px; color: var(--text-muted);
+  display: none; align-items: center; gap: 4px;
+}
+#pb-save-indicator.visible { display: flex; }
+#pb-save-indicator.error { color: #ef4444; }
+</style>
+</head>
+<body>
+
+<nav id="left-nav"></nav>
+<script src="shared-nav.js"></script>
+
+<div id="app-content">
+
+<div id="app-header">
+  <h1>Pay Bands</h1>
+  <div class="header-divider"></div>
+  <span class="header-meta">Compensation structure</span>
+  <div style="flex:1"></div>
+  <div id="pb-save-indicator">Saving…</div>
+</div>
+
+<div id="pb-main">
+
+  <!-- ── Section 1: Band Editor ───────────────────────────────── -->
+  <div class="pb-section">
+    <div class="pb-section-header">
+      <div>
+        <div class="pb-section-title">Pay Bands</div>
+        <div class="pb-section-sub">Set the compensation range for each level. Midpoint is the target for a fully performing employee.</div>
+      </div>
+    </div>
+    <div class="pb-section-body">
+      <table class="band-table" id="band-table">
+        <thead>
+          <tr>
+            <th style="width:80px">Level</th>
+            <th style="width:130px">Label</th>
+            <th>Description</th>
+            <th style="width:110px">Min /mo</th>
+            <th style="width:110px">Midpoint</th>
+            <th style="width:110px">Max /mo</th>
+            <th style="width:80px"></th>
+          </tr>
+        </thead>
+        <tbody id="band-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── Section 2: Country Multipliers ───────────────────────── -->
+  <div class="pb-section">
+    <div class="pb-section-header">
+      <div>
+        <div class="pb-section-title">Country Multipliers</div>
+        <div class="pb-section-sub">Scale pay bands by country. When enabled, each employee's effective band is their base band × their country's multiplier.</div>
+      </div>
+    </div>
+    <!-- Toggle row -->
+    <div class="pb-toggle-row">
+      <div>
+        <div class="pb-toggle-label">Use location multipliers</div>
+        <div class="pb-toggle-sub">When on, salary band warnings use the employee's country multiplier</div>
+      </div>
+      <label class="toggle-track" title="Toggle location multipliers">
+        <input type="checkbox" id="mult-toggle-cb">
+        <span class="toggle-bg" id="mult-toggle-bg"></span>
+        <span class="toggle-thumb" id="mult-toggle-thumb"></span>
+      </label>
+    </div>
+    <!-- Content shown only when enabled -->
+    <div id="multipliers-body">
+      <div id="multipliers-hidden" style="display:none">Location multipliers are disabled. Toggle on above to configure.</div>
+      <div id="multipliers-enabled" style="display:none">
+        <!-- Level preview selector -->
+        <div id="preview-bar">
+          <span>Preview effective bands for level:</span>
+          <select id="preview-level">
+            <option value="L1">L1</option>
+            <option value="L2">L2</option>
+            <option value="L3" selected>L3</option>
+            <option value="L4">L4</option>
+            <option value="L5">L5</option>
+            <option value="L6">L6</option>
+            <option value="L7">L7</option>
+            <option value="L8">L8</option>
+          </select>
+        </div>
+        <table class="mult-table" id="mult-table">
+          <thead>
+            <tr>
+              <th>Country</th>
+              <th style="width:100px">Multiplier</th>
+              <th style="width:80px">Currency</th>
+              <th style="width:160px">Effective range</th>
+              <th style="width:40px"></th>
+            </tr>
+          </thead>
+          <tbody id="mult-tbody"></tbody>
+        </table>
+        <div id="add-country-row">
+          <select id="add-mult-country">
+            <option value="">— Select country —</option>
+          </select>
+          <input type="number" id="add-mult-multiplier" placeholder="×1.00" min="0.01" max="10" step="0.01">
+          <input type="text" id="add-mult-currency" placeholder="EUR" maxlength="3">
+          <button class="band-save-btn" id="add-country-btn">Add country</button>
+          <span id="add-country-error" style="font-size:12px;color:#ef4444;display:none"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Section 3: Audit Trail ───────────────────────────────── -->
+  <div class="pb-section">
+    <div class="pb-section-header">
+      <div class="pb-section-title">Band change history</div>
+      <span style="font-size:12px;color:var(--text-muted)" id="audit-count"></span>
+    </div>
+    <div class="pb-section-body">
+      <table class="audit-table">
+        <thead>
+          <tr>
+            <th style="width:120px">When</th>
+            <th style="width:100px">Level / Country</th>
+            <th style="width:120px">Field</th>
+            <th>Old value</th>
+            <th>New value</th>
+          </tr>
+        </thead>
+        <tbody id="audit-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /#pb-main -->
+</div><!-- /#app-content -->
+
+<script>
+'use strict';
+
+// ── Shared data ────────────────────────────────────────────────────────────────
+
+const LEVELS = ['L1','L2','L3','L4','L5','L6','L7','L8'];
+
+const COUNTRY_LIST = [
+  { code: 'AE', name: 'UAE' }, { code: 'AR', name: 'Argentina' },
+  { code: 'AT', name: 'Austria' }, { code: 'AU', name: 'Australia' },
+  { code: 'BE', name: 'Belgium' }, { code: 'BR', name: 'Brazil' },
+  { code: 'CA', name: 'Canada' }, { code: 'CH', name: 'Switzerland' },
+  { code: 'CL', name: 'Chile' }, { code: 'CN', name: 'China' },
+  { code: 'DE', name: 'Germany' }, { code: 'DK', name: 'Denmark' },
+  { code: 'EG', name: 'Egypt' }, { code: 'ES', name: 'Spain' },
+  { code: 'FI', name: 'Finland' }, { code: 'FR', name: 'France' },
+  { code: 'GB', name: 'United Kingdom' }, { code: 'HK', name: 'Hong Kong' },
+  { code: 'ID', name: 'Indonesia' }, { code: 'IE', name: 'Ireland' },
+  { code: 'IN', name: 'India' }, { code: 'IT', name: 'Italy' },
+  { code: 'JP', name: 'Japan' }, { code: 'KE', name: 'Kenya' },
+  { code: 'KR', name: 'South Korea' }, { code: 'MX', name: 'Mexico' },
+  { code: 'MY', name: 'Malaysia' }, { code: 'NG', name: 'Nigeria' },
+  { code: 'NL', name: 'Netherlands' }, { code: 'NO', name: 'Norway' },
+  { code: 'NZ', name: 'New Zealand' }, { code: 'PH', name: 'Philippines' },
+  { code: 'PL', name: 'Poland' }, { code: 'PT', name: 'Portugal' },
+  { code: 'SE', name: 'Sweden' }, { code: 'SG', name: 'Singapore' },
+  { code: 'TH', name: 'Thailand' }, { code: 'US', name: 'United States' },
+  { code: 'VN', name: 'Vietnam' }, { code: 'ZA', name: 'South Africa' },
+];
+
+// ── State ──────────────────────────────────────────────────────────────────────
+
+let salaryBands = {};
+let locationMultipliers = {};
+let settings = {};
+let auditEntries = [];
+
+// ── Load / Save ────────────────────────────────────────────────────────────────
+
+async function loadData() {
+  const res = await fetch('/api/data');
+  if (!res.ok) throw new Error('Server returned ' + res.status);
+  const saved = await res.json();
+  if (saved.salaryBands)         salaryBands = { ...saved.salaryBands };
+  if (saved.locationMultipliers) locationMultipliers = { ...saved.locationMultipliers };
+  if (saved.settings)            settings = { ...saved.settings };
+}
+
+async function saveAll(reason) {
+  const indicator = document.getElementById('pb-save-indicator');
+  indicator.textContent = 'Saving…';
+  indicator.className = 'visible';
+  try {
+    const res = await fetch('/api/data');
+    const full = res.ok ? await res.json() : {};
+    full.salaryBands = salaryBands;
+    full.locationMultipliers = locationMultipliers;
+    full.settings = { ...(full.settings || {}), ...settings };
+    const headers = { 'Content-Type': 'application/json', 'X-Source': 'ui' };
+    if (reason) headers['X-Change-Reason'] = reason.slice(0, 500);
+    const resp = await fetch('/api/data', { method: 'POST', headers, body: JSON.stringify(full) });
+    if (!resp.ok) throw new Error('Save failed');
+    indicator.textContent = 'Saved';
+    setTimeout(() => { indicator.className = ''; }, 1500);
+    await loadAuditTrail();
+    renderAuditTrail();
+  } catch (e) {
+    indicator.textContent = 'Save failed';
+    indicator.className = 'visible error';
+    setTimeout(() => { indicator.className = ''; }, 3000);
+  }
+}
+
+async function loadAuditTrail() {
+  try {
+    const res = await fetch('/api/changelog?entityType=salaryBand&entityType=locationMultiplier&limit=50');
+    if (!res.ok) return;
+    const data = await res.json();
+    auditEntries = data.entries || [];
+  } catch (e) {
+    auditEntries = [];
+  }
+}
+
+// ── Formatting ─────────────────────────────────────────────────────────────────
+
+function fmtNum(n) {
+  if (n == null || isNaN(n)) return '—';
+  return Number(n).toLocaleString();
+}
+
+function fmtRelTime(iso) {
+  const diff = Date.now() - new Date(iso).getTime();
+  const m = Math.floor(diff / 60000);
+  if (m < 1) return 'just now';
+  if (m < 60) return m + 'm ago';
+  const h = Math.floor(m / 60);
+  if (h < 24) return h + 'h ago';
+  const d = Math.floor(h / 24);
+  if (d < 7) return d + 'd ago';
+  return new Date(iso).toLocaleDateString();
+}
+
+function fmtVal(v) {
+  if (v == null) return '<span class="audit-val-null">—</span>';
+  if (typeof v === 'object') return '<span style="font-family:monospace;font-size:11px">' + JSON.stringify(v).slice(0, 40) + '</span>';
+  return String(v);
+}
+
+// ── Band Editor ────────────────────────────────────────────────────────────────
+
+function validateBandRow(level) {
+  const min = parseFloat(document.getElementById(`band-min-${level}`).value);
+  const mid = parseFloat(document.getElementById(`band-mid-${level}`).value);
+  const max = parseFloat(document.getElementById(`band-max-${level}`).value);
+  const label = document.getElementById(`band-label-${level}`).value;
+  const desc = document.getElementById(`band-desc-${level}`).value;
+
+  const errors = [];
+  const warns = [];
+
+  if (isNaN(min) || min <= 0) errors.push('Min must be a positive number');
+  if (isNaN(mid) || mid <= 0) errors.push('Midpoint must be a positive number');
+  if (isNaN(max) || max <= 0) errors.push('Max must be a positive number');
+  if (!errors.length) {
+    if (mid < min) errors.push('Midpoint cannot be less than Min');
+    if (mid > max) errors.push('Midpoint cannot exceed Max');
+    if (min >= max) errors.push('Max must be greater than Min');
+  }
+  if (label.length > 40) errors.push('Label too long (max 40 characters)');
+  if (desc.length > 200) errors.push('Description too long (max 200 characters)');
+
+  // Cross-level overlap check
+  const levelIdx = LEVELS.indexOf(level);
+  if (levelIdx < LEVELS.length - 1) {
+    const nextLevel = LEVELS[levelIdx + 1];
+    const nextBand = salaryBands[nextLevel];
+    if (nextBand && !isNaN(max) && max > nextBand.min) {
+      warns.push(`Max overlaps with ${nextLevel} min (${fmtNum(nextBand.min)})`);
+    }
+  }
+
+  return { valid: errors.length === 0, errors, warns };
+}
+
+function renderBandTable() {
+  const tbody = document.getElementById('band-tbody');
+  tbody.innerHTML = '';
+
+  LEVELS.forEach(level => {
+    const band = salaryBands[level] || {};
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><span class="band-level-chip">${level}</span><div style="font-size:11px;color:var(--text-muted);margin-top:4px">${band.label || ''}</div></td>
+      <td>
+        <input class="band-input" id="band-label-${level}" type="text" value="${(band.label || '').replace(/"/g, '&quot;')}" maxlength="40" placeholder="Label">
+        <div class="band-row-error" id="band-err-${level}"></div>
+        <div class="band-row-warn" id="band-warn-${level}"></div>
+      </td>
+      <td>
+        <textarea class="band-input band-textarea" id="band-desc-${level}" maxlength="200" placeholder="Optional description">${band.description || ''}</textarea>
+      </td>
+      <td>
+        <input class="band-input" id="band-min-${level}" type="number" value="${band.min || ''}" min="1" placeholder="0">
+      </td>
+      <td>
+        <input class="band-input" id="band-mid-${level}" type="number" value="${band.midpoint || ''}" min="1" placeholder="0">
+      </td>
+      <td>
+        <input class="band-input" id="band-max-${level}" type="number" value="${band.max || ''}" min="1" placeholder="0">
+      </td>
+      <td>
+        <button class="band-save-btn" id="band-save-${level}" onclick="saveBandRow('${level}')">Save</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+
+    // Blur validation
+    ['min','mid','max'].forEach(type => {
+      const id = type === 'mid' ? `band-mid-${level}` : `band-${type}-${level}`;
+      document.getElementById(id).addEventListener('blur', () => {
+        const { errors, warns } = validateBandRow(level);
+        const errEl = document.getElementById(`band-err-${level}`);
+        const warnEl = document.getElementById(`band-warn-${level}`);
+        errEl.textContent = errors.join(' · ');
+        errEl.className = 'band-row-error' + (errors.length ? ' visible' : '');
+        warnEl.textContent = warns.join(' · ');
+        warnEl.className = 'band-row-warn' + (warns.length ? ' visible' : '');
+      });
+    });
+  });
+}
+
+async function saveBandRow(level) {
+  const { valid, errors, warns } = validateBandRow(level);
+  const errEl = document.getElementById(`band-err-${level}`);
+  const warnEl = document.getElementById(`band-warn-${level}`);
+  errEl.textContent = errors.join(' · ');
+  errEl.className = 'band-row-error' + (errors.length ? ' visible' : '');
+  warnEl.textContent = warns.join(' · ');
+  warnEl.className = 'band-row-warn' + (warns.length ? ' visible' : '');
+
+  if (!valid) return;
+
+  salaryBands[level] = {
+    ...(salaryBands[level] || {}),
+    min:         parseFloat(document.getElementById(`band-min-${level}`).value),
+    midpoint:    parseFloat(document.getElementById(`band-mid-${level}`).value),
+    max:         parseFloat(document.getElementById(`band-max-${level}`).value),
+    label:       document.getElementById(`band-label-${level}`).value.trim(),
+    description: document.getElementById(`band-desc-${level}`).value.trim(),
+  };
+
+  const btn = document.getElementById(`band-save-${level}`);
+  btn.disabled = true;
+  await saveAll(`Pay band ${level} updated`);
+  btn.textContent = '✓ Saved';
+  btn.className = 'band-save-btn saved';
+  setTimeout(() => {
+    btn.textContent = 'Save';
+    btn.className = 'band-save-btn';
+    btn.disabled = false;
+    // Refresh the level chip label
+    renderBandTable();
+  }, 1500);
+}
+
+// ── Country Multipliers ────────────────────────────────────────────────────────
+
+function getEffective(level, multiplier) {
+  const base = salaryBands[level] || {};
+  return {
+    min: base.min ? Math.round(base.min * multiplier) : null,
+    max: base.max ? Math.round(base.max * multiplier) : null,
+  };
+}
+
+function renderMultipliersSection() {
+  const enabled = settings.useLocationMultipliers;
+  const cb = document.getElementById('mult-toggle-cb');
+  const bg = document.getElementById('mult-toggle-bg');
+  const thumb = document.getElementById('mult-toggle-thumb');
+  cb.checked = !!enabled;
+  bg.className = 'toggle-bg' + (enabled ? ' on' : '');
+  thumb.className = 'toggle-thumb' + (enabled ? ' on' : '');
+
+  const hiddenDiv = document.getElementById('multipliers-hidden');
+  const enabledDiv = document.getElementById('multipliers-enabled');
+  hiddenDiv.style.display = enabled ? 'none' : 'block';
+  enabledDiv.style.display = enabled ? 'block' : 'none';
+
+  if (!enabled) return;
+
+  // Populate add-country dropdown (exclude already-added codes)
+  const addSel = document.getElementById('add-mult-country');
+  const existingCodes = new Set(Object.keys(locationMultipliers));
+  addSel.innerHTML = '<option value="">— Select country —</option>';
+  COUNTRY_LIST.filter(c => !existingCodes.has(c.code)).forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c.code; opt.textContent = c.name;
+    addSel.appendChild(opt);
+  });
+
+  renderMultTable();
+}
+
+function renderMultTable() {
+  const level = document.getElementById('preview-level').value;
+  const tbody = document.getElementById('mult-tbody');
+  tbody.innerHTML = '';
+
+  Object.entries(locationMultipliers).sort((a, b) => a[1].name.localeCompare(b[1].name)).forEach(([code, entry]) => {
+    const eff = getEffective(level, entry.multiplier);
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="font-weight:500;color:var(--text-primary)">${entry.name} <span style="font-size:11px;color:var(--text-muted)">(${code})</span></td>
+      <td>
+        <input class="mult-input" type="number" value="${entry.multiplier}" min="0.01" max="10" step="0.01"
+          data-code="${code}" data-field="multiplier" onchange="updateMultField('${code}','multiplier',this.value)">
+      </td>
+      <td>
+        <input class="mult-cur-input" type="text" value="${entry.currency}" maxlength="3"
+          data-code="${code}" onchange="updateMultField('${code}','currency',this.value.toUpperCase())">
+      </td>
+      <td class="mult-eff">${eff.min != null ? fmtNum(eff.min) + ' – ' + fmtNum(eff.max) : '—'}</td>
+      <td>
+        <button class="mult-remove-btn" onclick="removeCountry('${code}')" title="Remove ${entry.name}">×</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+async function updateMultField(code, field, value) {
+  if (!locationMultipliers[code]) return;
+  if (field === 'multiplier') {
+    const v = parseFloat(value);
+    if (isNaN(v) || v <= 0) return;
+    locationMultipliers[code].multiplier = Math.round(v * 100) / 100;
+  } else {
+    locationMultipliers[code][field] = value;
+  }
+  renderMultTable();
+  await saveAll(`Location multiplier ${code} updated`);
+}
+
+async function removeCountry(code) {
+  const name = locationMultipliers[code] ? locationMultipliers[code].name : code;
+  if (!confirm(`Remove ${name}?\n\nEmployees with country "${code}" will fall back to the base pay bands.`)) return;
+  delete locationMultipliers[code];
+  renderMultipliersSection();
+  await saveAll(`Location multiplier ${code} removed`);
+}
+
+document.getElementById('add-country-btn').addEventListener('click', async () => {
+  const code = document.getElementById('add-mult-country').value;
+  const mult = parseFloat(document.getElementById('add-mult-multiplier').value);
+  const cur = document.getElementById('add-mult-currency').value.toUpperCase().trim();
+  const errEl = document.getElementById('add-country-error');
+
+  if (!code) { errEl.textContent = 'Select a country.'; errEl.style.display = 'inline'; return; }
+  if (isNaN(mult) || mult <= 0) { errEl.textContent = 'Multiplier must be > 0.'; errEl.style.display = 'inline'; return; }
+  if (!cur || cur.length !== 3) { errEl.textContent = 'Currency must be 3 letters (e.g. EUR).'; errEl.style.display = 'inline'; return; }
+  errEl.style.display = 'none';
+
+  const countryName = (COUNTRY_LIST.find(c => c.code === code) || {}).name || code;
+  locationMultipliers[code] = { name: countryName, multiplier: Math.round(mult * 100) / 100, currency: cur };
+
+  document.getElementById('add-mult-country').value = '';
+  document.getElementById('add-mult-multiplier').value = '';
+  document.getElementById('add-mult-currency').value = '';
+
+  renderMultipliersSection();
+  await saveAll(`Location multiplier ${code} added`);
+});
+
+document.getElementById('mult-toggle-cb').addEventListener('change', async e => {
+  settings.useLocationMultipliers = e.target.checked;
+  renderMultipliersSection();
+  await saveAll(e.target.checked ? 'Location multipliers enabled' : 'Location multipliers disabled');
+});
+
+document.getElementById('preview-level').addEventListener('change', () => {
+  renderMultTable();
+});
+
+// ── Audit Trail ────────────────────────────────────────────────────────────────
+
+function renderAuditTrail() {
+  const tbody = document.getElementById('audit-tbody');
+  const countEl = document.getElementById('audit-count');
+
+  if (!auditEntries.length) {
+    tbody.innerHTML = '<tr><td colspan="5" class="audit-empty">No band changes recorded yet. Save a band to see it here.</td></tr>';
+    countEl.textContent = '';
+    return;
+  }
+
+  countEl.textContent = `Last ${auditEntries.length} changes`;
+  tbody.innerHTML = auditEntries.map(e => {
+    const entityLabel = e.entityId || e.entityLabel || '—';
+    const oldHtml = e.oldValue != null
+      ? `<span class="audit-val-old">${fmtVal(e.oldValue)}</span>`
+      : `<span class="audit-val-null">—</span>`;
+    const newHtml = e.newValue != null
+      ? `<span class="audit-val-new">${fmtVal(e.newValue)}</span>`
+      : `<span class="audit-val-null">—</span>`;
+    return `<tr>
+      <td class="audit-when"><span title="${e.timestamp}">${fmtRelTime(e.timestamp)}</span></td>
+      <td class="audit-entity">${entityLabel}</td>
+      <td class="audit-field">${e.field || e.operation || '—'}</td>
+      <td>${oldHtml}</td>
+      <td>${newHtml}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── Init ───────────────────────────────────────────────────────────────────────
+
+async function init() {
+  try {
+    await loadData();
+    await loadAuditTrail();
+    renderBandTable();
+    renderMultipliersSection();
+    renderAuditTrail();
+  } catch (e) {
+    document.getElementById('pb-main').innerHTML = `
+      <div style="padding:40px;text-align:center;color:var(--text-muted)">
+        <div style="font-size:16px;font-weight:500;margin-bottom:8px">Failed to load data</div>
+        <div style="font-size:13px">${e.message}</div>
+        <div style="margin-top:16px"><button onclick="location.reload()" style="padding:8px 16px;border-radius:6px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-family:inherit">Retry</button></div>
+      </div>`;
+  }
+}
+
+init();
+</script>
+</body>
+</html>

@@ -27,7 +27,7 @@ const COLLECTIONS = [
   { key: 'roles',           entityType: 'role',           labelField: 'title' },
   { key: 'persons',         entityType: 'person',         labelField: 'name' },
   { key: 'roleAssignments', entityType: 'roleAssignment', labelField: null },
-  { key: 'salaryBands',     entityType: 'salaryBand',     labelField: 'name' },
+  // salaryBands and locationMultipliers are plain objects (not arrays), handled by dedicated diff functions below
 ];
 
 // ── Changelog helpers ─────────────────────────────────────────────────────────
@@ -154,6 +154,50 @@ function diffTitles(prev, next, correlationId, meta) {
   return entries;
 }
 
+function diffSalaryBands(prev, next, correlationId, meta) {
+  const entries = [];
+  const prevB = prev || {};
+  const nextB = next || {};
+  const allLevels = new Set([...Object.keys(prevB), ...Object.keys(nextB)]);
+  for (const level of allLevels) {
+    const prevBand = prevB[level] || {};
+    const nextBand = nextB[level] || {};
+    const allFields = new Set([...Object.keys(prevBand), ...Object.keys(nextBand)]);
+    for (const field of allFields) {
+      if (IGNORED_FIELDS.has(field)) continue;
+      if (!deepEqual(prevBand[field], nextBand[field])) {
+        entries.push(makeEntry('UPDATE', 'salaryBand', level, level, field, prevBand[field], nextBand[field], correlationId, meta));
+      }
+    }
+  }
+  return entries;
+}
+
+function diffLocationMultipliers(prev, next, correlationId, meta) {
+  const entries = [];
+  const prevM = prev || {};
+  const nextM = next || {};
+  const allCodes = new Set([...Object.keys(prevM), ...Object.keys(nextM)]);
+  for (const code of allCodes) {
+    const prevRec = prevM[code];
+    const nextRec = nextM[code];
+    if (!prevRec && nextRec) {
+      entries.push(makeEntry('CREATE', 'locationMultiplier', code, nextRec.name || code, null, null, nextRec, correlationId, meta));
+    } else if (prevRec && !nextRec) {
+      entries.push(makeEntry('DELETE', 'locationMultiplier', code, prevRec.name || code, null, prevRec, null, correlationId, meta));
+    } else if (prevRec && nextRec) {
+      const allFields = new Set([...Object.keys(prevRec), ...Object.keys(nextRec)]);
+      for (const field of allFields) {
+        if (!deepEqual(prevRec[field], nextRec[field])) {
+          const label = nextRec.name || prevRec.name || code;
+          entries.push(makeEntry('UPDATE', 'locationMultiplier', code, label, field, prevRec[field], nextRec[field], correlationId, meta));
+        }
+      }
+    }
+  }
+  return entries;
+}
+
 function diffState(prev, next, correlationId, meta) {
   const entries = [];
 
@@ -164,6 +208,8 @@ function diffState(prev, next, correlationId, meta) {
 
   entries.push(...diffSettings(prev.settings, next.settings, correlationId, meta));
   entries.push(...diffTitles(prev.titles, next.titles, correlationId, meta));
+  entries.push(...diffSalaryBands(prev.salaryBands, next.salaryBands, correlationId, meta));
+  entries.push(...diffLocationMultipliers(prev.locationMultipliers, next.locationMultipliers, correlationId, meta));
 
   // Detect bulk operation — count entity-level CREATE/DELETE (not field-level UPDATEs)
   const entityOps = entries.filter(e => e.operation === 'CREATE' || e.operation === 'DELETE').length;

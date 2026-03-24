@@ -347,6 +347,14 @@
         <input type="number" id="add-emp-salary" class="form-control" placeholder="e.g. 5000" min="0" />
       </div>
       <div class="form-group">
+        <label class="form-label">Country</label>
+        <select id="add-emp-country" class="form-control"></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">City <span style="color:var(--text-muted);font-weight:400">(optional)</span></label>
+        <input type="text" id="add-emp-city" class="form-control" placeholder="e.g. Copenhagen" />
+      </div>
+      <div class="form-group">
         <label class="form-label">Assign to position (optional)</label>
         <select id="add-emp-role" class="form-control"></select>
       </div>
@@ -398,9 +406,6 @@
       <hr class="title-section-divider" />
       <div class="title-section-heading">Teams</div>
       <div id="dept-settings-teams-body"></div>
-      <hr class="title-section-divider" />
-      <div class="title-section-heading">Titles by Level</div>
-      <div id="dept-settings-titles-body"></div>
       <div class="modal-warning" id="dept-settings-warning"></div>
     </div>
     <div class="modal-footer" style="display:flex">
@@ -498,7 +503,8 @@
       </div>
       <div class="form-group">
         <label class="form-label">Title <span style="color:#ef4444">*</span></label>
-        <select id="add-role-title" class="form-control"></select>
+        <input type="text" id="add-role-title" list="add-role-title-list" class="form-control" autocomplete="off" placeholder="e.g. Senior Engineer" maxlength="60" />
+        <datalist id="add-role-title-list"></datalist>
       </div>
       <div class="form-group">
         <label class="form-label">Reports to</label>
@@ -619,9 +625,9 @@
         </label>
       </div>
       <div style="border-top:1px solid var(--border);margin-top:16px;padding-top:16px;">
-        <button id="settings-open-paybands" style="width:100%;padding:8px 12px;border-radius:6px;border:1.5px solid var(--border);background:#fff;font-size:13px;font-weight:500;cursor:pointer;color:var(--text-secondary);text-align:left;display:flex;align-items:center;justify-content:space-between;">
+        <a href="paybands.html" style="width:100%;padding:8px 12px;border-radius:6px;border:1.5px solid var(--border);background:#fff;font-size:13px;font-weight:500;cursor:pointer;color:var(--text-secondary);text-align:left;display:flex;align-items:center;justify-content:space-between;text-decoration:none;">
           Manage pay bands <span style="color:var(--text-muted);font-size:16px;">›</span>
-        </button>
+        </a>
       </div>
       <div style="border-top:1px solid var(--border);margin-top:16px;padding-top:16px;">
         <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;">
@@ -666,26 +672,6 @@
   </div>
 </div>
 
-<div id="paybands-modal-backdrop" style="display:none;position:fixed;inset:0;background:rgba(16,24,40,0.45);z-index:1100;align-items:center;justify-content:center;">
-  <div style="background:#fff;border-radius:12px;box-shadow:0 8px 32px rgba(16,24,40,0.18);width:460px;max-width:95vw;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;">
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 20px 14px;border-bottom:1px solid var(--border);flex-shrink:0;">
-      <h2 style="margin:0;font-size:16px;font-weight:600;color:var(--text-primary);">Pay bands</h2>
-      <button id="paybands-modal-close" style="background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:20px;line-height:1;padding:0 2px;">&times;</button>
-    </div>
-    <div style="padding:16px 20px;overflow-y:auto;flex:1;">
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px;padding:0 2px;">
-        <div style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;">Level</div>
-        <div style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;">Min /mo</div>
-        <div style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;">Max /mo</div>
-      </div>
-      <div id="paybands-rows"></div>
-    </div>
-    <div style="padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;flex-shrink:0;">
-      <button class="btn btn-ghost" id="paybands-cancel-btn">Cancel</button>
-      <button class="btn btn-primary" id="paybands-save-btn">Save</button>
-    </div>
-  </div>
-</div>
 
 <script>
 // ── Data ─────────────────────────────────────────────────────────────────────
@@ -1060,14 +1046,85 @@ const PERSON_FLAGS = [
 ];
 
 let SALARY_BANDS = {
-  L1: { min: 30000,  max: 42000  },  // Junior
-  L2: { min: 40000,  max: 55000  },  // Mid
-  L3: { min: 52000,  max: 72000  },  // Senior
-  L4: { min: 68000,  max: 92000  },  // Lead / Specialist
-  L5: { min: 88000,  max: 115000 },  // Manager
-  L6: { min: 110000, max: 145000 },  // Senior Manager
-  L7: { min: 140000, max: 185000 },  // Director / VP
-  L8: { min: 170000, max: 250000 },  // C-Level
+  L1: { min: 30000,  midpoint: 36000,  max: 42000,  label: 'Junior',           description: 'Entry-level individual contributor' },
+  L2: { min: 40000,  midpoint: 47500,  max: 55000,  label: 'Mid',              description: 'Developing professional, some autonomy' },
+  L3: { min: 52000,  midpoint: 62000,  max: 72000,  label: 'Senior',           description: 'Strong independent contributor' },
+  L4: { min: 68000,  midpoint: 80000,  max: 92000,  label: 'Lead / Specialist',description: 'Technical lead or deep specialist' },
+  L5: { min: 88000,  midpoint: 101500, max: 115000, label: 'Manager',          description: 'First-line manager or senior IC' },
+  L6: { min: 110000, midpoint: 127500, max: 145000, label: 'Senior Manager',   description: 'Multi-team scope or staff engineer' },
+  L7: { min: 140000, midpoint: 162500, max: 185000, label: 'Director',         description: 'Director or VP-level leadership' },
+  L8: { min: 170000, midpoint: 210000, max: 250000, label: 'Executive',        description: 'C-level or equivalent' },
+};
+
+let locationMultipliers = {
+  DK: { name: 'Denmark',        multiplier: 1.00, currency: 'DKK' },
+  NO: { name: 'Norway',         multiplier: 1.05, currency: 'NOK' },
+  GB: { name: 'United Kingdom', multiplier: 0.95, currency: 'GBP' },
+  DE: { name: 'Germany',        multiplier: 0.92, currency: 'EUR' },
+  SE: { name: 'Sweden',         multiplier: 0.98, currency: 'SEK' },
+  US: { name: 'United States',  multiplier: 1.15, currency: 'USD' },
+  PL: { name: 'Poland',         multiplier: 0.55, currency: 'PLN' },
+  IN: { name: 'India',          multiplier: 0.40, currency: 'INR' },
+};
+
+const COUNTRY_LIST = [
+  { code: 'AE', name: 'UAE' },
+  { code: 'AR', name: 'Argentina' },
+  { code: 'AT', name: 'Austria' },
+  { code: 'AU', name: 'Australia' },
+  { code: 'BE', name: 'Belgium' },
+  { code: 'BR', name: 'Brazil' },
+  { code: 'CA', name: 'Canada' },
+  { code: 'CH', name: 'Switzerland' },
+  { code: 'CL', name: 'Chile' },
+  { code: 'CN', name: 'China' },
+  { code: 'DE', name: 'Germany' },
+  { code: 'DK', name: 'Denmark' },
+  { code: 'EG', name: 'Egypt' },
+  { code: 'ES', name: 'Spain' },
+  { code: 'FI', name: 'Finland' },
+  { code: 'FR', name: 'France' },
+  { code: 'GB', name: 'United Kingdom' },
+  { code: 'HK', name: 'Hong Kong' },
+  { code: 'ID', name: 'Indonesia' },
+  { code: 'IE', name: 'Ireland' },
+  { code: 'IN', name: 'India' },
+  { code: 'IT', name: 'Italy' },
+  { code: 'JP', name: 'Japan' },
+  { code: 'KE', name: 'Kenya' },
+  { code: 'KR', name: 'South Korea' },
+  { code: 'MX', name: 'Mexico' },
+  { code: 'MY', name: 'Malaysia' },
+  { code: 'NG', name: 'Nigeria' },
+  { code: 'NL', name: 'Netherlands' },
+  { code: 'NO', name: 'Norway' },
+  { code: 'NZ', name: 'New Zealand' },
+  { code: 'PH', name: 'Philippines' },
+  { code: 'PL', name: 'Poland' },
+  { code: 'PT', name: 'Portugal' },
+  { code: 'SE', name: 'Sweden' },
+  { code: 'SG', name: 'Singapore' },
+  { code: 'TH', name: 'Thailand' },
+  { code: 'US', name: 'United States' },
+  { code: 'VN', name: 'Vietnam' },
+  { code: 'ZA', name: 'South Africa' },
+];
+
+// Best-effort map for migrating free-text location → ISO country code
+const LOCATION_MIGRATION_MAP = {
+  'argentina': 'AR', 'australia': 'AU', 'austria': 'AT', 'belgium': 'BE',
+  'brazil': 'BR', 'canada': 'CA', 'chile': 'CL', 'china': 'CN',
+  'denmark': 'DK', 'dk': 'DK', 'egypt': 'EG', 'finland': 'FI',
+  'france': 'FR', 'germany': 'DE', 'deutschland': 'DE', 'hong kong': 'HK',
+  'hungary': 'HU', 'india': 'IN', 'indonesia': 'ID', 'ireland': 'IE',
+  'italy': 'IT', 'japan': 'JP', 'kenya': 'KE', 'malaysia': 'MY',
+  'mexico': 'MX', 'netherlands': 'NL', 'new zealand': 'NZ', 'nigeria': 'NG',
+  'norway': 'NO', 'philippines': 'PH', 'poland': 'PL', 'portugal': 'PT',
+  'singapore': 'SG', 'south africa': 'ZA', 'south korea': 'KR',
+  'spain': 'ES', 'sweden': 'SE', 'switzerland': 'CH', 'thailand': 'TH',
+  'uae': 'AE', 'united arab emirates': 'AE', 'united kingdom': 'GB',
+  'uk': 'GB', 'england': 'GB', 'united states': 'US', 'usa': 'US',
+  'united states of america': 'US', 'vietnam': 'VN',
 };
 
 const TITLES = {
@@ -1167,6 +1224,7 @@ const TITLES = {
 
 const state = {
   selectedRoleIds: new Set(),
+  selectedPersonIds: new Set(),
   draggedPersonId: null,
   draggedRoleId: null,
   draggingDeptId: null,
@@ -1178,7 +1236,7 @@ const state = {
   pendingAnimation: null,
 };
 
-let settings = { currency: 'DKK', hideSalaries: false, hideLevels: false, viewOnly: false, matrixMode: false, dragDropEnabled: true, dragMode: 'person' };
+let settings = { currency: 'DKK', hideSalaries: false, hideLevels: false, viewOnly: false, matrixMode: false, dragDropEnabled: true, dragMode: 'person', useLocationMultipliers: false };
 
 let snapshots = [];
 let simMode   = false;
@@ -1343,10 +1401,19 @@ function nextPersonId() {
   return allIds.length > 0 ? Math.max(...allIds) + 1 : 1;
 }
 
+function effectiveBand(level, countryCode) {
+  const base = SALARY_BANDS[level];
+  if (!base) return null;
+  if (!settings.useLocationMultipliers || !countryCode) return base;
+  const loc = locationMultipliers[countryCode];
+  if (!loc) return base;
+  const m = loc.multiplier;
+  return { ...base, min: Math.round(base.min * m), midpoint: Math.round(base.midpoint * m), max: Math.round(base.max * m) };
+}
+
 function salaryBandStatus(person) {
   const role = getRoleForPerson(person.id);
-  const level = role ? role.level : null;
-  const band = level ? SALARY_BANDS[level] : null;
+  const band = role ? effectiveBand(role.level, person.country) : null;
   if (!band) return 'ok';
   if (person.salary < band.min) return 'under';
   if (person.salary > band.max) return 'over';
@@ -1439,7 +1506,7 @@ function renderCard(role, isOrphaned = false) {
   if (!isVacant && !person.noLongerHired) {
     const salaryStatus = salaryBandStatus(person);
     if (salaryStatus !== 'ok') {
-      const band = SALARY_BANDS[role.level];
+      const band = effectiveBand(role.level, person.country);
       const direction = salaryStatus === 'under' ? 'below' : 'above';
       const salaryWarn = document.createElement('div');
       salaryWarn.className = 'card-salary-warn';
@@ -1474,7 +1541,7 @@ function renderCard(role, isOrphaned = false) {
       });
       card.addEventListener('dragend', () => { if (state.draggedRoleId !== null) { state.draggedRoleId = null; render(); } });
     }
-    card.addEventListener('click', e => { e.stopPropagation(); state.selectedRoleIds.clear(); state.selectedRoleIds.add(role.id); clearTimeout(card._clickTimer); card._clickTimer = setTimeout(() => render(), 250); });
+    card.addEventListener('click', e => { e.stopPropagation(); state.selectedRoleIds.clear(); state.selectedPersonIds.clear(); state.selectedRoleIds.add(role.id); clearTimeout(card._clickTimer); card._clickTimer = setTimeout(() => render(), 250); });
     card.addEventListener('dblclick', e => { e.stopPropagation(); clearTimeout(card._clickTimer); openCombinedModal(role.id, 'role'); });
     card.addEventListener('dragover', e => {
       if (state.draggingDeptId !== null) return; // let event bubble to col for dept reorder
@@ -1529,11 +1596,13 @@ function renderCard(role, isOrphaned = false) {
     card.addEventListener('click', e => {
       e.stopPropagation();
       if (e.ctrlKey || e.metaKey) {
+        state.selectedPersonIds.clear();
         if (state.selectedRoleIds.has(role.id)) state.selectedRoleIds.delete(role.id);
         else state.selectedRoleIds.add(role.id);
         render();
       } else {
         state.selectedRoleIds.clear();
+        state.selectedPersonIds.clear();
         state.selectedRoleIds.add(role.id);
         clearTimeout(card._clickTimer);
         card._clickTimer = setTimeout(() => render(), 250);
@@ -2061,6 +2130,7 @@ function renderUnassignedColumn() {
     card.className = 'emp-card';
     card.dataset.personId = person.id;
     card.draggable = !settings.viewOnly && settings.dragDropEnabled !== false;
+    if (state.selectedPersonIds.has(person.id)) card.classList.add('selected');
     if (state.draggedPersonId === person.id) card.classList.add('dragging');
     const avatar = document.createElement('div');
     avatar.className = 'avatar';
@@ -2073,7 +2143,8 @@ function renderUnassignedColumn() {
     handle.className = 'drag-handle';
     handle.innerHTML = '&#8942;&#8942;';
     card.append(avatar, info, handle);
-    card.addEventListener('click', e => { e.stopPropagation(); openPersonModal(person.id); });
+    card.addEventListener('click', e => { e.stopPropagation(); state.selectedRoleIds.clear(); state.selectedPersonIds.clear(); state.selectedPersonIds.add(person.id); render(); });
+    card.addEventListener('dblclick', e => { e.stopPropagation(); openPersonModal(person.id); });
     card.addEventListener('dragstart', e => {
       state.draggedPersonId = person.id;
       e.dataTransfer.effectAllowed = 'move';
@@ -2155,9 +2226,10 @@ function render() {
   renderFilterBar();
 
   const count = state.selectedRoleIds.size;
+  const personCount = state.selectedPersonIds.size;
   const bar = document.getElementById('status-bar');
-  document.getElementById('status-text').textContent = count === 0 ? 'No selection' : (count === 1 ? '1 role selected' : `${count} roles selected`);
-  bar.classList.toggle('has-selection', count > 0);
+  document.getElementById('status-text').textContent = count === 0 && personCount === 0 ? 'No selection' : personCount > 0 ? (personCount === 1 ? '1 person selected' : `${personCount} persons selected`) : (count === 1 ? '1 role selected' : `${count} roles selected`);
+  bar.classList.toggle('has-selection', count > 0 || personCount > 0);
 
   const searchTerm = document.getElementById('header-search').value.toLowerCase().trim();
   if (searchTerm) {
@@ -2366,7 +2438,7 @@ function rebuildRoleManagerDropdown(roleId, deptId, currentManagerRoleId) {
 
 function updateSalaryBandDisplay(person, role) {
   const level = role ? role.level : null;
-  const band = level ? SALARY_BANDS[level] : null;
+  const band = level ? effectiveBand(level, person ? person.country : null) : null;
   const salary = person ? person.salary : 0;
   const status = band ? (salary < band.min ? 'under' : salary > band.max ? 'over' : 'ok') : 'ok';
 
@@ -3282,20 +3354,15 @@ document.getElementById('dept-name-input').addEventListener('keydown', e => { if
 
 // ── Add Role Modal ────────────────────────────────────────────────────────────
 
-function addRoleRebuildTitleDropdown() {
+function addRoleRebuildTitleSuggestions() {
   const deptIdRaw = document.getElementById('add-role-dept').value;
   const deptId = isNaN(Number(deptIdRaw)) ? deptIdRaw : Number(deptIdRaw);
   const levelId = document.getElementById('add-role-level').value;
-  const titleSel = document.getElementById('add-role-title');
+  const datalist = document.getElementById('add-role-title-list');
   const deptTitles = getTitlesForDept(deptId);
   const titles = (deptTitles && deptTitles[levelId]) || [];
-  titleSel.innerHTML = '';
-  if (titles.length === 0) {
-    const opt = document.createElement('option'); opt.value = ''; opt.textContent = '\u2014 No predefined titles \u2014';
-    titleSel.appendChild(opt);
-  } else {
-    titles.forEach(t => { const opt = document.createElement('option'); opt.value = t; opt.textContent = t; titleSel.appendChild(opt); });
-  }
+  datalist.innerHTML = '';
+  titles.forEach(t => { const opt = document.createElement('option'); opt.value = t; datalist.appendChild(opt); });
 }
 
 function addRoleRebuildManagerDropdown() {
@@ -3333,7 +3400,8 @@ function openAddRoleModal(defaultDeptId) {
   const levelSel = document.getElementById('add-role-level');
   levelSel.innerHTML = '';
   LEVELS.forEach(l => { const opt = document.createElement('option'); opt.value = l.id; opt.textContent = l.label; levelSel.appendChild(opt); });
-  addRoleRebuildTitleDropdown();
+  document.getElementById('add-role-title').value = '';
+  addRoleRebuildTitleSuggestions();
   addRoleRebuildManagerDropdown();
   addRoleRebuildTeamDropdown();
   document.getElementById('add-role-warning').textContent = '';
@@ -3352,7 +3420,13 @@ function saveAddRoleModal() {
   const deptRawVal = document.getElementById('add-role-dept').value;
   const deptNumVal = isNaN(Number(deptRawVal)) ? deptRawVal : Number(deptRawVal);
   const newRoleId = nextRoleId();
-  roles.push({ id: newRoleId, title: titleVal, level: document.getElementById('add-role-level').value, departmentId: deptNumVal, managerRoleId: mgrVal ? parseInt(mgrVal, 10) : null, teamId: teamVal ? parseInt(teamVal, 10) : null, orgId: 'default' });
+  const levelVal = document.getElementById('add-role-level').value;
+  roles.push({ id: newRoleId, title: titleVal, level: levelVal, departmentId: deptNumVal, managerRoleId: mgrVal ? parseInt(mgrVal, 10) : null, teamId: teamVal ? parseInt(teamVal, 10) : null, orgId: 'default' });
+  const deptTitles = getTitlesForDept(deptNumVal);
+  if (deptTitles) {
+    if (!deptTitles[levelVal]) deptTitles[levelVal] = [];
+    if (!deptTitles[levelVal].includes(titleVal)) deptTitles[levelVal].push(titleVal);
+  }
   state.pendingAnimation = { type: 'add', roleId: newRoleId };
   closeAddRoleModal(); render();
 }
@@ -3361,8 +3435,8 @@ document.getElementById('add-role-modal-close-btn').addEventListener('click', cl
 document.getElementById('add-role-cancel-btn').addEventListener('click', closeAddRoleModal);
 document.getElementById('add-role-save-btn').addEventListener('click', saveAddRoleModal);
 document.getElementById('add-role-modal-backdrop').addEventListener('click', e => { if (e.target === document.getElementById('add-role-modal-backdrop')) closeAddRoleModal(); });
-document.getElementById('add-role-dept').addEventListener('change', () => { addRoleRebuildTitleDropdown(); addRoleRebuildManagerDropdown(); addRoleRebuildTeamDropdown(); });
-document.getElementById('add-role-level').addEventListener('change', addRoleRebuildTitleDropdown);
+document.getElementById('add-role-dept').addEventListener('change', () => { addRoleRebuildTitleSuggestions(); addRoleRebuildManagerDropdown(); addRoleRebuildTeamDropdown(); });
+document.getElementById('add-role-level').addEventListener('change', addRoleRebuildTitleSuggestions);
 
 // ── Add Person Modal ──────────────────────────────────────────────────────────
 
@@ -3383,6 +3457,15 @@ function openAddPersonModal(preselectedRoleId) {
   });
   document.getElementById('add-emp-name').value = '';
   document.getElementById('add-emp-salary').value = '';
+  document.getElementById('add-emp-city').value = '';
+  // Populate country dropdown
+  const countrySel = document.getElementById('add-emp-country');
+  countrySel.innerHTML = '<option value="">— None —</option>';
+  COUNTRY_LIST.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c.code; opt.textContent = c.name;
+    countrySel.appendChild(opt);
+  });
   document.querySelectorAll('.add-gender-btn').forEach(b => b.classList.remove('active'));
   const warn = document.getElementById('add-emp-warning'); warn.textContent = ''; warn.classList.remove('visible');
   document.getElementById('add-emp-modal-backdrop').classList.add('visible');
@@ -3403,8 +3486,10 @@ function saveAddPersonModal() {
   const genderBtn = document.querySelector('.add-gender-btn.active');
   if (!genderBtn) { warn.textContent = 'Please select a gender.'; warn.classList.add('visible'); return; }
   const gender = genderBtn.dataset.gender;
+  const country = document.getElementById('add-emp-country').value || null;
+  const city = document.getElementById('add-emp-city').value.trim() || null;
   const newId = nextPersonId();
-  persons.push({ id: newId, name, salary, gender, salaryReviewNeeded: false, performanceReviewNeeded: false, isNew: false, onLeave: false, orgId: 'default' });
+  persons.push({ id: newId, name, salary, gender, country, city, salaryReviewNeeded: false, performanceReviewNeeded: false, isNew: false, onLeave: false, orgId: 'default' });
   if (roleId) roleAssignments.push({ id: nextRoleAssignmentId(), personId: newId, roleId, percentage: 100, orgId: 'default' });
   if (roleId) state.pendingAnimation = { type: 'add', roleId };
   closeAddPersonModal(); render();
@@ -3464,36 +3549,6 @@ function buildTeamSection(deptId) {
   container.appendChild(addBtn);
 }
 
-function buildTitleSection(deptId) {
-  const container = document.getElementById('dept-settings-titles-body');
-  container.innerHTML = '';
-  LEVELS.forEach(lvl => {
-    const deptTitles = getTitlesForDept(deptId);
-    const titles = (deptTitles && deptTitles[lvl.id]) || [];
-    const band = SALARY_BANDS[lvl.id];
-    const bandLabel = band ? `${formatSalary(band.min).replace('/mo','')} \u2013 ${formatSalary(band.max)}` : '';
-    const group = document.createElement('div'); group.className = 'title-level-group';
-    const hdr = document.createElement('div'); hdr.className = 'title-level-header';
-    hdr.innerHTML = `<span class="title-level-label">${lvl.label}</span><span class="title-level-band">${bandLabel}</span>`;
-    const list = document.createElement('div'); list.className = 'title-item-list'; list.dataset.level = lvl.id;
-    function addTitleItem(title) {
-      const row = document.createElement('div'); row.className = 'title-item';
-      row.innerHTML = `<span class="title-text">${title}</span><button class="title-remove-btn" title="Remove">&#x2715;</button>`;
-      row.querySelector('.title-remove-btn').addEventListener('click', () => row.remove());
-      list.appendChild(row);
-    }
-    titles.forEach(addTitleItem);
-    const addRow = document.createElement('div'); addRow.className = 'title-add-row';
-    const addInput = document.createElement('input'); addInput.type = 'text'; addInput.className = 'form-control title-add-input'; addInput.placeholder = 'New title\u2026'; addInput.maxLength = 60;
-    const addBtn = document.createElement('button'); addBtn.className = 'btn btn-ghost'; addBtn.textContent = '+ Add';
-    function doAdd() { const v = addInput.value.trim(); if (!v) return; addTitleItem(v); addInput.value = ''; addInput.focus(); }
-    addBtn.addEventListener('click', doAdd);
-    addInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); doAdd(); } });
-    addRow.append(addInput, addBtn);
-    group.append(hdr, list, addRow);
-    container.appendChild(group);
-  });
-}
 
 function openDeptSettingsModal(deptId) {
   editingDeptId = deptId;
@@ -3534,7 +3589,6 @@ function openDeptSettingsModal(deptId) {
   cwTrack.style.background = dept.companyWide ? 'var(--accent)' : 'var(--border)';
   cwThumb.style.transform = dept.companyWide ? 'translateX(16px)' : 'translateX(0)';
   buildTeamSection(deptId);
-  buildTitleSection(deptId);
   document.getElementById('dept-settings-modal-backdrop').classList.add('visible');
   setTimeout(() => document.getElementById('dept-settings-name').focus(), 50);
   const deleteBtn = document.getElementById('dept-settings-delete-btn');
@@ -3601,10 +3655,6 @@ function saveDeptSettingsModal() {
     }
   });
 
-  if (!TITLES[editingDeptId]) TITLES[editingDeptId] = {};
-  document.querySelectorAll('#dept-settings-titles-body .title-item-list').forEach(listEl => {
-    TITLES[editingDeptId][listEl.dataset.level] = [...listEl.querySelectorAll('.title-text')].map(el => el.textContent.trim()).filter(Boolean);
-  });
   closeDeptSettingsModal(); render();
 }
 
@@ -3666,7 +3716,7 @@ document.getElementById('reset-data-btn').addEventListener('click', e => {
 });
 
 document.addEventListener('click', e => {
-  if (!e.target.closest('.emp-card') && state.selectedRoleIds.size > 0) { state.selectedRoleIds.clear(); render(); }
+  if (!e.target.closest('.emp-card') && (state.selectedRoleIds.size > 0 || state.selectedPersonIds.size > 0)) { state.selectedRoleIds.clear(); state.selectedPersonIds.clear(); render(); }
 });
 
 document.getElementById('header-search').addEventListener('input', render);
@@ -3715,7 +3765,7 @@ function saveToStorage(opts = {}) {
     fetch(endpoint, {
       method: 'POST',
       headers,
-      body: JSON.stringify({ departments, roles, persons, roleAssignments, titles: TITLES, teams, settings, salaryBands: SALARY_BANDS, snapshots, _simLabel: simLabel, plannedChange })
+      body: JSON.stringify({ departments, roles, persons, roleAssignments, titles: TITLES, teams, settings, salaryBands: SALARY_BANDS, locationMultipliers, snapshots, _simLabel: simLabel, plannedChange })
     }).catch(e => console.warn('Save failed:', e));
   }, 300);
 }
@@ -3740,6 +3790,7 @@ async function loadFromStorage() {
     if (saved.teams) teams.splice(0, teams.length, ...saved.teams);
     if (saved.settings) Object.assign(settings, saved.settings);
     if (saved.salaryBands) Object.assign(SALARY_BANDS, saved.salaryBands);
+    if (saved.locationMultipliers) Object.assign(locationMultipliers, saved.locationMultipliers);
     if (saved.snapshots)     snapshots.splice(0, snapshots.length, ...saved.snapshots);
     if (saved.plannedChange) plannedChange = saved.plannedChange;
 
@@ -3800,6 +3851,22 @@ async function loadFromStorage() {
 
     // ── Migration 4: ensure orgId on all entities (required for M2 DB migration) ─
     [departments, teams, roles, persons, roleAssignments].forEach(arr => arr.forEach(e => { e.orgId = e.orgId ?? 'default'; }));
+
+    // ── Migration 5: split free-text location → country (ISO) + city ─────────
+    persons.forEach(p => {
+      if (p.location && !p.country) {
+        const parts = p.location.split(',').map(s => s.trim());
+        const countryPart = parts.length > 1 ? parts[parts.length - 1].toLowerCase() : p.location.toLowerCase();
+        const code = LOCATION_MIGRATION_MAP[countryPart];
+        if (code) {
+          p.country = code;
+          p.city = parts.length > 1 ? parts.slice(0, parts.length - 1).join(', ') : null;
+        } else {
+          p.city = p.location;
+        }
+        delete p.location;
+      }
+    });
 
     // ── Restore simulation session if one is active on the server ─────────────
     const simRes = await fetch('/api/sim-data');
@@ -3956,48 +4023,7 @@ document.getElementById('settings-modal-backdrop').addEventListener('click', e =
     document.getElementById('settings-modal-backdrop').style.display = 'none';
 });
 
-// ── Pay-bands modal ───────────────────────────────────────────────────────────
-
-function openPaybandsModal() {
-  document.getElementById('settings-modal-backdrop').style.display = 'none';
-  const rowsEl = document.getElementById('paybands-rows');
-  rowsEl.innerHTML = '';
-  LEVELS.forEach(lvl => {
-    const band = SALARY_BANDS[lvl.id];
-    const row = document.createElement('div');
-    row.style.cssText = 'display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;align-items:center;margin-bottom:8px;';
-    row.innerHTML = `
-      <div style="font-size:13px;font-weight:500;color:var(--text-primary);">${lvl.label}</div>
-      <input type="number" class="form-control" data-level="${lvl.id}" data-type="min" value="${band.min}" min="0" style="padding:6px 8px;font-size:13px;" />
-      <input type="number" class="form-control" data-level="${lvl.id}" data-type="max" value="${band.max}" min="0" style="padding:6px 8px;font-size:13px;" />
-    `;
-    rowsEl.appendChild(row);
-  });
-  document.getElementById('paybands-modal-backdrop').style.display = 'flex';
-}
-
-document.getElementById('settings-open-paybands').addEventListener('click', openPaybandsModal);
-
-document.getElementById('paybands-modal-close').addEventListener('click', () => {
-  document.getElementById('paybands-modal-backdrop').style.display = 'none';
-});
-document.getElementById('paybands-cancel-btn').addEventListener('click', () => {
-  document.getElementById('paybands-modal-backdrop').style.display = 'none';
-});
-document.getElementById('paybands-modal-backdrop').addEventListener('click', e => {
-  if (e.target === document.getElementById('paybands-modal-backdrop'))
-    document.getElementById('paybands-modal-backdrop').style.display = 'none';
-});
-document.getElementById('paybands-save-btn').addEventListener('click', () => {
-  document.querySelectorAll('#paybands-rows input[data-level]').forEach(input => {
-    const lvl = input.dataset.level;
-    const type = input.dataset.type;
-    const val = parseInt(input.value, 10);
-    if (!isNaN(val) && val >= 0) SALARY_BANDS[lvl][type] = val;
-  });
-  document.getElementById('paybands-modal-backdrop').style.display = 'none';
-  render();
-});
+// ── Pay bands moved to paybands.html ─────────────────────────────────────────
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 
@@ -4027,6 +4053,7 @@ async function init() {
           if (saved.teams) teams.splice(0, teams.length, ...saved.teams);
           if (saved.settings) Object.assign(settings, saved.settings);
           if (saved.salaryBands) Object.assign(SALARY_BANDS, saved.salaryBands);
+          if (saved.locationMultipliers) Object.assign(locationMultipliers, saved.locationMultipliers);
           if (saved.snapshots) snapshots.splice(0, snapshots.length, ...saved.snapshots);
           // Apply same migrations as loadFromStorage
           if (departments.length && typeof departments[0].id === 'string') {

@@ -1,0 +1,20 @@
+HOW TO START THE SERVER
+=======================
+
+1. Open a terminal in this folder (H:\ClaudeCodeTest)
+
+2. Install dependencies (first time only):
+   npm install
+
+3. Start the server:
+   npm start
+
+4. Open the app in your browser:
+   http://localhost:3000/orgchart.html
+
+Other pages:
+   http://localhost:3000/directory.html
+   http://localhost:3000/dashboard.html
+
+Keep the terminal open while using the app.
+Data is saved to orgchart-data.json in this folder.

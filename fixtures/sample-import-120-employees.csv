@@ -1,0 +1,120 @@
+employee_id,name,email,job_title,department,manager_id,dotted_line_manager_id,legal_entity,location,cost_center,monthly_salary,salary_band,employment_date
+1,David Rasmussen,david.rasmussen@company.com,CEO,Executive,,,"DK A/S",Copenhagen,1000,120000,A,2018-01-15
+
+2,Anna Jensen,anna.jensen@company.com,CMO,Marketing,1,5,"DK A/S",Copenhagen,2000,95000,A,2019-03-01
+3,Lars Nielsen,lars.nielsen@company.com,CTO,Engineering,1,5,"DK A/S",Copenhagen,3000,100000,A,2018-06-12
+4,Mette Sørensen,mette.sorensen@company.com,CHRO,HR,1,5,"DK A/S",Aarhus,4000,90000,A,2020-02-20
+5,Jonas Hansen,jonas.hansen@company.com,CFO,Finance,1,,"DK A/S",Copenhagen,5000,98000,A,2019-09-10
+6,Thomas Eriksen,thomas.eriksen@company.com,Sales Director,Sales,1,5,"DK A/S",Copenhagen,6000,92000,A,2019-11-01
+
+# Marketing (15)
+7,Emil Christensen,emil.christensen@company.com,Marketing Manager,Marketing,2,6,"DK A/S",Copenhagen,2001,65000,B,2020-05-01
+8,Sofie Larsen,sofie.larsen@company.com,Content Specialist,Marketing,7,6,"DK A/S",Copenhagen,2001,42000,C,2021-01-12
+9,Frederik Madsen,frederik.madsen@company.com,SEO Specialist,Marketing,7,6,"DK A/S",Aarhus,2001,45000,C,2021-03-15
+10,Clara Pedersen,clara.pedersen@company.com,Marketing Analyst,Marketing,7,5,"DK A/S",Copenhagen,2002,48000,C,2022-06-01
+11,Mathias Thomsen,mathias.thomsen@company.com,Campaign Manager,Marketing,7,6,"DK A/S",Odense,2002,50000,B,2021-11-20
+12,Line Poulsen,line.poulsen@company.com,SoMe Manager,Marketing,7,6,"DK A/S",Copenhagen,2001,47000,C,2022-02-01
+13,Oliver Berg,oliver.berg@company.com,Designer,Marketing,7,3,"DK A/S",Aarhus,2003,46000,C,2021-07-07
+14,Emma Holm,emma.holm@company.com,Copywriter,Marketing,7,6,"DK A/S",Copenhagen,2001,43000,C,2022-03-10
+15,Kasper Dahl,kasper.dahl@company.com,Marketing Coordinator,Marketing,7,6,"DK A/S",Odense,2001,38000,D,2023-01-05
+16,Julie Knudsen,julie.knudsen@company.com,Email Specialist,Marketing,7,6,"DK A/S",Copenhagen,2002,44000,C,2022-09-01
+17,Mikkel Iversen,mikkel.iversen@company.com,Performance Specialist,Marketing,7,5,"DK A/S",Aarhus,2002,52000,B,2021-12-12
+18,Freja Vestergaard,freja.vestergaard@company.com,Brand Manager,Marketing,7,2,"DK A/S",Copenhagen,2002,60000,B,2020-10-10
+19,Rasmus Møller,rasmus.moller@company.com,Marketing Intern,Marketing,7,6,"DK A/S",Copenhagen,2001,25000,D,2023-08-01
+20,Sara Kristensen,sara.kristensen@company.com,PR Manager,Marketing,7,2,"DK A/S",Odense,2002,55000,B,2021-06-20
+21,Victor Hansen,victor.hansen@company.com,Growth Specialist,Marketing,7,5,"SE AB",Stockholm,2100,53000,B,2022-11-11
+
+# Engineering (~40)
+22,Oliver Poulsen,oliver.poulsen@company.com,Engineering Manager,Engineering,3,6,"DK A/S",Copenhagen,3001,75000,B,2019-08-01
+23,Lucas Andersen,lucas.andersen@company.com,Senior Developer,Engineering,22,6,"DK A/S",Copenhagen,3001,65000,B,2020-02-11
+24,Noah Rasmussen,noah.rasmussen@company.com,Backend Developer,Engineering,22,6,"DK A/S",Aarhus,3001,52000,C,2021-04-25
+25,William Kristensen,william.kristensen@company.com,Frontend Developer,Engineering,22,6,"DK A/S",Copenhagen,3001,52000,C,2022-01-17
+26,Alma Olsen,alma.olsen@company.com,QA Engineer,Engineering,22,5,"DK A/S",Odense,3002,50000,C,2021-09-05
+27,Anton Holm,anton.holm@company.com,DevOps Engineer,Engineering,22,5,"DK A/S",Copenhagen,3002,60000,B,2020-11-11
+28,Ida Nielsen,ida.nielsen@company.com,Product Manager,Engineering,22,2,"DK A/S",Copenhagen,3003,70000,B,2021-06-01
+
+29,Frederik Jensen,frederik.jensen@company.com,Developer,Engineering,22,6,"DK A/S",Copenhagen,3001,48000,C,2022-03-03
+30,Clara Hansen,clara.hansen@company.com,Developer,Engineering,22,6,"DK A/S",Aarhus,3001,47000,C,2022-04-04
+31,Oscar Larsen,oscar.larsen@company.com,Developer,Engineering,22,6,"NO AS",Oslo,3100,49000,C,2022-05-05
+32,Laura Andersen,laura.andersen@company.com,Developer,Engineering,22,6,"SE AB",Stockholm,3200,50000,C,2022-06-06
+33,Emil Thomsen,emil.thomsen@company.com,Developer,Engineering,22,6,"DK A/S",Copenhagen,3001,48000,C,2022-07-07
+34,Sofie Møller,sofie.moller@company.com,Developer,Engineering,22,6,"DK A/S",Aarhus,3001,47000,C,2022-08-08
+35,Mathias Berg,mathias.berg@company.com,Developer,Engineering,22,6,"SE AB",Stockholm,3200,51000,C,2022-09-09
+36,Freja Kristensen,freja.kristensen@company.com,Developer,Engineering,22,6,"NO AS",Oslo,3100,50000,C,2022-10-10
+37,Lucas Holm,lucas.holm@company.com,Developer,Engineering,22,6,"DK A/S",Copenhagen,3001,48000,C,2022-11-11
+38,Emma Nielsen,emma.nielsen@company.com,Developer,Engineering,22,6,"DK A/S",Aarhus,3001,47000,C,2022-12-12
+
+39,Noah Jensen,noah.jensen@company.com,QA Engineer,Engineering,22,5,"DK A/S",Copenhagen,3002,46000,C,2021-01-01
+40,Anna Larsen,anna.larsen@company.com,QA Engineer,Engineering,22,5,"DK A/S",Aarhus,3002,45000,C,2021-02-02
+41,Victor Andersen,victor.andersen@company.com,QA Engineer,Engineering,22,5,"SE AB",Stockholm,3200,47000,C,2021-03-03
+
+42,Oliver Hansen,oliver.hansen@company.com,DevOps Engineer,Engineering,22,5,"NO AS",Oslo,3100,60000,B,2021-04-04
+43,Clara Nielsen,clara.nielsen@company.com,DevOps Engineer,Engineering,22,5,"DK A/S",Aarhus,3002,58000,B,2021-05-05
+
+44,William Jensen,william.jensen@company.com,Frontend Developer,Engineering,22,6,"DK A/S",Copenhagen,3001,49000,C,2023-01-01
+45,Laura Madsen,laura.madsen@company.com,Frontend Developer,Engineering,22,6,"SE AB",Stockholm,3200,50000,C,2023-02-02
+46,Frederik Olsen,frederik.olsen@company.com,Backend Developer,Engineering,22,6,"DK A/S",Aarhus,3001,51000,C,2023-03-03
+47,Sofie Thomsen,sofie.thomsen@company.com,Backend Developer,Engineering,22,6,"NO AS",Oslo,3100,52000,C,2023-04-04
+
+48,Mathias Hansen,mathias.hansen@company.com,Security Engineer,Engineering,22,5,"DK A/S",Copenhagen,3004,65000,B,2021-08-08
+49,Ida Jensen,ida.jensen@company.com,Data Engineer,Engineering,22,5,"SE AB",Stockholm,3201,60000,B,2021-09-09
+50,Lucas Nielsen,lucas.nielsen@company.com,Data Scientist,Engineering,22,5,"DK A/S",Aarhus,3004,62000,B,2021-10-10
+51,Freja Andersen,freja.andersen@company.com,UX Designer,Engineering,22,2,"DK A/S",Copenhagen,3005,58000,B,2021-11-11
+52,Oscar Møller,oscar.moller@company.com,UI Designer,Engineering,22,2,"SE AB",Stockholm,3202,56000,B,2021-12-12
+
+# HR (10)
+53,Ida Møller,ida.moller@company.com,HR Manager,HR,4,5,"DK A/S",Aarhus,4001,65000,B,2020-08-01
+54,Freja Holm,freja.holm@company.com,HR Partner,HR,53,2,"DK A/S",Copenhagen,4001,52000,C,2021-02-14
+55,Victor Dahl,victor.dahl@company.com,Recruiter,HR,53,6,"DK A/S",Aarhus,4001,50000,C,2022-03-01
+56,Laura Knudsen,laura.knudsen@company.com,HR Coordinator,HR,53,5,"DK A/S",Odense,4001,42000,C,2021-10-10
+57,Magnus Iversen,magnus.iversen@company.com,People Analyst,HR,53,3,"DK A/S",Copenhagen,4002,55000,B,2022-05-18
+58,Emma Berg,emma.berg@company.com,Talent Specialist,HR,53,6,"SE AB",Stockholm,4100,53000,B,2022-06-06
+59,Kasper Nielsen,kasper.nielsen@company.com,HR Consultant,HR,53,5,"NO AS",Oslo,4200,52000,B,2022-07-07
+60,Sofie Hansen,sofie.hansen@company.com,HR Intern,HR,53,,"DK A/S",Copenhagen,4001,26000,D,2023-08-01
+61,Rasmus Jensen,rasmus.jensen@company.com,L&D Specialist,HR,53,2,"DK A/S",Odense,4002,54000,B,2021-09-09
+62,Julie Larsen,julie.larsen@company.com,HR Operations,HR,53,5,"DK A/S",Copenhagen,4001,50000,C,2022-11-11
+
+# Finance (10)
+63,Anders Berg,anders.berg@company.com,Finance Manager,Finance,5,1,"DK A/S",Copenhagen,5001,70000,B,2020-01-01
+64,Julie Mortensen,julie.mortensen@company.com,Accountant,Finance,63,5,"DK A/S",Copenhagen,5001,50000,C,2021-06-01
+65,Kasper Eriksen,kasper.eriksen@company.com,Controller,Finance,63,5,"DK A/S",Aarhus,5001,55000,B,2021-07-15
+66,Emma Friis,emma.friis@company.com,Finance Analyst,Finance,63,3,"DK A/S",Odense,5002,52000,C,2022-02-01
+67,Rasmus Vestergaard,rasmus.vestergaard@company.com,Payroll Specialist,Finance,63,4,"DK A/S",Copenhagen,5002,48000,C,2022-08-10
+68,Mikkel Holm,mikkel.holm@company.com,Accountant,Finance,63,5,"SE AB",Stockholm,5100,51000,C,2022-03-03
+69,Anna Nielsen,anna.nielsen@company.com,Controller,Finance,63,5,"NO AS",Oslo,5200,56000,B,2022-04-04
+70,Peter Jensen,peter.jensen@company.com,Finance Assistant,Finance,63,5,"DK A/S",Odense,5001,42000,C,2022-05-05
+71,Line Andersen,line.andersen@company.com,Payroll Assistant,Finance,63,4,"DK A/S",Copenhagen,5002,43000,C,2022-06-06
+72,Jonas Larsen,jonas.larsen@company.com,Finance Intern,Finance,63,,"DK A/S",Copenhagen,5001,26000,D,2023-07-07
+
+# Sales (28)
+73,Mads Sørensen,mads.sorensen@company.com,Sales Manager,Sales,6,5,"DK A/S",Copenhagen,6001,70000,B,2020-02-02
+74,Andreas Nielsen,andreas.nielsen@company.com,Account Executive,Sales,73,5,"DK A/S",Copenhagen,6001,55000,B,2021-03-03
+75,Frederik Larsen,frederik.larsen@company.com,Account Executive,Sales,73,5,"DK A/S",Aarhus,6001,54000,B,2021-04-04
+76,Clara Jensen,clara.jensen@company.com,SDR,Sales,73,2,"DK A/S",Copenhagen,6002,42000,C,2022-05-05
+77,Oliver Hansen,oliver.hansen.sales@company.com,SDR,Sales,73,2,"DK A/S",Odense,6002,41000,C,2022-06-06
+78,Emma Nielsen,emma.nielsen.sales@company.com,SDR,Sales,73,2,"SE AB",Stockholm,6100,43000,C,2022-07-07
+79,Lucas Andersen,lucas.andersen.sales@company.com,Account Manager,Sales,73,5,"DK A/S",Aarhus,6001,52000,B,2021-08-08
+80,Ida Thomsen,ida.thomsen@company.com,Account Manager,Sales,73,5,"DK A/S",Copenhagen,6001,51000,B,2021-09-09
+81,Noah Madsen,noah.madsen@company.com,Account Manager,Sales,73,5,"NO AS",Oslo,6200,53000,B,2021-10-10
+82,Freja Olsen,freja.olsen@company.com,Sales Ops,Sales,73,5,"DK A/S",Copenhagen,6003,50000,C,2022-11-11
+
+83,Mathias Berg,mathias.berg.sales@company.com,SDR,Sales,73,2,"DK A/S",Copenhagen,6002,40000,C,2023-01-01
+84,Sofie Larsen,sofie.larsen.sales@company.com,SDR,Sales,73,2,"DK A/S",Aarhus,6002,40000,C,2023-02-02
+85,Victor Hansen,victor.hansen.sales@company.com,SDR,Sales,73,2,"DK A/S",Copenhagen,6002,41000,C,2023-03-03
+86,Emma Andersen,emma.andersen.sales@company.com,SDR,Sales,73,2,"NO AS",Oslo,6200,42000,C,2023-04-04
+87,Lucas Nielsen,lucas.nielsen.sales@company.com,SDR,Sales,73,2,"SE AB",Stockholm,6100,43000,C,2023-05-05
+88,Anna Jensen,anna.jensen.sales@company.com,SDR,Sales,73,2,"DK A/S",Aarhus,6002,40000,C,2023-06-06
+
+89,Kasper Thomsen,kasper.thomsen@company.com,Account Executive,Sales,73,5,"DK A/S",Copenhagen,6001,56000,B,2022-01-01
+90,Mikkel Hansen,mikkel.hansen@company.com,Account Executive,Sales,73,5,"DK A/S",Aarhus,6001,55000,B,2022-02-02
+91,Laura Nielsen,laura.nielsen@company.com,Account Executive,Sales,73,5,"DK A/S",Odense,6001,54000,B,2022-03-03
+92,Frederik Jensen,frederik.jensen.sales@company.com,Account Executive,Sales,73,5,"SE AB",Stockholm,6100,56000,B,2022-04-04
+93,Sofie Hansen,sofie.hansen.sales@company.com,Account Executive,Sales,73,5,"NO AS",Oslo,6200,55000,B,2022-05-05
+94,Oliver Larsen,oliver.larsen@company.com,Account Executive,Sales,73,5,"DK A/S",Copenhagen,6001,56000,B,2022-06-06
+
+95,Clara Andersen,clara.andersen@company.com,Customer Success Manager,Sales,73,2,"DK A/S",Copenhagen,6004,52000,B,2021-07-07
+96,Lucas Holm,lucas.holm.sales@company.com,Customer Success Manager,Sales,73,2,"DK A/S",Aarhus,6004,51000,B,2021-08-08
+97,Emma Møller,emma.moller@company.com,Customer Success Manager,Sales,73,2,"SE AB",Stockholm,6101,52000,B,2021-09-09
+98,Noah Nielsen,noah.nielsen.sales@company.com,Customer Success Manager,Sales,73,2,"DK A/S",Copenhagen,6004,51000,B,2021-10-10
+99,Freja Jensen,freja.jensen@company.com,Customer Success Manager,Sales,73,2,"NO AS",Oslo,6201,52000,B,2021-11-11
+100,Victor Larsen,victor.larsen@company.com,Customer Success Manager,Sales,73,2,"DK A/S",Copenhagen,6004,53000,B,2021-12-12

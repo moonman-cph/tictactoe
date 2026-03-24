@@ -3789,7 +3789,18 @@ async function loadFromStorage() {
     if (saved.titles) { Object.keys(TITLES).forEach(k => delete TITLES[k]); Object.assign(TITLES, saved.titles); }
     if (saved.teams) teams.splice(0, teams.length, ...saved.teams);
     if (saved.settings) Object.assign(settings, saved.settings);
-    if (saved.salaryBands) Object.assign(SALARY_BANDS, saved.salaryBands);
+    if (saved.salaryBands) {
+      Object.assign(SALARY_BANDS, saved.salaryBands);
+      // Sync level labels from persisted band data so dropdowns match paybands.html
+      LEVELS.forEach(l => { if (SALARY_BANDS[l.id]?.label) l.label = `${l.id} · ${SALARY_BANDS[l.id].label}`; });
+    }
+    if (saved.levelOrder && saved.levelOrder.length) {
+      // Rebuild LEVELS from persisted order, adding any new custom levels
+      LEVELS.splice(0, LEVELS.length, ...saved.levelOrder.map(id => ({
+        id,
+        label: `${id} · ${(SALARY_BANDS[id] && SALARY_BANDS[id].label) || id}`
+      })));
+    }
     if (saved.locationMultipliers) Object.assign(locationMultipliers, saved.locationMultipliers);
     if (saved.snapshots)     snapshots.splice(0, snapshots.length, ...saved.snapshots);
     if (saved.plannedChange) plannedChange = saved.plannedChange;
@@ -4052,7 +4063,16 @@ async function init() {
           if (saved.titles) { Object.keys(TITLES).forEach(k => delete TITLES[k]); Object.assign(TITLES, saved.titles); }
           if (saved.teams) teams.splice(0, teams.length, ...saved.teams);
           if (saved.settings) Object.assign(settings, saved.settings);
-          if (saved.salaryBands) Object.assign(SALARY_BANDS, saved.salaryBands);
+          if (saved.salaryBands) {
+            Object.assign(SALARY_BANDS, saved.salaryBands);
+            LEVELS.forEach(l => { if (SALARY_BANDS[l.id]?.label) l.label = `${l.id} · ${SALARY_BANDS[l.id].label}`; });
+          }
+          if (saved.levelOrder && saved.levelOrder.length) {
+            LEVELS.splice(0, LEVELS.length, ...saved.levelOrder.map(id => ({
+              id,
+              label: `${id} · ${(SALARY_BANDS[id] && SALARY_BANDS[id].label) || id}`
+            })));
+          }
           if (saved.locationMultipliers) Object.assign(locationMultipliers, saved.locationMultipliers);
           if (saved.snapshots) snapshots.splice(0, snapshots.length, ...saved.snapshots);
           // Apply same migrations as loadFromStorage
@@ -4281,7 +4301,7 @@ const IMPORT_TARGET_FIELDS = [
   { id: 'salary',      hints: ['salary','pay','løn','wage','monthly','compensation','comp'] },
   { id: 'gender',      hints: ['gender','køn','sex'], enumValues: ['male','female','other'] },
   { id: 'roleTitle',   hints: ['title','job title','role','position','jobtitle','stilling','job'] },
-  { id: 'roleLevel',   hints: ['level','grade','rang','tier'], enumValues: ['L1','L2','L3','L4','L5','L6','L7','L8'] },
+  { id: 'roleLevel',   hints: ['level','grade','rang','tier'], get enumValues() { return LEVELS.map(l => l.id); } },
   { id: 'roleDept',    hints: ['department','dept','afdeling','division','team dept'] },
   { id: 'roleTeam',    hints: ['team','gruppe','group','squad'] },
   { id: 'managerName',           hints: ['manager','leder','reports to','reportsto','supervisor','chef'] },
@@ -4668,7 +4688,8 @@ function runImport(rows, mapping, mode, dryRun = false, valueTransforms = {}, bu
     const team = (teamName && dept) ? wTeams.find(t => t.name.toLowerCase() === teamName.toLowerCase() && t.departmentId === dept.id) : null;
 
     const levelRaw = get(row, 'roleLevel').toUpperCase();
-    const level = LEVELS.find(l => l.id === levelRaw || levelRaw.startsWith(l.id)) ? levelRaw.match(/L[1-8]/)?.[0] : null;
+    const matchedLevel = LEVELS.find(l => l.id === levelRaw || levelRaw.startsWith(l.id));
+    const level = matchedLevel ? matchedLevel.id : null;
     if (get(row, 'roleLevel') && !level) result.unmatchedLevels++;
 
     if (roleTitle && deptId) {

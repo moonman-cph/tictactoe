@@ -94,15 +94,42 @@
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
   border: 1px solid transparent;
+  /* colours set dynamically by JS via inline style */
 }
-.band-level-chip[data-level="L1"] { background: #ede9fe; color: #5b21b6; border-color: #c4b5fd; }
-.band-level-chip[data-level="L2"] { background: #dbeafe; color: #1e40af; border-color: #93c5fd; }
-.band-level-chip[data-level="L3"] { background: #d1fae5; color: #065f46; border-color: #6ee7b7; }
-.band-level-chip[data-level="L4"] { background: #dcfce7; color: #14532d; border-color: #86efac; }
-.band-level-chip[data-level="L5"] { background: #fef9c3; color: #854d0e; border-color: #fde047; }
-.band-level-chip[data-level="L6"] { background: #ffedd5; color: #9a3412; border-color: #fdba74; }
-.band-level-chip[data-level="L7"] { background: #fce7f3; color: #9d174d; border-color: #f9a8d4; }
-.band-level-chip[data-level="L8"] { background: #1e293b; color: #f1f5f9; border-color: #334155; }
+
+/* ── Reorder / delete buttons ───────────────────────────── */
+.band-reorder-btn {
+  background: none; border: none; cursor: pointer;
+  color: var(--text-muted); font-size: 13px; padding: 1px 3px;
+  border-radius: 4px; line-height: 1; transition: color 0.12s, background 0.12s;
+  display: block; width: 22px; text-align: center;
+}
+.band-reorder-btn:hover { background: var(--bg); color: var(--accent); }
+.band-reorder-btn:disabled { opacity: 0.2; cursor: default; }
+
+.band-delete-btn {
+  background: none; border: none; cursor: pointer;
+  color: var(--text-muted); font-size: 16px; padding: 0 4px;
+  border-radius: 4px; transition: color 0.12s;
+}
+.band-delete-btn:hover { color: #ef4444; }
+
+/* ── Add band row ───────────────────────────────────────── */
+#add-band-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 16px; border-top: 1px solid var(--border);
+  background: var(--bg); flex-wrap: wrap;
+}
+#add-band-row input {
+  padding: 5px 8px; border: 1px solid var(--border);
+  border-radius: 6px; font-family: inherit; font-size: 13px;
+  background: var(--surface); color: var(--text-primary);
+}
+#add-band-row input:focus { outline: none; border-color: var(--accent); }
+#add-band-id    { width: 70px; text-transform: uppercase; font-weight: 600; }
+#add-band-label { width: 110px; }
+#add-band-min, #add-band-mid, #add-band-max { width: 90px; }
+#add-band-error { font-size: 12px; color: #ef4444; display: none; }
 
 .band-input {
   width: 100%;
@@ -359,17 +386,28 @@
       <table class="band-table" id="band-table">
         <thead>
           <tr>
-            <th style="width:80px">Level</th>
+            <th style="width:36px"></th>
+            <th style="width:90px">Level</th>
             <th style="width:130px">Label</th>
             <th>Description</th>
             <th style="width:110px">Min /mo</th>
             <th style="width:110px">Midpoint</th>
             <th style="width:110px">Max /mo</th>
             <th style="width:80px"></th>
+            <th style="width:36px"></th>
           </tr>
         </thead>
         <tbody id="band-tbody"></tbody>
       </table>
+      <div id="add-band-row">
+        <input type="text" id="add-band-id" placeholder="ID e.g. L9" maxlength="8" title="Level identifier (unique, e.g. L9, IC1)">
+        <input type="text" id="add-band-label" placeholder="Label" maxlength="40">
+        <input type="number" id="add-band-min" placeholder="Min /mo" min="1">
+        <input type="number" id="add-band-mid" placeholder="Midpoint" min="1">
+        <input type="number" id="add-band-max" placeholder="Max /mo" min="1">
+        <button class="band-save-btn" onclick="addBand()">Add band</button>
+        <span id="add-band-error"></span>
+      </div>
     </div>
   </div>
 
@@ -393,16 +431,7 @@
         <!-- Level preview selector -->
         <div id="preview-bar">
           <span>Preview effective bands for level:</span>
-          <select id="preview-level">
-            <option value="L1">L1</option>
-            <option value="L2">L2</option>
-            <option value="L3" selected>L3</option>
-            <option value="L4">L4</option>
-            <option value="L5">L5</option>
-            <option value="L6">L6</option>
-            <option value="L7">L7</option>
-            <option value="L8">L8</option>
-          </select>
+          <select id="preview-level"></select>
         </div>
         <table class="mult-table" id="mult-table">
           <thead>
@@ -439,18 +468,26 @@
 
 // ── Shared data ────────────────────────────────────────────────────────────────
 
-const LEVELS = ['L1','L2','L3','L4','L5','L6','L7','L8'];
+// Level order is loaded from persisted data; this is the fallback default
+const DEFAULT_LEVEL_ORDER = ['L1','L2','L3','L4','L5','L6','L7','L8'];
 
-const LEVEL_LABELS = {
-  L1: 'Associate',
-  L2: 'Junior',
-  L3: 'Mid',
-  L4: 'Senior',
-  L5: 'Staff',
-  L6: 'Lead',
-  L7: 'Director / VP',
-  L8: 'Executive',
+// Suggested labels when a band has no label set (keyed by common level IDs)
+const LEVEL_LABEL_SUGGESTIONS = {
+  L1: 'Associate', L2: 'Junior', L3: 'Mid', L4: 'Senior',
+  L5: 'Staff', L6: 'Lead', L7: 'Director / VP', L8: 'Executive',
 };
+
+// Colour palette for level chips (assigned by position index, cycles if >8 levels)
+const CHIP_PALETTE = [
+  { bg:'#ede9fe', color:'#5b21b6', border:'#c4b5fd' },
+  { bg:'#dbeafe', color:'#1e40af', border:'#93c5fd' },
+  { bg:'#d1fae5', color:'#065f46', border:'#6ee7b7' },
+  { bg:'#dcfce7', color:'#14532d', border:'#86efac' },
+  { bg:'#fef9c3', color:'#854d0e', border:'#fde047' },
+  { bg:'#ffedd5', color:'#9a3412', border:'#fdba74' },
+  { bg:'#fce7f3', color:'#9d174d', border:'#f9a8d4' },
+  { bg:'#1e293b', color:'#f1f5f9', border:'#334155' },
+];
 
 const COUNTRY_LIST = [
   { code: 'AE', name: 'UAE' }, { code: 'AR', name: 'Argentina' },
@@ -477,6 +514,7 @@ const COUNTRY_LIST = [
 
 // ── State ──────────────────────────────────────────────────────────────────────
 
+let levelOrder = [...DEFAULT_LEVEL_ORDER]; // mutable, persisted
 let salaryBands = {};
 let locationMultipliers = {};
 let settings = {};
@@ -490,6 +528,14 @@ async function loadData() {
   if (saved.salaryBands)         salaryBands = { ...saved.salaryBands };
   if (saved.locationMultipliers) locationMultipliers = { ...saved.locationMultipliers };
   if (saved.settings)            settings = { ...saved.settings };
+  // Derive level order from persisted data, falling back to sorted salaryBands keys
+  if (saved.levelOrder && saved.levelOrder.length) {
+    levelOrder = [...saved.levelOrder];
+  } else if (Object.keys(salaryBands).length) {
+    levelOrder = Object.keys(salaryBands);
+  } else {
+    levelOrder = [...DEFAULT_LEVEL_ORDER];
+  }
 }
 
 async function saveAll(reason) {
@@ -502,6 +548,7 @@ async function saveAll(reason) {
     full.salaryBands = salaryBands;
     full.locationMultipliers = locationMultipliers;
     full.settings = { ...(full.settings || {}), ...settings };
+    full.levelOrder = levelOrder;
     const headers = { 'Content-Type': 'application/json', 'X-Source': 'ui' };
     if (reason) headers['X-Change-Reason'] = reason.slice(0, 500);
     const resp = await fetch('/api/data', { method: 'POST', headers, body: JSON.stringify(full) });
@@ -546,9 +593,9 @@ function validateBandRow(level) {
   if (desc.length > 200) errors.push('Description too long (max 200 characters)');
 
   // Cross-level overlap check
-  const levelIdx = LEVELS.indexOf(level);
-  if (levelIdx < LEVELS.length - 1) {
-    const nextLevel = LEVELS[levelIdx + 1];
+  const levelIdx = levelOrder.indexOf(level);
+  if (levelIdx < levelOrder.length - 1) {
+    const nextLevel = levelOrder[levelIdx + 1];
     const nextBand = salaryBands[nextLevel];
     if (nextBand && !isNaN(max) && max > nextBand.min) {
       warns.push(`Max overlaps with ${nextLevel} min (${fmtNum(nextBand.min)})`);
@@ -562,13 +609,37 @@ function renderBandTable() {
   const tbody = document.getElementById('band-tbody');
   tbody.innerHTML = '';
 
-  LEVELS.forEach(level => {
+  // Sync preview-level select options
+  const prevSel = document.getElementById('preview-level');
+  const prevVal = prevSel.value || (levelOrder[2] || levelOrder[0] || '');
+  prevSel.innerHTML = '';
+  levelOrder.forEach(lv => {
+    const opt = document.createElement('option');
+    opt.value = lv; opt.textContent = lv;
+    if (lv === prevVal) opt.selected = true;
+    prevSel.appendChild(opt);
+  });
+
+  levelOrder.forEach((level, idx) => {
     const band = salaryBands[level] || {};
+    const chip = CHIP_PALETTE[idx % CHIP_PALETTE.length];
+    const chipStyle = `background:${chip.bg};color:${chip.color};border-color:${chip.border};`;
+    const suggestion = LEVEL_LABEL_SUGGESTIONS[level] || level;
+    const isFirst = idx === 0;
+    const isLast  = idx === levelOrder.length - 1;
+
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td><span class="band-level-chip" data-level="${level}">${level}</span><div style="font-size:11px;color:var(--text-muted);margin-top:4px">${band.label || ''}</div></td>
+      <td style="padding:4px 8px;vertical-align:middle">
+        <button class="band-reorder-btn" onclick="moveLevel('${level}',-1)" title="Move up" ${isFirst ? 'disabled' : ''}>▲</button>
+        <button class="band-reorder-btn" onclick="moveLevel('${level}',1)" title="Move down" ${isLast ? 'disabled' : ''}>▼</button>
+      </td>
       <td>
-        <input class="band-input" id="band-label-${level}" type="text" value="${(band.label || '').replace(/"/g, '&quot;')}" maxlength="40" placeholder="e.g. ${LEVEL_LABELS[level]}">
+        <span class="band-level-chip" style="${chipStyle}">${level}</span>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:4px">${band.label || ''}</div>
+      </td>
+      <td>
+        <input class="band-input" id="band-label-${level}" type="text" value="${(band.label || '').replace(/"/g, '&quot;')}" maxlength="40" placeholder="e.g. ${suggestion}">
         <div class="band-row-error" id="band-err-${level}"></div>
         <div class="band-row-warn" id="band-warn-${level}"></div>
       </td>
@@ -586,6 +657,9 @@ function renderBandTable() {
       </td>
       <td>
         <button class="band-save-btn" id="band-save-${level}" onclick="saveBandRow('${level}')">Save</button>
+      </td>
+      <td style="padding:4px 8px;vertical-align:middle">
+        <button class="band-delete-btn" onclick="deleteBand('${level}')" title="Remove ${level}">×</button>
       </td>
     `;
     tbody.appendChild(tr);
@@ -608,16 +682,83 @@ function renderBandTable() {
 
 function suggestLabels() {
   let changed = false;
-  LEVELS.forEach(level => {
+  levelOrder.forEach(level => {
     const input = document.getElementById(`band-label-${level}`);
-    if (input && !input.value.trim()) {
-      input.value = LEVEL_LABELS[level];
+    const suggestion = LEVEL_LABEL_SUGGESTIONS[level];
+    if (input && !input.value.trim() && suggestion) {
+      input.value = suggestion;
       changed = true;
     }
   });
   if (!changed) {
-    alert('All label fields already have values. Clear a label to use a suggestion.');
+    alert('All label fields already have values (or no suggestions exist for custom levels). Clear a label to use a suggestion.');
   }
+}
+
+async function moveLevel(level, direction) {
+  const idx = levelOrder.indexOf(level);
+  const newIdx = idx + direction;
+  if (newIdx < 0 || newIdx >= levelOrder.length) return;
+  levelOrder.splice(idx, 1);
+  levelOrder.splice(newIdx, 0, level);
+  renderBandTable();
+  await saveAll(`Level order updated`);
+}
+
+async function deleteBand(level) {
+  // Safety check: fetch current roles and count how many use this level
+  let rolesUsingLevel = 0;
+  try {
+    const res = await fetch('/api/data');
+    if (res.ok) {
+      const data = await res.json();
+      rolesUsingLevel = (data.roles || []).filter(r => r.level === level).length;
+    }
+  } catch (e) { /* if fetch fails, allow with warning */ }
+
+  if (rolesUsingLevel > 0) {
+    alert(`Cannot remove "${level}" — ${rolesUsingLevel} role${rolesUsingLevel > 1 ? 's are' : ' is'} currently assigned to this level.\n\nReassign those roles to a different level in the Org Chart first.`);
+    return;
+  }
+
+  if (!confirm(`Remove pay band "${level}"?\n\nThis cannot be undone. Any new roles must be assigned a different level.`)) return;
+
+  levelOrder.splice(levelOrder.indexOf(level), 1);
+  delete salaryBands[level];
+  renderBandTable();
+  await saveAll(`Pay band ${level} removed`);
+}
+
+async function addBand() {
+  const idRaw = document.getElementById('add-band-id').value.trim().toUpperCase();
+  const label = document.getElementById('add-band-label').value.trim();
+  const min   = parseFloat(document.getElementById('add-band-min').value);
+  const mid   = parseFloat(document.getElementById('add-band-mid').value);
+  const max   = parseFloat(document.getElementById('add-band-max').value);
+  const errEl = document.getElementById('add-band-error');
+
+  const showErr = msg => { errEl.textContent = msg; errEl.style.display = 'inline'; };
+  errEl.style.display = 'none';
+
+  if (!idRaw)                       return showErr('Enter a level ID (e.g. L9).');
+  if (!/^[A-Z0-9_-]{1,8}$/.test(idRaw)) return showErr('ID must be 1–8 alphanumeric characters.');
+  if (levelOrder.includes(idRaw))   return showErr(`"${idRaw}" already exists.`);
+  if (isNaN(min) || min <= 0)       return showErr('Min must be a positive number.');
+  if (isNaN(mid) || mid <= 0)       return showErr('Midpoint must be a positive number.');
+  if (isNaN(max) || max <= 0)       return showErr('Max must be a positive number.');
+  if (min >= max)                   return showErr('Max must be greater than Min.');
+  if (mid < min || mid > max)       return showErr('Midpoint must be between Min and Max.');
+
+  levelOrder.push(idRaw);
+  salaryBands[idRaw] = { min, midpoint: mid, max, label, description: '' };
+
+  // Clear add-band inputs
+  ['add-band-id','add-band-label','add-band-min','add-band-mid','add-band-max'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+
+  renderBandTable();
+  await saveAll(`Pay band ${idRaw} added`);
 }
 
 async function saveBandRow(level) {

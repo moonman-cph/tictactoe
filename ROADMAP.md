@@ -6,7 +6,7 @@ The team is small for the foreseeable future — parallel development is not a c
 
 ---
 
-## M1 — Foundation (current)
+## M1 — Foundation ✓ Complete
 Single user, single dummy organisation, flat JSON file persistence, single-file HTML apps. Suitable for UX iteration and feature development. No auth, no multi-tenancy.
 
 **Constraints that apply now:**
@@ -20,8 +20,8 @@ Single user, single dummy organisation, flat JSON file persistence, single-file 
 
 ---
 
-## M2 — Database, API Layer & Multi-Tenancy Foundations
-Replace the JSON file with **PostgreSQL**. PostgreSQL is chosen because it natively supports schema-per-tenant isolation, row-level security (RLS), field-level encryption via extensions (`pgcrypto`), JSON columns for flexible config, and scales from single-server to fully managed cloud deployments.
+## M2 — Database, API Layer & Multi-Tenancy Foundations (current)
+Replace the JSON file with **PostgreSQL on Azure**. The app is deployed on **Azure** with a managed **Azure Database for PostgreSQL** instance. PostgreSQL is chosen because it natively supports schema-per-tenant isolation, row-level security (RLS), field-level encryption via extensions (`pgcrypto`), JSON columns for flexible config, and scales from single-server to fully managed cloud deployments.
 
 Introduce a versioned REST API: all routes move to `/api/v1/`. No route may be removed or changed in a breaking way once published — add new versions instead.
 

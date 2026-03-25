@@ -289,8 +289,8 @@
       #notif-bell-btn.active { background: rgba(0,0,0,0.08); color: #111827; }
       #notif-badge {
         position: absolute;
-        top: 3px;
-        right: 3px;
+        top: 1px;
+        right: 1px;
         min-width: 16px;
         height: 16px;
         padding: 0 3.5px;
@@ -570,7 +570,7 @@
     btn.id = 'notif-bell-btn';
     btn.title = 'Notifications';
     btn.setAttribute('aria-label', 'Notifications');
-    btn.innerHTML = `<svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
       <path d="M8 1.5a4.5 4.5 0 014.5 4.5c0 2.5.5 4 1.5 5H2c1-1 1.5-2.5 1.5-5A4.5 4.5 0 018 1.5z"/>
       <line x1="6.5" y1="14" x2="9.5" y2="14"/>
     </svg><span id="notif-badge" style="display:none">0</span>`;

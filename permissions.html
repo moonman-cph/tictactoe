@@ -467,7 +467,14 @@
         <div class="perm-section-header">
           <div>
             <div class="perm-section-title">Assignment Preview</div>
-            <div class="perm-section-sub">Read-only view of each employee's effective groups and resolved rights. Deny always wins.</div>
+            <div class="perm-section-sub">Read-only view of each employee's effective groups and resolved rights. Deny always wins. <span style="color:#f59e0b;font-weight:500">Reflects org data at the time this page was loaded — refresh to see the latest.</span></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;flex-shrink:0">
+            <span id="preview-loaded-at" style="font-size:11px;color:var(--text-muted)"></span>
+            <button class="btn btn-ghost" style="font-size:12px;padding:5px 10px" onclick="refreshPreviewData()">
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 8a7 7 0 0 1 12-4.9M15 8a7 7 0 0 1-12 4.9"/><polyline points="11,3 15,3 15,7"/><polyline points="5,13 1,13 1,9"/></svg>
+              Refresh
+            </button>
           </div>
         </div>
         <div class="preview-filters">
@@ -567,6 +574,8 @@ function rightPillHtml(rightKey, isDeny) {
 
 // ── Load / save ───────────────────────────────────────────────────────────────
 
+let dataLoadedAt = null;
+
 async function loadData() {
   try {
     const res = await fetch('/api/data');
@@ -576,10 +585,26 @@ async function loadData() {
     if (!data.assignmentPolicies)        data.assignmentPolicies = [];
     if (!data.personPermissionOverrides) data.personPermissionOverrides = [];
     if (!data.levelOrder)                data.levelOrder = [];
+    dataLoadedAt = new Date();
   } catch (e) {
     console.warn('Failed to load data', e);
   }
   render();
+  updateLoadedAtLabel();
+}
+
+function updateLoadedAtLabel() {
+  const el = document.getElementById('preview-loaded-at');
+  if (el && dataLoadedAt) {
+    el.textContent = `as of ${dataLoadedAt.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`;
+  }
+}
+
+async function refreshPreviewData() {
+  const btn = document.querySelector('[onclick="refreshPreviewData()"]');
+  if (btn) btn.disabled = true;
+  await loadData();
+  if (btn) btn.disabled = false;
 }
 
 let _saveTimer = null;

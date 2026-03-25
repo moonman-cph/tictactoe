@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign in — OrgChart</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: #f5f4f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 24px;
+      /* Subtle dot grid texture */
+      background-image: radial-gradient(circle, #d6d3cc 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+
+    @keyframes cardIn {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .card {
+      background: #ffffff;
+      width: 100%;
+      max-width: 420px;
+      border-radius: 16px;
+      border: 1px solid #e6e4df;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+      padding: 40px 36px 32px;
+      animation: cardIn 0.4s ease both;
+    }
+
+    /* ── Logo ── */
+    .logo-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: #e8622a;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(232, 98, 42, 0.35);
+    }
+
+    .logo-text {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    .logo-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: #111110;
+      letter-spacing: -0.3px;
+      line-height: 1.2;
+    }
+
+    .logo-tagline {
+      font-size: 12px;
+      font-weight: 400;
+      color: #57534e;
+      letter-spacing: 0.1px;
+    }
+
+    /* ── Heading ── */
+    .heading {
+      margin-bottom: 6px;
+      font-size: 22px;
+      font-weight: 600;
+      color: #111110;
+      letter-spacing: -0.4px;
+    }
+
+    .subheading {
+      font-size: 14px;
+      color: #78716c;
+      font-weight: 400;
+      margin-bottom: 28px;
+    }
+
+    /* ── Divider ── */
+    .divider {
+      height: 1px;
+      background: #e6e4df;
+      margin-bottom: 28px;
+    }
+
+    /* ── Form ── */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-bottom: 18px;
+    }
+
+    .form-group:last-of-type {
+      margin-bottom: 0;
+    }
+
+    label {
+      font-size: 13px;
+      font-weight: 500;
+      color: #57534e;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 400;
+      color: #111110;
+      background: #ffffff;
+      border: 1px solid #e6e4df;
+      border-radius: 8px;
+      padding: 10px 14px;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    input[type="email"]::placeholder,
+    input[type="password"]::placeholder {
+      color: #a8a29e;
+    }
+
+    input[type="email"]:focus,
+    input[type="password"]:focus {
+      border-color: #1a7a8a;
+      box-shadow: 0 0 0 3px rgba(26, 122, 138, 0.1);
+    }
+
+    /* ── Password row ── */
+    .password-label-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .forgot-link {
+      font-size: 12px;
+      font-weight: 400;
+      color: #a8a29e;
+      text-decoration: none;
+      transition: color 0.15s ease;
+    }
+
+    .forgot-link:hover {
+      color: #57534e;
+    }
+
+    /* ── Button ── */
+    .btn-signin {
+      display: block;
+      width: 100%;
+      margin-top: 24px;
+      padding: 12px 16px;
+      background: #1a7a8a;
+      color: #ffffff;
+      font-family: 'Outfit', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      letter-spacing: 0.1px;
+      transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+    }
+
+    .btn-signin:hover {
+      background: #156878;
+      box-shadow: 0 4px 12px rgba(26, 122, 138, 0.28);
+    }
+
+    .btn-signin:active {
+      transform: scale(0.99);
+      background: #115e6b;
+    }
+
+    /* ── Demo notice ── */
+    .demo-notice {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 12px;
+      font-style: italic;
+      color: #a8a29e;
+    }
+
+    /* ── Footer ── */
+    .card-footer {
+      margin-top: 28px;
+      padding-top: 20px;
+      border-top: 1px solid #e6e4df;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    .footer-link {
+      font-size: 12px;
+      color: #a8a29e;
+      text-decoration: none;
+      font-weight: 400;
+      transition: color 0.15s ease;
+    }
+
+    .footer-link:hover {
+      color: #57534e;
+    }
+
+    .footer-dot {
+      width: 3px;
+      height: 3px;
+      background: #d6d3cc;
+      border-radius: 50%;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+
+    <!-- Logo -->
+    <div class="logo-row">
+      <div class="logo-icon">
+        <!-- Org chart hierarchy icon -->
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="11" cy="4.5" r="3" fill="white" />
+          <circle cx="4.5" cy="16.5" r="3" fill="white" />
+          <circle cx="17.5" cy="16.5" r="3" fill="white" />
+          <line x1="11" y1="7.5" x2="11" y2="11.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="11" y1="11.5" x2="4.5" y2="13.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="11" y1="11.5" x2="17.5" y2="13.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="logo-text">
+        <span class="logo-name">OrgChart</span>
+        <span class="logo-tagline">Workforce intelligence platform</span>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Heading -->
+    <h1 class="heading">Welcome back</h1>
+    <p class="subheading">Sign in to your workspace</p>
+
+    <!-- Form -->
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="email">Work email</label>
+        <div class="input-wrap">
+          <input type="email" id="email" name="email" placeholder="you@company.com" autocomplete="email" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="password-label-row">
+          <label for="password">Password</label>
+          <a href="#" class="forgot-link">Forgot password?</a>
+        </div>
+        <div class="input-wrap">
+          <input type="password" id="password" name="password" placeholder="••••••••" autocomplete="current-password" />
+        </div>
+      </div>
+
+      <button type="submit" class="btn-signin">Sign in</button>
+    </form>
+
+    <p class="demo-notice">Demo mode — any credentials will work</p>
+
+    <div class="card-footer">
+      <a href="#" class="footer-link">Privacy</a>
+      <div class="footer-dot"></div>
+      <a href="#" class="footer-link">Terms</a>
+      <div class="footer-dot"></div>
+      <a href="#" class="footer-link">Help</a>
+    </div>
+
+  </div>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      window.location.href = 'dashboard.html';
+    });
+  </script>
+</body>
+</html>

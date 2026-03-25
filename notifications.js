@@ -9,6 +9,12 @@
   // ── Static Release Notes ──────────────────────────────────────────────────
   const RELEASE_NOTES = [
     {
+      id: 'release-2026-03-25-logo',
+      date: 'Mar 2026',
+      title: 'Brand logo update',
+      body: 'The Teampura logo now appears across the sidebar and login page.',
+    },
+    {
       id: 'release-v1.5-permissions',
       date: 'Mar 2026',
       title: 'Permissions & Groups (v1.5)',

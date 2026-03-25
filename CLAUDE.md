@@ -56,6 +56,25 @@ After completing any significant change (new feature, significant UI change, bug
 git add orgchart.html && git commit -m "Your message here" && git push
 ```
 
+### Release Notes (required before every push)
+
+Before committing and pushing any meaningful change, prepend a new entry to the **top** of the `RELEASE_NOTES` array in `notifications.js`:
+
+```js
+{
+  id: 'release-YYYY-MM-DD-topic',   // unique slug — date + short topic, e.g. release-2026-03-25-logo
+  date: 'Mon YYYY',                  // e.g. 'Mar 2026'
+  title: 'Short title of change',
+  body: 'One sentence describing what was added or fixed.',
+},
+```
+
+Rules:
+- Always prepend (newest first).
+- `id` must be unique — use the date + a short topic slug to guarantee this.
+- Only add an entry for changes visible to the user (UI changes, new features, bug fixes). Skip pure infrastructure or config-only changes.
+- The entry will appear as unread in the notification bell for all users on their next page load.
+
 ## Product Roadmap
 
 See [`ROADMAP.md`](ROADMAP.md) for the full milestone plan and standing architectural rules.

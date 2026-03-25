@@ -1,5 +1,5 @@
 /**
- * notifications.js — Shared notification bell for all OrgChart pages.
+ * notifications.js — Shared notification bell for all Teampura pages.
  * Auto-injects a bell icon into #app-header. Computes live notifications
  * from /api/data. Read state persisted in localStorage.
  */

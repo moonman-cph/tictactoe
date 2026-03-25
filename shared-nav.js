@@ -66,7 +66,7 @@
         <line x1="8" y1="5" x2="13" y2="9" stroke="white" stroke-width="1.2" opacity="0.6"/>
       </svg>
     </div>
-    <span class="nav-logo-name">OrgChart</span>
+    <span class="nav-logo-name">Teampura</span>
   </div>
   <div id="nav-body">
     <div class="nav-section">

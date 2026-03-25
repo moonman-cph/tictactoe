@@ -971,16 +971,18 @@ function addPolicyRuleRow(existing) {
       sel.innerHTML = levels.map(l => `<option value="${l}" ${existing && existing.value === l ? 'selected' : ''}>${levelLabel(l)}</option>`).join('');
       valWrap.appendChild(sel);
     } else if (field === 'departmentId' && op === 'in') {
-      const wrap = document.createElement('div');
-      wrap.style.cssText = 'display:flex;flex-wrap:wrap;gap:6px;';
+      const sel = document.createElement('select');
+      sel.multiple = true;
+      sel.style.cssText = 'width:100%;min-height:80px;max-height:120px;';
       (data.departments || []).forEach(dept => {
-        const checked = existing && Array.isArray(existing.value) && existing.value.map(String).includes(String(dept.id));
-        const lbl = document.createElement('label');
-        lbl.style.cssText = 'display:flex;align-items:center;gap:3px;font-size:11px;cursor:pointer;';
-        lbl.innerHTML = `<input type="checkbox" value="${dept.id}" ${checked ? 'checked' : ''}> ${escHtml(dept.name)}`;
-        wrap.appendChild(lbl);
+        const selected = existing && Array.isArray(existing.value) && existing.value.map(String).includes(String(dept.id));
+        const opt = document.createElement('option');
+        opt.value = dept.id;
+        opt.textContent = dept.name;
+        opt.selected = selected;
+        sel.appendChild(opt);
       });
-      valWrap.appendChild(wrap);
+      valWrap.appendChild(sel);
     } else if (field === 'departmentId') {
       const sel = document.createElement('select');
       sel.style.width = '100%';
@@ -1023,7 +1025,8 @@ function collectPolicyRules() {
 
     let value;
     if (field === 'departmentId' && op === 'in') {
-      value = [...vw.querySelectorAll('input[type=checkbox]:checked')].map(c => isNaN(c.value) ? c.value : Number(c.value));
+      const multiSel = vw.querySelector('select[multiple]');
+      value = multiSel ? [...multiSel.selectedOptions].map(o => isNaN(o.value) ? o.value : Number(o.value)) : [];
       if (!value.length) return;
     } else {
       const sel = vw.querySelector('select');

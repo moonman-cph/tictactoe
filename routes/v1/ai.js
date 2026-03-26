@@ -3,7 +3,7 @@
 const express  = require('express');
 const db       = require('../../db');
 const { generateUUID }            = require('../../lib/changelog-diff');
-const { roleToTier, getRoleSubtree } = require('../../lib/data-scope');
+const { roleToTier } = require('../../lib/data-scope');
 
 const router = express.Router();
 

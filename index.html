@@ -257,7 +257,7 @@
       <button type="submit" class="btn-signin">Sign in</button>
     </form>
 
-    <p class="demo-notice">Demo mode — any credentials will work</p>
+    <p class="demo-notice" id="loginError" style="display:none;color:#dc2626;font-style:normal;font-weight:500;"></p>
 
     <div class="card-footer">
       <a href="#" class="footer-link">Privacy</a>
@@ -270,9 +270,47 @@
   </div>
 
   <script>
-    document.getElementById('loginForm').addEventListener('submit', function(e) {
+    // If already logged in, skip to dashboard
+    fetch('/api/v1/auth/me', { credentials: 'same-origin' })
+      .then(function(r) { if (r.ok) location.replace('/dashboard.html'); })
+      .catch(function() {});
+
+    var form    = document.getElementById('loginForm');
+    var btn     = form.querySelector('.btn-signin');
+    var errEl   = document.getElementById('loginError');
+
+    form.addEventListener('submit', async function(e) {
       e.preventDefault();
-      window.location.href = 'dashboard.html';
+      errEl.style.display = 'none';
+      btn.disabled = true;
+      btn.textContent = 'Signing in…';
+
+      try {
+        var res = await fetch('/api/v1/auth/login', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({
+            email:    document.getElementById('email').value.trim(),
+            password: document.getElementById('password').value,
+          }),
+          credentials: 'same-origin',
+        });
+
+        if (res.ok) {
+          location.replace('/dashboard.html');
+        } else {
+          var data = await res.json();
+          errEl.textContent    = data.error || 'Sign in failed. Please try again.';
+          errEl.style.display  = 'block';
+          btn.disabled         = false;
+          btn.textContent      = 'Sign in';
+        }
+      } catch (err) {
+        errEl.textContent   = 'Network error. Please try again.';
+        errEl.style.display = 'block';
+        btn.disabled        = false;
+        btn.textContent     = 'Sign in';
+      }
     });
   </script>
 </body>

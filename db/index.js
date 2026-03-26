@@ -81,6 +81,18 @@ async function _initSchema() {
       ON CONFLICT (org_id, key) DO UPDATE SET value = '3'
     `);
     console.log('[db] Migration v3 complete.');
+    migrationVersion = 3;
+  }
+
+  // ── Migration v4: users table + seed first super_admin ────────────────────
+  if (migrationVersion < 4) {
+    console.log('[db] Running migration v4 (users table)...');
+    await _seedSuperAdmin(pg);
+    await pg.query(`
+      INSERT INTO org_config (org_id, key, value) VALUES ('default', '_migration_version', '4')
+      ON CONFLICT (org_id, key) DO UPDATE SET value = '4'
+    `);
+    console.log('[db] Migration v4 complete.');
   }
 }
 
@@ -242,6 +254,29 @@ async function _migrateToEncryption(pg) {
   }
 
   console.log(`[db] Re-encrypted ${persons.rows.length} person(s) and ${bands.rows.length} salary band(s).`);
+}
+
+// ── Migration v4: seed first super_admin from env vars ───────────────────────
+
+async function _seedSuperAdmin(pg) {
+  const email    = process.env.ADMIN_EMAIL;
+  const password = process.env.ADMIN_PASSWORD;
+  if (!email || !password) {
+    console.log('[db] ADMIN_EMAIL / ADMIN_PASSWORD not set — skipping super_admin seed. Set them and restart to create the first admin account.');
+    return;
+  }
+  const exists = await pg.query(`SELECT 1 FROM users WHERE email = $1`, [email.toLowerCase()]);
+  if (exists.rows.length > 0) {
+    console.log(`[db] Super admin ${email} already exists — skipping seed.`);
+    return;
+  }
+  const bcrypt = require('bcryptjs');
+  const hash   = await bcrypt.hash(password, 12);
+  await pg.query(
+    `INSERT INTO users (org_id, email, password_hash, role) VALUES ('default', $1, $2, 'super_admin')`,
+    [email.toLowerCase(), hash]
+  );
+  console.log(`[db] Created super_admin: ${email}`);
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -635,11 +670,11 @@ async function setData(data, orgId = 'default') {
 
 // ── getChangelog ──────────────────────────────────────────────────────────────
 
-async function getChangelog() {
+async function getChangelog(orgId = 'default') {
   if (!process.env.DATABASE_URL) return _fileGetChangelog();
   await ensureSchema();
   const r = await getPool().query(
-    `SELECT * FROM audit_log WHERE org_id = 'default' ORDER BY timestamp ASC`
+    `SELECT * FROM audit_log WHERE org_id = $1 ORDER BY timestamp ASC`, [orgId]
   );
   return r.rows.map(rowToEntry);
 }
@@ -696,4 +731,55 @@ async function appendChangelogEntries(entries) {
   }
 }
 
-module.exports = { getData, setData, getChangelog, appendChangelogEntries, DATA_FILE, CHANGELOG_FILE };
+// ── User CRUD ─────────────────────────────────────────────────────────────────
+
+async function getUserByEmail(email) {
+  if (!process.env.DATABASE_URL) return null;
+  await ensureSchema();
+  const r = await getPool().query(`SELECT * FROM users WHERE email = $1`, [email.toLowerCase()]);
+  return r.rows[0] || null;
+}
+
+async function getUserById(id) {
+  if (!process.env.DATABASE_URL) return null;
+  await ensureSchema();
+  const r = await getPool().query(`SELECT * FROM users WHERE id = $1`, [id]);
+  return r.rows[0] || null;
+}
+
+async function createUser({ orgId = 'default', email, passwordHash, role = 'employee', personId = null }) {
+  if (!process.env.DATABASE_URL) throw new Error('Database required for user creation.');
+  await ensureSchema();
+  const r = await getPool().query(
+    `INSERT INTO users (org_id, email, password_hash, role, person_id) VALUES ($1,$2,$3,$4,$5) RETURNING *`,
+    [orgId, email.toLowerCase(), passwordHash, role, personId]
+  );
+  return r.rows[0];
+}
+
+async function updateUserLastLogin(userId) {
+  if (!process.env.DATABASE_URL) return;
+  await ensureSchema();
+  await getPool().query(`UPDATE users SET last_login = now() WHERE id = $1`, [userId]);
+}
+
+async function updateUserPassword(userId, hash) {
+  if (!process.env.DATABASE_URL) throw new Error('Database required.');
+  await ensureSchema();
+  await getPool().query(`UPDATE users SET password_hash = $1 WHERE id = $2`, [hash, userId]);
+}
+
+async function listUsers(orgId = 'default') {
+  if (!process.env.DATABASE_URL) return [];
+  await ensureSchema();
+  const r = await getPool().query(
+    `SELECT id, org_id, email, role, person_id, status, created_at, last_login FROM users WHERE org_id = $1 ORDER BY created_at`,
+    [orgId]
+  );
+  return r.rows;
+}
+
+module.exports = {
+  getData, setData, getChangelog, appendChangelogEntries, DATA_FILE, CHANGELOG_FILE,
+  getUserByEmail, getUserById, createUser, updateUserLastLogin, updateUserPassword, listUsers,
+};

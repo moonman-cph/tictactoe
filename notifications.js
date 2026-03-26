@@ -16,6 +16,13 @@
   //   detail — full description shown in the modal (plain text or simple HTML)
   const RELEASE_NOTES = [
     {
+      id:     'release-0.7.0-auth',
+      date:   '26 Mar 2026',
+      title:  'Login & role-based access (0.7.0)',
+      body:   'M3 is live: every page now requires a real login, and data access is enforced server-side by role.',
+      detail: 'Authentication is now enforced across the entire application. All users must sign in with an email and password. Access is controlled by five roles — Super Admin, Org Admin, HR, Manager, and Employee — each enforced on the server, not just in the UI. Managers see salary data only for their direct reports. Employees see org structure but not compensation data. Every data change is now attributed to the logged-in user in the audit trail. Sessions expire automatically after 8 hours.',
+    },
+    {
       id: 'release-0.6.0-m2-complete',
       date: '26 Mar 2026',
       title: 'Security & database hardening (0.6.0)',

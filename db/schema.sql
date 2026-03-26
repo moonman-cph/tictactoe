@@ -125,6 +125,24 @@ CREATE TABLE IF NOT EXISTS org_config (
   PRIMARY KEY (org_id, key)
 );
 
+-- ── Users ─────────────────────────────────────────────────────────────────────
+-- Roles: super_admin | org_admin | hr | manager | employee
+-- person_id optionally links a user account to an entry in the persons table.
+
+CREATE TABLE IF NOT EXISTS users (
+  id            TEXT        NOT NULL DEFAULT gen_random_uuid()::text,
+  org_id        TEXT        NOT NULL DEFAULT 'default',
+  email         TEXT        NOT NULL,
+  password_hash TEXT        NOT NULL,
+  role          TEXT        NOT NULL DEFAULT 'employee',
+  person_id     TEXT,
+  status        TEXT        NOT NULL DEFAULT 'active',
+  created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
+  last_login    TIMESTAMPTZ,
+  PRIMARY KEY (id),
+  UNIQUE (email)
+);
+
 -- ── Audit Log ─────────────────────────────────────────────────────────────────
 -- Append-only. Application role: INSERT + SELECT only (no UPDATE, no DELETE).
 

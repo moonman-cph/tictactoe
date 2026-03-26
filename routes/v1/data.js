@@ -3,8 +3,14 @@
 const express = require('express');
 const db      = require('../../db');
 const { generateUUID, diffState } = require('../../lib/changelog-diff');
+const { scopeDataForUser }        = require('../../lib/data-scope');
+const { requireRole }             = require('../../lib/auth');
 
 const router = express.Router();
+
+// ── Write roles ───────────────────────────────────────────────────────────────
+// Only these roles may POST data changes.
+const WRITE_ROLES = ['super_admin', 'org_admin', 'hr'];
 
 // ── Input validation ───────────────────────────────────────────────────────────
 
@@ -42,26 +48,34 @@ function validateOrgData(body) {
   return null; // valid
 }
 
+// ── GET /api/v1/data ──────────────────────────────────────────────────────────
+// Returns org data scoped to the requesting user's role.
+
 router.get('/', async (req, res) => {
   try {
-    res.json(await db.getData());
+    const data   = await db.getData(req.user.orgId);
+    const scoped = scopeDataForUser(data, req.user);
+    res.json(scoped);
   } catch (e) {
     res.json({});
   }
 });
 
-router.post('/', async (req, res) => {
+// ── POST /api/v1/data ─────────────────────────────────────────────────────────
+// Writes full org state. Restricted to write roles.
+
+router.post('/', requireRole(...WRITE_ROLES), async (req, res) => {
   try {
     // 1. Validate input
     const validationError = validateOrgData(req.body);
     if (validationError) return res.status(400).json({ error: validationError });
 
     // 2. Read current state for diffing
-    const prev = await db.getData();
+    const prev = await db.getData(req.user.orgId);
 
     // 3. Write new state
     const next = req.body;
-    await db.setData(next);
+    await db.setData(next, req.user.orgId);
 
     // 4. Extract metadata from headers
     const correlationId  = generateUUID();
@@ -73,9 +87,18 @@ router.post('/', async (req, res) => {
     const actorIp        = req.ip || req.headers['x-forwarded-for'] || null;
     const actorUserAgent = (req.headers['user-agent'] || '').slice(0, 500) || null;
 
-    const meta = { changeReason, source, bulkId, actorIp, actorUserAgent, actorId: null, actorEmail: null, actorRole: null };
+    const meta = {
+      changeReason,
+      source,
+      bulkId,
+      actorIp,
+      actorUserAgent,
+      actorId:    req.user.userId,
+      actorEmail: req.user.email,
+      actorRole:  req.user.role,
+    };
 
-    // 5. Diff and append changelog (non-fatal — a changelog error must never block a save)
+    // 5. Diff and append changelog (non-fatal)
     try {
       const entries = diffState(prev, next, correlationId, meta);
       await db.appendChangelogEntries(entries);

@@ -49,7 +49,7 @@ Security foundations introduced in this milestone:
 
 ---
 
-## M3 — Authentication & Role-Based Access Control (current)
+## M3 — Authentication & Role-Based Access Control (current — ~70% complete)
 Login, sessions, and JWT-based auth. Role-based access is enforced **server-side on every API response** — not just hidden in the UI.
 
 Five roles:
@@ -60,6 +60,24 @@ Five roles:
 - `employee` — read access to their own record; can update designated personal fields.
 
 Sensitive fields (salary, band, personal data) are **opt-in from the API** — never returned in a response unless the requesting user's role explicitly permits it. Hiding data via CSS or JS is never acceptable as a security measure.
+
+**M3 Progress:**
+| Component | Status | Notes |
+|-----------|--------|-------|
+| JWT auth (login / logout / me) | ✓ Done | httpOnly cookie, 8h expiry, `lib/auth.js` |
+| `users` DB table | ✓ Done | email + bcrypt hash + role + person_id link |
+| Super-admin seed on first boot | ✓ Done | `ADMIN_EMAIL` + `ADMIN_PASSWORD` env vars |
+| All routes protected | ✓ Done | `requireAuth` middleware on every API route |
+| Role-scoped GET /api/v1/data | ✓ Done | `lib/data-scope.js` — salary filtered by role |
+| Write restricted to hr/org_admin/super_admin | ✓ Done | `requireRole` on POST /api/v1/data |
+| Actor fields in audit log | ✓ Done | userId, email, role from JWT on every write |
+| Login page wired up | ✓ Done | `index.html` — real POST /api/v1/auth/login |
+| All pages redirect to login | ✓ Done | `shared-auth.js` — fetch interceptor + initial check |
+| Nav shows logged-in user + logout | ✓ Done | `shared-nav.js` listens for auth:ready event |
+| `/api/v1/health` status endpoint | ✓ Done | Public — checks DB, encryption key, JWT secret |
+| `changeReason` mandatory for sensitive writes | ✗ Pending | Server enforcement + UI prompt dialogs |
+| Role-based nav visibility | ✗ Pending | Hide admin nav items from employee/manager |
+| Employee self-service field edits | ✗ Pending | M7 territory |
 
 ---
 

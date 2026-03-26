@@ -82,15 +82,51 @@
     </div>
   </div>
   <div id="nav-footer">
-    <div class="nav-user-avatar">DM</div>
+    <div class="nav-user-avatar" id="nav-user-avatar">—</div>
     <div class="nav-user-info">
-      <div class="nav-user-name">David Miller</div>
-      <div class="nav-user-role">HR Admin</div>
+      <div class="nav-user-name" id="nav-user-name">Loading…</div>
+      <div class="nav-user-role" id="nav-user-role"></div>
     </div>
+    <button id="nav-logout-btn" title="Sign out" style="margin-left:auto;background:none;border:none;cursor:pointer;color:var(--text-3,#9ca3af);padding:4px;border-radius:4px;line-height:1;font-size:14px;">⏻</button>
   </div>`;
 
   // Script is placed immediately after <nav id="left-nav"> in each page,
   // so the element already exists when this runs synchronously.
   const nav = document.getElementById('left-nav');
   if (nav) nav.innerHTML = html;
+
+  // ── Populate user identity from auth:ready event ───────────────────────────
+  const ROLE_LABELS = {
+    super_admin: 'Super Admin',
+    org_admin:   'Org Admin',
+    hr:          'HR Admin',
+    manager:     'Manager',
+    employee:    'Employee',
+  };
+
+  function applyUser(user) {
+    const nameEl   = document.getElementById('nav-user-name');
+    const roleEl   = document.getElementById('nav-user-role');
+    const avatarEl = document.getElementById('nav-user-avatar');
+    if (!nameEl) return;
+    const label = user.email.split('@')[0];
+    nameEl.textContent   = label;
+    roleEl.textContent   = ROLE_LABELS[user.role] || user.role;
+    avatarEl.textContent = label.slice(0, 2).toUpperCase();
+  }
+
+  // If shared-auth.js already resolved (fast network), window.__currentUser is set
+  if (window.__currentUser) {
+    applyUser(window.__currentUser);
+  } else {
+    document.addEventListener('auth:ready', function(e) { applyUser(e.detail); });
+  }
+
+  // ── Logout button ──────────────────────────────────────────────────────────
+  document.addEventListener('click', function(e) {
+    if (e.target && e.target.id === 'nav-logout-btn') {
+      fetch('/api/v1/auth/logout', { method: 'POST', credentials: 'same-origin' })
+        .finally(function() { location.replace('/'); });
+    }
+  });
 })();

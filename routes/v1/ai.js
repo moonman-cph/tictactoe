@@ -2,7 +2,8 @@
 
 const express  = require('express');
 const db       = require('../../db');
-const { generateUUID } = require('../../lib/changelog-diff');
+const { generateUUID }            = require('../../lib/changelog-diff');
+const { roleToTier, getRoleSubtree } = require('../../lib/data-scope');
 
 const router = express.Router();
 
@@ -235,19 +236,19 @@ function getAnthropicClient() {
 
 // ── Routes ────────────────────────────────────────────────────────────────────
 
-// GET /api/v1/ai/whoami?personId=X
-// Returns tier + display info for the identity bar
+// GET /api/v1/ai/whoami
+// Returns tier + display info for the identity bar (uses JWT identity)
 router.get('/whoami', async (req, res) => {
   try {
-    const { personId } = req.query;
-    const data  = await db.getData();
-    const tier  = inferTier(personId, data);
+    const personId = req.user.personId;
+    const data     = await db.getData(req.user.orgId);
+    const tier     = roleToTier(req.user.role);
 
-    const person = (data.persons || []).find(p => String(p.id) === String(personId));
-    const ra     = (data.roleAssignments || []).find(a => String(a.personId) === String(personId));
+    const person = personId ? (data.persons || []).find(p => String(p.id) === String(personId)) : null;
+    const ra     = personId ? (data.roleAssignments || []).find(a => String(a.personId) === String(personId)) : null;
     const role   = ra ? (data.roles || []).find(r => String(r.id) === String(ra.roleId)) : null;
 
-    res.json({ tier, personName: person?.name || null, roleTitle: role?.title || null });
+    res.json({ tier, personName: person?.name || null, roleTitle: role?.title || null, email: req.user.email });
   } catch (e) {
     console.error('[ai/whoami]', e);
     res.status(500).json({ error: e.message });
@@ -255,10 +256,11 @@ router.get('/whoami', async (req, res) => {
 });
 
 // POST /api/v1/ai/query
-// Body: { prompt, history, personId }
+// Body: { prompt, history }
 router.post('/query', async (req, res) => {
   try {
-    const { prompt, history, personId } = req.body || {};
+    const { prompt, history } = req.body || {};
+    const personId = req.user.personId;
     if (!prompt || typeof prompt !== 'string') return res.status(400).json({ error: 'prompt must be a non-empty string.' });
     if (typeof prompt === 'string' && prompt.length > 2000) return res.status(400).json({ error: 'prompt must be 2000 characters or fewer.' });
     const safeHistory = Array.isArray(history) ? history.filter(m => m && typeof m.role === 'string' && typeof m.content === 'string') : [];
@@ -267,8 +269,8 @@ router.post('/query', async (req, res) => {
       return res.status(503).json({ error: 'AI assistant is not configured. Set ANTHROPIC_API_KEY in your environment.' });
     }
 
-    const data         = await db.getData();
-    const tier         = inferTier(personId, data);
+    const data         = await db.getData(req.user.orgId);
+    const tier         = roleToTier(req.user.role);
     const systemPrompt = buildSystemPrompt(tier, personId, data);
 
     const messages = [
@@ -306,9 +308,9 @@ router.post('/query', async (req, res) => {
         orgId:          'default',
         correlationId,
         timestamp:      new Date().toISOString(),
-        actorId:        personId ? String(personId) : null,
-        actorEmail:     null,
-        actorRole:      tier,
+        actorId:        req.user.userId,
+        actorEmail:     req.user.email,
+        actorRole:      req.user.role,
         actorIp:        req.ip || req.headers['x-forwarded-for'] || null,
         actorUserAgent: (req.headers['user-agent'] || '').slice(0, 500) || null,
         operation:      'AI_QUERY',

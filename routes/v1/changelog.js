@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
   try {
-    const log = await db.getChangelog();
+    const log = await db.getChangelog(req.user.orgId);
 
     const { correlationId, entityType, entityId, field, operation, source, bulkId, from, to, isSensitive } = req.query;
     const limit  = Math.min(parseInt(req.query.limit  || '200', 10), 1000);
@@ -41,7 +41,7 @@ router.get('/', async (req, res) => {
 
 router.get('/summary', async (req, res) => {
   try {
-    const log = await db.getChangelog();
+    const log = await db.getChangelog(req.user.orgId);
 
     const days = parseInt(req.query.days || '30', 10);
     const since = new Date(Date.now() - days * 86400000).toISOString();

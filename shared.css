@@ -219,6 +219,17 @@ body {
 .npm-action--danger:hover { background: rgba(220,60,60,0.15); color: #f87171; }
 
 /* ── Impersonation banner ─────────────────────────────────────── */
+:root { --banner-h: 37px; }
+
+/* Push the whole app down when the banner is visible */
+body.has-impersonation-banner {
+  padding-top: var(--banner-h);
+}
+/* #left-nav has an explicit height:100vh — shrink it to compensate */
+body.has-impersonation-banner #left-nav {
+  height: calc(100vh - var(--banner-h));
+}
+
 #impersonation-banner {
   position: fixed;
   top: 0; left: 0; right: 0;

@@ -174,6 +174,7 @@
       ' &nbsp;—&nbsp; ' +
       '<button id="impersonation-end-btn">Return to ' + (user.originalEmail || 'admin') + '</button>';
     document.body.insertBefore(banner, document.body.firstChild);
+    document.body.classList.add('has-impersonation-banner');
 
     document.getElementById('impersonation-end-btn').addEventListener('click', function() {
       fetch('/api/v1/auth/impersonate-end', { method: 'POST', credentials: 'same-origin' })

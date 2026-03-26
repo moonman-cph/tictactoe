@@ -16,6 +16,13 @@
   //   detail — full description shown in the modal (plain text or simple HTML)
   const RELEASE_NOTES = [
     {
+      id:     'release-0.7.2-profile-menu',
+      date:   '26 Mar 2026',
+      title:  'Profile menu in nav (0.7.2)',
+      body:   'Click your name in the bottom-left to open a profile menu with your email, role, and sign-out.',
+      detail: 'The bottom of the left navigation now has a profile popup menu. Click your avatar and name to open it — it shows your full email address, your role badge, and a Sign out button. The old standalone power button has been removed.',
+    },
+    {
       id:     'release-0.7.1-demo-login',
       date:   '26 Mar 2026',
       title:  'Demo login box (0.7.1)',

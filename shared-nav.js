@@ -81,13 +81,21 @@
       ${orgchartOnlyItems}
     </div>
   </div>
+  <div id="nav-profile-menu" aria-hidden="true">
+    <div class="npm-header">
+      <div class="npm-email" id="npm-email"></div>
+      <div class="npm-role-badge" id="npm-role-badge"></div>
+    </div>
+    <div class="npm-divider"></div>
+    <button class="npm-action npm-action--danger" id="npm-signout">Sign out</button>
+  </div>
   <div id="nav-footer">
     <div class="nav-user-avatar" id="nav-user-avatar">—</div>
     <div class="nav-user-info">
       <div class="nav-user-name" id="nav-user-name">Loading…</div>
       <div class="nav-user-role" id="nav-user-role"></div>
     </div>
-    <button id="nav-logout-btn" title="Sign out" style="margin-left:auto;background:none;border:none;cursor:pointer;color:var(--text-3,#9ca3af);padding:4px;border-radius:4px;line-height:1;font-size:14px;">⏻</button>
+    <svg id="nav-footer-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="margin-left:auto;flex-shrink:0;opacity:0.4;transition:transform 0.2s ease;"><polyline points="2,8 6,4 10,8"/></svg>
   </div>`;
 
   // Script is placed immediately after <nav id="left-nav"> in each page,
@@ -113,6 +121,11 @@
     nameEl.textContent   = label;
     roleEl.textContent   = ROLE_LABELS[user.role] || user.role;
     avatarEl.textContent = label.slice(0, 2).toUpperCase();
+    // Profile menu
+    var emailEl = document.getElementById('npm-email');
+    var badgeEl = document.getElementById('npm-role-badge');
+    if (emailEl) emailEl.textContent = user.email;
+    if (badgeEl) badgeEl.textContent = ROLE_LABELS[user.role] || user.role;
   }
 
   // If shared-auth.js already resolved (fast network), window.__currentUser is set
@@ -122,11 +135,54 @@
     document.addEventListener('auth:ready', function(e) { applyUser(e.detail); });
   }
 
-  // ── Logout button ──────────────────────────────────────────────────────────
+  // ── Profile menu toggle ────────────────────────────────────────────────────
+  function openMenu() {
+    var menu    = document.getElementById('nav-profile-menu');
+    var footer  = document.getElementById('nav-footer');
+    var chevron = document.getElementById('nav-footer-chevron');
+    if (!menu) return;
+    menu.classList.add('npm--open');
+    menu.setAttribute('aria-hidden', 'false');
+    footer.classList.add('nav-footer--open');
+    if (chevron) chevron.style.transform = 'rotate(180deg)';
+  }
+
+  function closeMenu() {
+    var menu    = document.getElementById('nav-profile-menu');
+    var footer  = document.getElementById('nav-footer');
+    var chevron = document.getElementById('nav-footer-chevron');
+    if (!menu) return;
+    menu.classList.remove('npm--open');
+    menu.setAttribute('aria-hidden', 'true');
+    footer.classList.remove('nav-footer--open');
+    if (chevron) chevron.style.transform = '';
+  }
+
   document.addEventListener('click', function(e) {
-    if (e.target && e.target.id === 'nav-logout-btn') {
+    var footer = document.getElementById('nav-footer');
+    var menu   = document.getElementById('nav-profile-menu');
+    if (!footer || !menu) return;
+
+    // Sign out
+    if (e.target && e.target.id === 'npm-signout') {
       fetch('/api/v1/auth/logout', { method: 'POST', credentials: 'same-origin' })
         .finally(function() { location.replace('/'); });
+      return;
     }
+
+    // Toggle on footer click
+    if (footer.contains(e.target)) {
+      menu.classList.contains('npm--open') ? closeMenu() : openMenu();
+      return;
+    }
+
+    // Close on outside click
+    if (!menu.contains(e.target)) {
+      closeMenu();
+    }
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeMenu();
   });
 })();

@@ -135,6 +135,15 @@ function buildContext(personId, tier, data) {
     }
   }
 
+  // Role occupant lookup: roleId → person name (for manager resolution)
+  const roleOccupant = {};
+  for (const ra of roleAssignments) {
+    if (!roleOccupant[String(ra.roleId)]) {
+      const p = persons.find(pp => String(pp.id) === String(ra.personId));
+      if (p) roleOccupant[String(ra.roleId)] = p.name;
+    }
+  }
+
   const people = persons.map(p => {
     const role = personRoleMap[String(p.id)];
     const deptName = role ? (deptById[String(role.departmentId)] || 'Unknown') : 'Unknown';
@@ -145,6 +154,10 @@ function buildContext(personId, tier, data) {
       level:      role ? role.level : null,
       department: deptName,
     };
+    if (role && role.managerRoleId) {
+      const managerName = roleOccupant[String(role.managerRoleId)];
+      if (managerName) entry.manager = managerName;
+    }
     const showSalary =
       tier === 'admin' ||
       (tier === 'manager' && subtreePersonIds && subtreePersonIds.has(String(p.id)));

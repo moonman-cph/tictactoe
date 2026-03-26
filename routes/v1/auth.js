@@ -4,6 +4,7 @@ const express = require('express');
 const bcrypt  = require('bcryptjs');
 const db      = require('../../db');
 const { signToken, setCookie, clearCookie, requireAuth } = require('../../lib/auth');
+const { getEffectiveRights } = require('../../lib/permissions');
 
 const router = express.Router();
 
@@ -48,14 +49,30 @@ router.post('/logout', (req, res) => {
 });
 
 // GET /api/v1/auth/me
-router.get('/me', requireAuth, (req, res) => {
-  res.json({
-    userId:   req.user.userId,
-    orgId:    req.user.orgId,
-    email:    req.user.email,
-    role:     req.user.role,
-    personId: req.user.personId || null,
-  });
+router.get('/me', requireAuth, async (req, res) => {
+  try {
+    const data   = await db.getData(req.user.orgId);
+    const rights = getEffectiveRights(req.user, data);
+    res.json({
+      userId:   req.user.userId,
+      orgId:    req.user.orgId,
+      email:    req.user.email,
+      role:     req.user.role,
+      personId: req.user.personId || null,
+      rights,
+    });
+  } catch (e) {
+    // Fallback: return user without rights rather than failing auth check
+    console.error('[auth/me] rights computation failed:', e.message);
+    res.json({
+      userId:   req.user.userId,
+      orgId:    req.user.orgId,
+      email:    req.user.email,
+      role:     req.user.role,
+      personId: req.user.personId || null,
+      rights:   [],
+    });
+  }
 });
 
 // POST /api/v1/auth/change-password

@@ -1,10 +1,17 @@
 // shared-nav.js — single source of truth for the left navigation.
 // Auto-detects the active page and injects nav HTML into <nav id="left-nav">.
+// Nav items are filtered by the user's effective rights from window.__currentUser.rights.
 // orgchart-specific items (Simulate, Import CSV, Clear/Reset) are only rendered
 // on orgchart.html; all event-listener wiring remains in orgchart.html's own script.
 
 (function () {
   const page = location.pathname.split('/').pop() || 'orgchart.html';
+
+  function hasRight(r) {
+    return (window.__currentUser && window.__currentUser.rights)
+      ? window.__currentUser.rights.includes(r)
+      : true; // Before auth resolves, show all items to avoid flicker on admin pages
+  }
 
   function item(href, label, svgPath, opts = {}) {
     const isActive = href === page || (href === 'orgchart.html' && page === '');
@@ -46,40 +53,54 @@
 
   const danger = 'color:var(--danger,#e05252);';
 
-  // ── orgchart-only admin items ──────────────────────────────────────────────
-  const orgchartOnlyItems = onOrgchart ? `
+  // ── Build nav HTML based on current user's rights ─────────────────────────
+  function buildNavHTML() {
+    // People section items
+    const peopleItems = [
+      hasRight('view_directory') ? item('directory.html', 'Directory', ico.directory) : '',
+      hasRight('view_pay_bands') ? item('paybands.html',  'Pay Bands', ico.paybands)  : '',
+    ].filter(Boolean);
+
+    // Admin section items
+    const adminItems = [
+      hasRight('manage_settings')    ? item(simulateHref,  'Simulate',  ico.simulate,  simulateId)  : '',
+      hasRight('manage_settings')    ? item(snapshotsHref, 'Snapshots', ico.snapshots, snapshotsId) : '',
+      hasRight('manage_permissions') ? item('permissions.html', 'Permissions', ico.permissions)     : '',
+      hasRight('view_changelog')     ? item('changelog.html', 'Changelog', ico.changelog)           : '',
+      hasRight('manage_settings')    ? item(settingsHref,  'Settings',  ico.settings,  settingsId)  : '',
+    ].filter(Boolean);
+
+    // orgchart-only destructive items (only if user has manage_settings)
+    const orgchartOnlyItems = (onOrgchart && hasRight('manage_settings')) ? `
       ${item('#', 'Import CSV',       ico.importcsv, { id: 'import-csv-btn' })}
       ${item('#', 'Clear Employees',  ico.clearEmp,  { id: 'clear-employees-btn', style: danger })}
       ${item('#', 'Clear Structure',  ico.clearStr,  { id: 'clear-structure-btn', style: danger })}
       ${item('#', 'Clear Data',       ico.clearData, { id: 'clear-data-btn',      style: danger })}
       ${item('#', 'Reset Data',       ico.reset,     { id: 'reset-data-btn',      style: danger })}` : '';
 
-  // ── Full nav HTML ──────────────────────────────────────────────────────────
-  const html = `
+    const adminSection = (adminItems.length || orgchartOnlyItems.trim()) ? `
+    <div class="nav-section">
+      <div class="nav-section-label">Admin</div>
+      ${adminItems.join('\n      ')}
+      ${orgchartOnlyItems}
+    </div>` : '';
+
+    return `
   <div id="nav-logo">
     <img src="/images/teampura-petrol-small.svg" alt="Teampura" class="nav-logo-img">
   </div>
   <div id="nav-body">
     <div class="nav-section">
       ${item('dashboard.html', 'Dashboard',    ico.dashboard)}
-      ${item('orgchart.html',  'Org Chart',    ico.orgchart)}
+      ${hasRight('view_org_chart') ? item('orgchart.html', 'Org Chart', ico.orgchart) : ''}
       ${item('ai.html',        'AI Assistant', ico.ai)}
     </div>
-    <div class="nav-section">
+    ${peopleItems.length ? `<div class="nav-section">
       <div class="nav-section-label">People</div>
-      ${item('directory.html', 'Directory', ico.directory)}
-      ${item('paybands.html',  'Pay Bands', ico.paybands)}
-    </div>
+      ${peopleItems.join('\n      ')}
+    </div>` : ''}
     <div class="nav-spacer"></div>
-    <div class="nav-section">
-      <div class="nav-section-label">Admin</div>
-      ${item(simulateHref,  'Simulate',  ico.simulate,  simulateId)}
-      ${item(snapshotsHref, 'Snapshots', ico.snapshots, snapshotsId)}
-      ${item('permissions.html', 'Permissions', ico.permissions)}
-      ${item('changelog.html', 'Changelog', ico.changelog)}
-      ${item(settingsHref,  'Settings',  ico.settings,  settingsId)}
-      ${orgchartOnlyItems}
-    </div>
+    ${adminSection}
   </div>
   <div id="nav-profile-menu" aria-hidden="true">
     <div class="npm-header">
@@ -97,11 +118,17 @@
     </div>
     <svg id="nav-footer-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="margin-left:auto;flex-shrink:0;opacity:0.4;transition:transform 0.2s ease;"><polyline points="2,8 6,4 10,8"/></svg>
   </div>`;
+  }
 
   // Script is placed immediately after <nav id="left-nav"> in each page,
   // so the element already exists when this runs synchronously.
   const nav = document.getElementById('left-nav');
-  if (nav) nav.innerHTML = html;
+  function renderNav() {
+    if (nav) nav.innerHTML = buildNavHTML();
+  }
+
+  // Initial render (no rights yet — shows all items to avoid blank nav flash)
+  renderNav();
 
   // ── Populate user identity from auth:ready event ───────────────────────────
   const ROLE_LABELS = {
@@ -130,9 +157,13 @@
 
   // If shared-auth.js already resolved (fast network), window.__currentUser is set
   if (window.__currentUser) {
+    renderNav();
     applyUser(window.__currentUser);
   } else {
-    document.addEventListener('auth:ready', function(e) { applyUser(e.detail); });
+    document.addEventListener('auth:ready', function(e) {
+      renderNav();
+      applyUser(e.detail);
+    });
   }
 
   // ── Profile menu toggle ────────────────────────────────────────────────────

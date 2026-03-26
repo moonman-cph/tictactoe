@@ -16,6 +16,13 @@
   //   detail — full description shown in the modal (plain text or simple HTML)
   const RELEASE_NOTES = [
     {
+      id:     'release-0.8.0-role-nav',
+      date:   '26 Mar 2026',
+      title:  'Role-based navigation & org chart permissions (0.8.0)',
+      body:   'Nav items and org chart editing are now controlled by each user\'s permissions — managers and employees see a tailored, view-only experience.',
+      detail: 'Navigation items are now shown or hidden based on the effective rights computed for each logged-in user. Rights are derived from the Permissions page (permission groups, assignment policies, and individual overrides) and fall back to sensible role defaults when no policies are configured.\n\nManagers can view the org chart but cannot drag, drop, or edit roles. Employees see a read-only org chart with no salary figures. HR admins and org admins retain full access.\n\nSalary visibility and view-only mode in the org chart settings panel are automatically locked for roles that do not have the corresponding right — the toggles are disabled and display a tooltip indicating they are permission-controlled.\n\nThese rights are returned from GET /api/v1/auth/me on every page load, so changes made in the Permissions page take effect the next time a user loads a page.',
+    },
+    {
       id:     'release-0.7.2-profile-menu',
       date:   '26 Mar 2026',
       title:  'Profile menu in nav (0.7.2)',

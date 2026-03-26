@@ -76,7 +76,9 @@ Sensitive fields (salary, band, personal data) are **opt-in from the API** — n
 | Nav shows logged-in user + logout | ✓ Done | `shared-nav.js` listens for auth:ready event |
 | `/api/v1/health` status endpoint | ✓ Done | Public — checks DB, encryption key, JWT secret |
 | `changeReason` mandatory for sensitive writes | ✗ Pending | Server enforcement + UI prompt dialogs |
-| Role-based nav visibility | ✗ Pending | Hide admin nav items from employee/manager |
+| Role-based nav visibility + org chart constraints | ✓ Done | `lib/permissions.js` + `shared-nav.js` + `orgchart.html`; rights returned from `/api/v1/auth/me` |
+| Rights enforcement in `directory.html` | ✗ Pending | Hide salary column and edit controls for roles without `view_salaries` / `edit_directory` |
+| Rights enforcement in `paybands.html` | ✗ Pending | Hide page entirely for roles without `view_pay_bands` |
 | Employee self-service field edits | ✗ Pending | M7 territory |
 
 ---

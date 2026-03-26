@@ -4232,6 +4232,44 @@ document.getElementById('settings-modal-backdrop').addEventListener('click', e =
 
 // ── Pay bands moved to paybands.html ─────────────────────────────────────────
 
+// ── Role-based constraints from permissions system ────────────────────────────
+
+function applyRoleConstraints(user) {
+  const rights = (user && user.rights) ? user.rights : [];
+
+  if (!rights.includes('edit_org_chart')) {
+    settings.viewOnly = true;
+    applyViewOnly();
+    // Disable the toggle so the user cannot override their role restriction
+    const cb    = document.getElementById('settings-view-only-cb');
+    const track = document.getElementById('settings-view-only-track');
+    const label = document.getElementById('settings-view-only-toggle');
+    if (cb)    { cb.disabled = true; }
+    if (track) { track.title = 'Controlled by your permissions'; }
+    if (label) { label.style.opacity = '0.5'; label.style.pointerEvents = 'none'; }
+  }
+
+  if (!rights.includes('view_salaries')) {
+    settings.hideSalaries = true;
+    applySalaryVisibility();
+    const cb    = document.getElementById('settings-hide-salaries-cb');
+    const track = document.getElementById('settings-hide-salaries-track');
+    const label = document.getElementById('settings-hide-salaries-toggle');
+    if (cb)    { cb.disabled = true; }
+    if (track) { track.title = 'Controlled by your permissions'; }
+    if (label) { label.style.opacity = '0.5'; label.style.pointerEvents = 'none'; }
+  }
+}
+
+// Apply immediately if auth already resolved, otherwise wait for auth:ready
+if (window.__currentUser) {
+  applyRoleConstraints(window.__currentUser);
+} else {
+  document.addEventListener('auth:ready', function(e) {
+    applyRoleConstraints(e.detail);
+  });
+}
+
 // ── Init ──────────────────────────────────────────────────────────────────────
 
 async function init() {

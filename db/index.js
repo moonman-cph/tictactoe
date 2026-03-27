@@ -683,10 +683,11 @@ async function setData(data, orgId = 'default') {
 
     // Mark this org as initialised so getData can distinguish "explicitly cleared"
     // from "never been written to" (the latter triggers client-side seed).
-    // Exception: if data is completely empty, DELETE _initialized so the client
-    // re-seeds on next load (enables Reset Data to actually work).
-    const isEmpty = (data.departments ?? []).length === 0 && (data.persons ?? []).length === 0;
-    if (isEmpty) {
+    // Exception: a bare {} body (Reset Data) deletes _initialized so the org chart
+    // re-seeds on next load. Any body with explicit keys — even empty arrays — keeps
+    // _initialized set so the org chart stays empty after Clear Data.
+    const isBareReset = Object.keys(data).length === 0;
+    if (isBareReset) {
       await client.query(
         `DELETE FROM org_config WHERE org_id = $1 AND key = '_initialized'`,
         [orgId]

@@ -16,6 +16,13 @@
   //   detail — full description shown in the modal (plain text or simple HTML)
   const RELEASE_NOTES = [
     {
+      id:     'release-0.9.12-clear-data-regression',
+      date:   '27 Mar 2026',
+      title:  'Clear Data no longer re-seeds defaults (0.9.12)',
+      body:   'Fixed regression: Clear Data was triggering a full default re-seed on the Org Chart instead of staying empty.',
+      detail: 'The 0.9.11 fix for Reset Data introduced a regression: the "initialized" check used empty arrays as the condition, which matched both Reset Data (bare {}) and Clear Data (explicit empty arrays). Now only a bare {} reset clears the initialized flag — explicit empty-array saves (Clear Employees, Clear Structure, Clear Data) keep the flag set so the Org Chart correctly stays empty.',
+    },
+    {
       id:     'release-0.9.11-reset-data-fix',
       date:   '27 Mar 2026',
       title:  'Reset Data now works correctly (0.9.11)',

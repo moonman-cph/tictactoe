@@ -91,17 +91,6 @@ Sensitive fields (salary, band, personal data) are **opt-in from the API** — n
 
 ---
 
-## 🐛 Known Bugs — Fix Next Session
-
-These regressions were introduced during M3 permissions work and need to be investigated before continuing with M4.
-
-| Bug | Symptom | Likely cause |
-|-----|---------|--------------|
-| **Settings panel broken** | Settings modal fails to open or save | Probable conflict between `settings.viewOnly` enforcement in `applyRoleConstraints` and modal open logic |
-| **Snapshots broken** | Snapshot creation or restore fails | `saveToStorage` / `loadFromStorage` may now reject due to auth checks on `/api/v1/data`; POST write-rights check may block snapshot saves for some roles |
-| **Simulate broken** | Simulation mode fails to activate or is ignored | `/api/sim-data` POST/DELETE may conflict with new auth middleware or write-rights gate |
-
----
 
 ## M4 — Platform Operator Console & Org-Admin Self-Service (current)
 The operator console is a protected `/admin` section of the app, accessible only to `super_admin` role. It is the internal tool for managing all customer organisations. Org-admin self-service (inviting users, managing their own org) ships in the same milestone.

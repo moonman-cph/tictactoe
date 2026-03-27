@@ -3484,11 +3484,11 @@ document.getElementById('pc-edit-btn').addEventListener('click', unfreezeToEdit)
 document.getElementById('pc-apply-btn').addEventListener('click', () => { if (confirm('Apply the planned change to the live org chart now?')) applyPlannedChange(); });
 document.getElementById('pc-cancel-btn').addEventListener('click', cancelPlannedChange);
 
-document.getElementById('simulate-nav-btn').addEventListener('click', e => { e.preventDefault(); if (plannedChange) unfreezeToEdit(); else if (!simMode) enterSimulation(); });
+document.addEventListener('click', e => { if (e.target.closest('#simulate-nav-btn')) { e.preventDefault(); if (plannedChange) unfreezeToEdit(); else if (!simMode) enterSimulation(); } });
 document.getElementById('sim-discard-btn').addEventListener('click', () => { if (confirm('Discard simulation? All changes will be lost.')) exitSimulation(false); });
 document.getElementById('sim-apply-btn').addEventListener('click', () => { if (confirm('Apply simulation changes to the live org chart?')) exitSimulation(true); });
 
-document.getElementById('snapshots-nav-btn').addEventListener('click', e => { e.preventDefault(); openSnapshotsModal(); });
+document.addEventListener('click', e => { if (e.target.closest('#snapshots-nav-btn')) { e.preventDefault(); openSnapshotsModal(); } });
 document.getElementById('snapshots-close-btn').addEventListener('click', closeSnapshotsModal);
 document.getElementById('snapshots-modal-backdrop').addEventListener('click', e => { if (e.target === document.getElementById('snapshots-modal-backdrop')) closeSnapshotsModal(); });
 document.getElementById('snapshots-take-btn').addEventListener('click', takeSnapshot);
@@ -3868,7 +3868,8 @@ document.getElementById('dept-settings-name').addEventListener('keydown', e => {
 
 // ── Misc Event Wiring ─────────────────────────────────────────────────────────
 
-document.getElementById('clear-employees-btn').addEventListener('click', e => {
+document.addEventListener('click', e => {
+  if (!e.target.closest('#clear-employees-btn')) return;
   e.preventDefault();
   if (confirm('Clear all employees? This will remove all people and unassign all roles, but keep the org structure. This cannot be undone.')) {
     persons.splice(0, persons.length);
@@ -3878,7 +3879,8 @@ document.getElementById('clear-employees-btn').addEventListener('click', e => {
   }
 });
 
-document.getElementById('clear-structure-btn').addEventListener('click', e => {
+document.addEventListener('click', e => {
+  if (!e.target.closest('#clear-structure-btn')) return;
   e.preventDefault();
   if (confirm('Clear all structure? This will remove all departments, roles and teams, but keep all employees. This cannot be undone.')) {
     departments.splice(0, departments.length);
@@ -3890,7 +3892,8 @@ document.getElementById('clear-structure-btn').addEventListener('click', e => {
   }
 });
 
-document.getElementById('clear-data-btn').addEventListener('click', e => {
+document.addEventListener('click', e => {
+  if (!e.target.closest('#clear-data-btn')) return;
   e.preventDefault();
   if (confirm('Clear all data? This will remove all departments, roles and people. This cannot be undone.')) {
     departments.splice(0, departments.length);
@@ -3903,7 +3906,8 @@ document.getElementById('clear-data-btn').addEventListener('click', e => {
   }
 });
 
-document.getElementById('reset-data-btn').addEventListener('click', e => {
+document.addEventListener('click', e => {
+  if (!e.target.closest('#reset-data-btn')) return;
   e.preventDefault();
   if (confirm('Reset all data to defaults? This cannot be undone.')) {
     fetch('/api/data', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Change-Reason': 'Reset data to defaults', 'X-Source': 'ui' }, body: '{}' })
@@ -4202,7 +4206,8 @@ document.getElementById('settings-drag-mode-cb').addEventListener('change', e =>
   saveToStorage();
 });
 
-document.getElementById('settings-nav-btn').addEventListener('click', e => {
+document.addEventListener('click', e => {
+  if (!e.target.closest('#settings-nav-btn')) return;
   e.preventDefault();
   document.getElementById('settings-currency-dkk').classList.toggle('active', settings.currency === 'DKK');
   document.getElementById('settings-currency-eur').classList.toggle('active', settings.currency === 'EUR');
@@ -5131,7 +5136,7 @@ document.getElementById('import-back-btn').addEventListener('click', () => {
 document.getElementById('import-modal-close').addEventListener('click', closeImportModal);
 document.getElementById('import-cancel-btn').addEventListener('click', closeImportModal);
 document.getElementById('import-modal-backdrop').addEventListener('click', e => { if (e.target === document.getElementById('import-modal-backdrop')) closeImportModal(); });
-document.getElementById('import-csv-btn').addEventListener('click', e => { e.preventDefault(); openImportModal(); });
+document.addEventListener('click', e => { if (e.target.closest('#import-csv-btn')) { e.preventDefault(); openImportModal(); } });
 </script>
 
 <script src="/notifications.js"></script>

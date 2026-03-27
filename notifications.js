@@ -16,6 +16,13 @@
   //   detail — full description shown in the modal (plain text or simple HTML)
   const RELEASE_NOTES = [
     {
+      id:     'release-0.9.4-nav-bug-fixes',
+      date:   '27 Mar 2026',
+      title:  'Settings, Snapshots & Simulate fixed (0.9.4)',
+      body:   'Settings panel, Snapshots modal, and Simulate mode all failed to open after login. Now fixed.',
+      detail: 'The left navigation re-renders after authentication resolves, which was destroying the event listeners wired to the Settings, Snapshots, Simulate, Import CSV, and Clear/Reset nav buttons. All five are now using event delegation so they survive nav re-renders.',
+    },
+    {
       id:     'release-0.9.3-ai-auth-permissions',
       date:   '26 Mar 2026',
       title:  'AI assistant uses live session & permissions (0.9.3)',

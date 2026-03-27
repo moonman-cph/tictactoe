@@ -75,8 +75,7 @@
       ${onOrgchart ? item('#', 'Import CSV', ico.importcsv, { id: 'import-csv-btn' }) : ''}
       ${item('#', 'Clear Employees',  ico.clearEmp,  { id: 'clear-employees-btn', style: danger })}
       ${item('#', 'Clear Structure',  ico.clearStr,  { id: 'clear-structure-btn', style: danger })}
-      ${item('#', 'Clear Data',       ico.clearData, { id: 'clear-data-btn',      style: danger })}
-      ${item('#', 'Reset Data',       ico.reset,     { id: 'reset-data-btn',      style: danger })}` : '';
+      ${item('#', 'Clear Data',       ico.clearData, { id: 'clear-data-btn',      style: danger })}` : '';
 
     const adminSection = (adminItems.length || destructiveItems.trim()) ? `
     <div class="nav-section">
@@ -558,17 +557,6 @@
         }
         return;
       }
-      if (e.target.closest('#reset-data-btn')) {
-        e.preventDefault();
-        if (confirm('Reset all data to defaults? This cannot be undone.')) {
-          fetch('/api/v1/data', {
-            method: 'POST',
-            credentials: 'same-origin',
-            headers: { 'Content-Type': 'application/json', 'X-Change-Reason': 'Reset data to defaults', 'X-Source': 'ui' },
-            body: '{}',
-          }).then(function() { location.reload(); }).catch(function() { location.reload(); });
-        }
-        return;
       }
     });
   }

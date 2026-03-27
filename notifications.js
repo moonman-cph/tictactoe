@@ -16,6 +16,13 @@
   //   detail — full description shown in the modal (plain text or simple HTML)
   const RELEASE_NOTES = [
     {
+      id:     'release-0.9.13-remove-seed-data',
+      date:   '27 Mar 2026',
+      title:  'Org Chart no longer pre-loads 120 default employees (0.9.13)',
+      body:   'Removed hardcoded seed data — the org chart now starts empty on a fresh install. Import a CSV to load sample data.',
+      detail: 'The app previously shipped with 120 hardcoded employees, 117 roles, and 10 departments baked into the JavaScript. These would silently re-appear after clearing data due to various edge cases in the initialization flow. All seed data has been removed. The org chart now starts completely empty — use Import CSV (org chart page, left nav) with fixtures/default-seed-120.csv if you want to restore the sample dataset. The "Reset Data" button has also been removed since it had no purpose without seed data.',
+    },
+    {
       id:     'release-0.9.12-clear-data-regression',
       date:   '27 Mar 2026',
       title:  'Clear Data no longer re-seeds defaults (0.9.12)',

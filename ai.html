@@ -216,11 +216,17 @@
   }
 
   // ── Helpers ────────────────────────────────────────────────────────────────
-  function genId() {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
-      const r = Math.random() * 16 | 0;
-      return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
-    });
+
+  // Generate the next numeric ID for an array of entities.
+  // The orgchart uses numeric IDs throughout (nextRoleId, Math.max, etc.) — mixing
+  // in UUID strings causes Math.max(...ids) to return NaN and breaks rendering.
+  function nextNumericId(arr) {
+    let max = 0;
+    for (const e of (arr || [])) {
+      const n = Number(e.id);
+      if (isFinite(n) && n > max) max = n;
+    }
+    return max + 1;
   }
 
   function canApplyAction(action) {
@@ -360,7 +366,7 @@
       case 'create_department': {
         data.departments = data.departments || [];
         data.departments.push({
-          id:          genId(),
+          id:          nextNumericId(data.departments),
           orgId:       'default',
           name:        action.departmentName,
           color:       action.departmentColor || '#6366f1',
@@ -379,16 +385,18 @@
         data.roles = data.roles || [];
         // Resolve department: the AI should send an ID, but may send a name — handle both
         let deptId = action.roleDepartmentId || null;
-        if (deptId) {
+        if (deptId != null) {
           const byId = (data.departments || []).find(d => String(d.id) === String(deptId));
-          if (!byId) {
+          if (byId) {
+            deptId = byId.id; // preserve native type (number for existing depts, number for AI-created after nextNumericId)
+          } else {
             const byName = (data.departments || []).find(d => d.name.toLowerCase() === String(deptId).toLowerCase());
-            if (byName) deptId = String(byName.id);
+            if (byName) deptId = byName.id;
           }
         }
-        if (!deptId) throw new Error('Could not resolve department for the new role. Please specify a valid department.');
+        if (deptId == null) throw new Error('Could not resolve department for the new role. Please specify a valid department.');
         data.roles.push({
-          id:            genId(),
+          id:            nextNumericId(data.roles),
           orgId:         'default',
           title:         action.roleTitle,
           level:         action.roleLevel || null,
@@ -412,10 +420,10 @@
           // Resolve by ID first, fall back to name
           const byId = (data.departments || []).find(d => String(d.id) === String(action.newDepartmentId));
           if (byId) {
-            role.departmentId = String(byId.id);
+            role.departmentId = byId.id; // preserve native type
           } else {
             const byName = (data.departments || []).find(d => d.name.toLowerCase() === String(action.newDepartmentId).toLowerCase());
-            if (byName) role.departmentId = String(byName.id);
+            if (byName) role.departmentId = byName.id;
             else throw new Error('Could not resolve new department: ' + action.newDepartmentId);
           }
         }
@@ -423,7 +431,7 @@
         break;
       }
       case 'create_person': {
-        const newId = genId();
+        const newId = nextNumericId(data.persons);
         data.persons = data.persons || [];
         data.persons.push({
           id:     newId,
@@ -434,7 +442,7 @@
         });
         if (action.personRoleId) {
           data.roleAssignments = data.roleAssignments || [];
-          data.roleAssignments.push({ id: genId(), roleId: action.personRoleId, personId: newId });
+          data.roleAssignments.push({ id: nextNumericId(data.roleAssignments), roleId: action.personRoleId, personId: newId });
         }
         break;
       }

@@ -16,6 +16,13 @@
   //   detail — full description shown in the modal (plain text or simple HTML)
   const RELEASE_NOTES = [
     {
+      id:     'release-0.9.10-numeric-ids',
+      date:   '27 Mar 2026',
+      title:  'AI-created entities now use numeric IDs (0.9.10)',
+      body:   'Departments and roles created by the AI now use numeric IDs, fixing "Cannot connect to server" on the Org Chart after AI changes.',
+      detail: 'The root cause of the Org Chart crash after AI creates roles or departments: the org chart uses numeric IDs throughout (nextRoleId, Math.max over all role IDs, etc.). When the AI created entities with UUID string IDs, Math.max(...ids) returned NaN, breaking ID generation and rendering in subtle ways. AI-created entities now use nextNumericId() — the same sequential logic the org chart uses — so they integrate seamlessly. Also fixed a String() conversion that was stripping the native type from department IDs when resolving name→ID fallbacks.',
+    },
+    {
       id:     'release-0.9.9-global-clear-reset',
       date:   '27 Mar 2026',
       title:  'Clear/Reset data available on all pages (0.9.9)',

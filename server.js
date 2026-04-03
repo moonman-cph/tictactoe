@@ -99,4 +99,9 @@ app.listen(PORT, () => {
   console.log(`Storage: ${storage}`);
   if (!process.env.JWT_SECRET)     console.warn('[warn] JWT_SECRET is not set — authentication will not work.');
   if (!process.env.ENCRYPTION_KEY) console.warn('[warn] ENCRYPTION_KEY is not set — sensitive data is not encrypted at rest.');
+
+  // Sync demo user password from DEMO_PASSWORD env var on every startup.
+  // This ensures Azure env var changes take effect immediately after restart
+  // without waiting for the first authenticated request to trigger ensureSchema().
+  db.syncDemoUser().catch(e => console.error('[startup] demo user sync failed:', e.message));
 });

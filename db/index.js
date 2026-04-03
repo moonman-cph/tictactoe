@@ -819,7 +819,16 @@ async function listUsers(orgId = 'default') {
   return r.rows;
 }
 
+// Eagerly sync the demo user password from DEMO_PASSWORD env var.
+// Call at server startup so env var changes take effect immediately on restart.
+async function syncDemoUser() {
+  if (!process.env.DATABASE_URL) return; // file mode — no users table
+  await ensureSchema();                  // schema must be ready first
+  await _seedDemoUser(getPool());        // upsert with current DEMO_PASSWORD
+}
+
 module.exports = {
   getData, setData, getChangelog, appendChangelogEntries, DATA_FILE, CHANGELOG_FILE,
   getUserByEmail, getUserById, createUser, updateUserLastLogin, updateUserPassword, listUsers,
+  syncDemoUser,
 };

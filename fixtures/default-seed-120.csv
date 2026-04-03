@@ -1,121 +1,121 @@
-employee_id,name,email,gender,job_title,level,department,manager_id,monthly_salary,employment_date
-EMP-0001,David Bowie,david.bowie@acme.com,male,Chief Executive Officer,L8,Executive,,220000,2012-03-15
-EMP-0002,Meryl Streep,meryl.streep@acme.com,female,Chief Technology Officer,L8,Executive,EMP-0001,195000,2012-07-01
-EMP-0003,Freddie Mercury,freddie.mercury@acme.com,male,Chief Product Officer,L8,Executive,EMP-0001,190000,2013-01-10
-EMP-0004,Audrey Hepburn,audrey.hepburn@acme.com,female,Chief Financial Officer,L8,Executive,EMP-0001,195000,2012-11-20
-EMP-0005,Elvis Presley,elvis.presley@acme.com,male,Chief Marketing Officer,L8,Executive,EMP-0001,185000,2013-04-01
-EMP-0006,Cate Blanchett,cate.blanchett@acme.com,female,Chief People Officer,L8,Executive,EMP-0001,180000,2013-08-12
-EMP-0007,Michael Jackson,michael.jackson@acme.com,male,VP of Engineering,L7,Engineering,,160000,2013-02-28
-EMP-0008,Marlon Brando,marlon.brando@acme.com,male,Engineering Manager,L5,Engineering,EMP-0007,105000,2015-06-01
-EMP-0009,Aretha Franklin,aretha.franklin@acme.com,female,Engineering Manager,L5,Engineering,EMP-0007,100000,2023-09-11
-EMP-0010,Al Pacino,al.pacino@acme.com,male,Engineering Manager,L5,Engineering,EMP-0007,98000,2016-03-14
-EMP-0011,Whitney Houston,whitney.houston@acme.com,female,Senior Software Engineer,L3,Engineering,EMP-0008,65000,2018-05-07
-EMP-0012,Jack Nicholson,jack.nicholson@acme.com,male,Senior Software Engineer,L3,Engineering,EMP-0008,68000,2017-09-18
-EMP-0013,Tina Turner,tina.turner@acme.com,female,Senior Software Engineer,L3,Engineering,EMP-0008,62000,2019-03-04
-EMP-0014,Katharine Hepburn,katharine.hepburn@acme.com,female,Senior QA Engineer,L3,Engineering,EMP-0008,60000,2018-07-23
-EMP-0015,Prince,prince@acme.com,male,Software Engineer,L2,Engineering,EMP-0008,48000,2020-01-13
-EMP-0016,Sophia Loren,sophia.loren@acme.com,female,Software Engineer,L2,Engineering,EMP-0008,45000,2023-11-06
-EMP-0017,Bob Dylan,bob.dylan@acme.com,male,Software Engineer,L2,Engineering,EMP-0008,50000,2020-08-17
-EMP-0018,Ingrid Bergman,ingrid.bergman@acme.com,female,QA Engineer,L2,Engineering,EMP-0008,44000,2021-04-06
-EMP-0019,Mick Jagger,mick.jagger@acme.com,male,Junior Software Engineer,L1,Engineering,EMP-0008,35000,2024-02-19
-EMP-0020,Grace Kelly,grace.kelly@acme.com,female,Junior QA Engineer,L1,Engineering,EMP-0008,33000,2024-05-01
-EMP-0021,Jimi Hendrix,jimi.hendrix@acme.com,male,Senior Software Engineer,L3,Engineering,EMP-0009,66000,2017-10-11
-EMP-0022,Marilyn Monroe,marilyn.monroe@acme.com,female,Senior Software Engineer,L3,Engineering,EMP-0009,64000,2018-02-26
-EMP-0023,Bruce Springsteen,bruce.springsteen@acme.com,male,Senior QA Engineer,L3,Engineering,EMP-0009,60000,2019-07-08
-EMP-0024,Elizabeth Taylor,elizabeth.taylor@acme.com,female,Software Engineer,L2,Engineering,EMP-0009,47000,2020-11-02
-EMP-0025,Kurt Cobain,kurt.cobain@acme.com,male,Software Engineer,L2,Engineering,EMP-0009,46000,2021-06-14
-EMP-0026,Bette Davis,bette.davis@acme.com,female,Software Engineer,L2,Engineering,EMP-0009,49000,2020-09-21
-EMP-0027,Stevie Wonder,stevie.wonder@acme.com,male,QA Engineer,L2,Engineering,EMP-0009,43000,2023-03-27
-EMP-0028,Humphrey Bogart,humphrey.bogart@acme.com,male,Junior Software Engineer,L1,Engineering,EMP-0009,34000,2023-08-14
-EMP-0029,Janis Joplin,janis.joplin@acme.com,female,Junior Software Engineer,L1,Engineering,EMP-0009,36000,2024-09-02
-EMP-0030,Cary Grant,cary.grant@acme.com,male,Senior Software Engineer,L3,Engineering,EMP-0010,67000,2016-12-05
-EMP-0031,Billie Holiday,billie.holiday@acme.com,female,Senior Software Engineer,L3,Engineering,EMP-0010,63000,2018-11-19
-EMP-0032,James Dean,james.dean@acme.com,male,Senior QA Engineer,L3,Engineering,EMP-0010,59000,2019-10-28
-EMP-0033,Nina Simone,nina.simone@acme.com,female,Software Engineer,L2,Engineering,EMP-0010,47000,2021-01-11
-EMP-0034,Marlon Wayans,marlon.wayans@acme.com,male,Software Engineer,L2,Engineering,EMP-0010,45000,2021-07-19
-EMP-0035,Ray Charles,ray.charles@acme.com,male,Software Engineer,L2,Engineering,EMP-0010,50000,2020-04-30
-EMP-0036,Denzel Washington,denzel.washington@acme.com,male,Director of Product,L7,Product,,155000,2013-06-17
-EMP-0037,Beyonce Knowles,beyonce.knowles@acme.com,female,Group Product Manager,L5,Product,EMP-0036,110000,2015-01-26
-EMP-0038,Robert De Niro,robert.de.niro@acme.com,male,Group Product Manager,L5,Product,EMP-0036,105000,2015-11-09
-EMP-0039,Madonna Ciccone,madonna.ciccone@acme.com,female,Senior Product Manager,L4,Product,EMP-0037,80000,2022-10-03
-EMP-0040,Tom Hanks,tom.hanks@acme.com,male,Senior Product Manager,L4,Product,EMP-0038,78000,2017-04-24
-EMP-0041,Rihanna Fenty,rihanna.fenty@acme.com,female,Group Product Manager,L5,Product,EMP-0036,108000,2015-08-31
-EMP-0042,Dustin Hoffman,dustin.hoffman@acme.com,male,Product Manager,L3,Product,EMP-0037,58000,2020-06-15
-EMP-0043,Adele Adkins,adele.adkins@acme.com,female,Product Manager,L3,Product,EMP-0038,56000,2020-02-10
-EMP-0044,Jodie Foster,jodie.foster@acme.com,female,Senior Product Manager,L4,Product,EMP-0041,77000,2017-07-03
-EMP-0045,Elton John,elton.john@acme.com,male,Product Manager,L3,Product,EMP-0041,57000,2019-11-18
-EMP-0046,Natalie Portman,natalie.portman@acme.com,female,Product Analyst,L2,Product,EMP-0037,43000,2023-05-22
-EMP-0047,Johnny Cash,johnny.cash@acme.com,male,Product Analyst,L2,Product,EMP-0038,42000,2022-03-07
-EMP-0048,Charlize Theron,charlize.theron@acme.com,female,Director of Design,L7,Design,,150000,2014-02-19
-EMP-0049,Frank Sinatra,frank.sinatra@acme.com,male,Design Manager,L5,Design,EMP-0048,95000,2015-04-14
-EMP-0050,Penelope Cruz,penelope.cruz@acme.com,female,Design Manager,L5,Design,EMP-0048,92000,2022-07-18
-EMP-0051,Jim Morrison,jim.morrison@acme.com,male,Senior UX Designer,L3,Design,EMP-0049,65000,2018-08-14
-EMP-0052,Halle Berry,halle.berry@acme.com,female,Senior UX Designer,L3,Design,EMP-0049,63000,2018-04-11
-EMP-0053,Leonard Cohen,leonard.cohen@acme.com,male,UX Designer,L2,Design,EMP-0049,46000,2021-10-04
-EMP-0054,Sandra Bullock,sandra.bullock@acme.com,female,Senior Visual Designer,L3,Design,EMP-0050,64000,2018-12-03
-EMP-0055,Lou Reed,lou.reed@acme.com,male,Visual Designer,L2,Design,EMP-0050,44000,2023-07-31
-EMP-0056,Anthony Hopkins,anthony.hopkins@acme.com,male,VP of Sales,L7,Sales,,175000,2012-09-03
-EMP-0057,Amy Winehouse,amy.winehouse@acme.com,female,Regional Sales Manager,L5,Sales,EMP-0056,100000,2015-03-23
-EMP-0058,Clint Eastwood,clint.eastwood@acme.com,male,Regional Sales Manager,L5,Sales,EMP-0056,98000,2015-07-06
-EMP-0059,Joni Mitchell,joni.mitchell@acme.com,female,Regional Sales Manager,L5,Sales,EMP-0056,95000,2016-01-11
-EMP-0060,Paul Newman,paul.newman@acme.com,male,Senior Account Executive,L4,Sales,EMP-0057,83000,2016-10-17
-EMP-0061,Dolly Parton,dolly.parton@acme.com,female,Senior Account Executive,L4,Sales,EMP-0057,81000,2017-06-29
-EMP-0062,Gene Hackman,gene.hackman@acme.com,male,Account Executive,L4,Sales,EMP-0057,73000,2017-11-14
-EMP-0063,Taylor Swift,taylor.swift@acme.com,female,Account Executive,L4,Sales,EMP-0057,75000,2022-08-29
-EMP-0064,Orson Welles,orson.welles@acme.com,male,Account Executive,L4,Sales,EMP-0057,72000,2018-10-16
-EMP-0065,Alicia Keys,alicia.keys@acme.com,female,Sales Development Rep,L2,Sales,EMP-0057,43000,2023-02-13
-EMP-0066,Sidney Poitier,sidney.poitier@acme.com,male,Sales Development Rep,L2,Sales,EMP-0057,41000,2022-05-16
-EMP-0067,Shakira Mebarak,shakira.mebarak@acme.com,female,Senior Account Executive,L4,Sales,EMP-0058,82000,2017-03-28
-EMP-0068,Gregory Peck,gregory.peck@acme.com,male,Senior Account Executive,L4,Sales,EMP-0058,80000,2017-08-07
-EMP-0069,Cardi B,cardi.b@acme.com,female,Account Executive,L4,Sales,EMP-0058,72000,2019-04-22
-EMP-0070,Laurence Olivier,laurence.olivier@acme.com,male,Account Executive,L4,Sales,EMP-0058,74000,2018-01-08
-EMP-0071,Nicki Minaj,nicki.minaj@acme.com,female,Sales Development Rep,L2,Sales,EMP-0058,42000,2022-11-28
-EMP-0072,Marlon Wayans,m.wayans@acme.com,male,Sales Development Rep,L2,Sales,EMP-0058,41000,2024-01-15
-EMP-0073,Lady Gaga,lady.gaga@acme.com,female,Account Executive,L4,Sales,EMP-0059,71000,2018-06-25
-EMP-0074,Cillian Murphy,cillian.murphy@acme.com,male,Account Executive,L4,Sales,EMP-0059,73000,2018-03-19
-EMP-0075,Billie Eilish,billie.eilish@acme.com,female,Sales Development Rep,L2,Sales,EMP-0059,40000,2024-07-08
-EMP-0076,Bette Midler,bette.midler@acme.com,female,Director of Marketing,L7,Marketing,,165000,2012-06-25
-EMP-0077,Bruno Mars,bruno.mars@acme.com,male,Regional Marketing Manager,L5,Marketing,EMP-0076,96000,2015-09-14
-EMP-0078,Viola Davis,viola.davis@acme.com,female,Senior Content Strategist,L3,Marketing,EMP-0077,62000,2022-04-04
-EMP-0079,Eminem Mathers,eminem.mathers@acme.com,male,Senior Demand Gen Manager,L3,Marketing,EMP-0077,64000,2018-07-30
-EMP-0080,Julianne Moore,julianne.moore@acme.com,female,Marketing Specialist,L2,Marketing,EMP-0077,44000,2021-09-13
-EMP-0081,Jay-Z Carter,jay-z.carter@acme.com,male,Regional Marketing Manager,L5,Marketing,EMP-0076,92000,2015-05-20
-EMP-0082,Chadwick Boseman,chadwick.boseman@acme.com,male,,,,,61000,2022-01-31
-EMP-0083,Kendrick Lamar,kendrick.lamar@acme.com,male,Content Specialist,L2,Marketing,EMP-0081,43000,2021-11-22
-EMP-0084,Lupita Nyong'o,lupita.nyongo@acme.com,female,Marketing Specialist,L2,Marketing,EMP-0081,42000,2021-08-09
-EMP-0085,Eddie Vedder,eddie.vedder@acme.com,male,Regional Marketing Manager,L5,Marketing,EMP-0076,90000,2016-05-02
-EMP-0086,Zendaya Coleman,zendaya.coleman@acme.com,female,Senior Marketing Manager,L3,Marketing,EMP-0085,60000,2020-12-07
-EMP-0087,Chris Martin,chris.martin@acme.com,male,Marketing Coordinator,L1,Marketing,EMP-0085,33000,2024-10-14
-EMP-0088,Nicole Kidman,nicole.kidman@acme.com,female,Director of Customer Success,L7,Customer Success,,160000,2013-10-07
-EMP-0089,Thom Yorke,thom.yorke@acme.com,male,CS Manager,L5,Customer Success,EMP-0088,98000,2015-12-01
-EMP-0090,Cate Winslet,cate.winslet@acme.com,female,CS Manager,L5,Customer Success,EMP-0088,95000,2016-04-11
-EMP-0091,Kanye West,kanye.west@acme.com,male,Senior Customer Success Manager,L4,Customer Success,EMP-0089,76000,2018-09-24
-EMP-0092,Tilda Swinton,tilda.swinton@acme.com,female,Senior Customer Success Manager,L4,Customer Success,EMP-0089,78000,2017-02-06
-EMP-0093,Pharrell Williams,pharrell.williams@acme.com,male,Customer Success Manager,L3,Customer Success,EMP-0089,60000,2022-06-20
-EMP-0094,Jessica Lange,jessica.lange@acme.com,female,Customer Success Manager,L3,Customer Success,EMP-0089,58000,2020-03-02
-EMP-0095,Jack White,jack.white@acme.com,male,CS Manager,L5,Customer Success,EMP-0088,96000,2016-07-18
-EMP-0096,Judi Dench,judi.dench@acme.com,female,Customer Success Specialist,L2,Customer Success,EMP-0089,44000,2021-05-17
-EMP-0097,Dua Lipa,dua.lipa@acme.com,female,Senior Customer Success Manager,L4,Customer Success,EMP-0090,76000,2022-09-12
-EMP-0098,Daniel Day-Lewis,daniel.day-lewis@acme.com,male,Customer Success Manager,L3,Customer Success,EMP-0090,58000,2020-05-11
-EMP-0099,Post Malone,post.malone@acme.com,male,Customer Success Manager,L3,Customer Success,EMP-0090,56000,2021-03-08
-EMP-0100,Olivia Colman,olivia.colman@acme.com,female,Customer Success Specialist,L2,Customer Success,EMP-0090,44000,2022-02-14
-EMP-0101,Harry Styles,harry.styles@acme.com,male,Customer Success Manager,L3,Customer Success,EMP-0095,56000,2022-12-05
-EMP-0102,Florence Pugh,florence.pugh@acme.com,female,Customer Success Manager,L3,Customer Success,EMP-0095,55000,2021-07-26
-EMP-0103,Paul McCartney,paul.mccartney@acme.com,male,Director of People,L7,People & HR,,155000,2013-09-02
-EMP-0104,Margot Robbie,margot.robbie@acme.com,female,HR Manager,L5,People & HR,EMP-0103,92000,2016-06-27
-EMP-0105,Mick Fleetwood,mick.fleetwood@acme.com,male,Senior HR Business Partner,L4,People & HR,EMP-0104,76000,2017-12-11
-EMP-0106,Ana de Armas,ana.de.armas@acme.com,female,HR Business Partner,L4,People & HR,EMP-0104,72000,2018-11-05
-EMP-0107,John Lennon,john.lennon@acme.com,male,Senior Recruiter,L3,People & HR,EMP-0104,60000,2019-08-19
-EMP-0108,Saoirse Ronan,saoirse.ronan@acme.com,female,HR Specialist,L2,People & HR,EMP-0105,45000,2023-04-17
-EMP-0109,Patti Smith,patti.smith@acme.com,female,Recruiter,L2,People & HR,EMP-0107,43000,2022-07-04
-EMP-0110,Anya Taylor-Joy,anya.taylor-joy@acme.com,female,People Operations Specialist,L2,People & HR,EMP-0104,42000,2023-10-23
-EMP-0111,Roger Waters,roger.waters@acme.com,male,Director of Finance,L7,Finance,,158000,2013-03-18
-EMP-0112,Cynthia Erivo,cynthia.erivo@acme.com,female,Finance Manager,L5,Finance,EMP-0111,93000,2016-08-22
-EMP-0113,David Gilmour,david.gilmour@acme.com,male,Senior Financial Analyst,L4,Finance,EMP-0112,78000,2017-05-15
-EMP-0114,Regina King,regina.king@acme.com,female,Financial Analyst,L3,Finance,EMP-0112,58000,2020-10-26
-EMP-0115,Ozzy Osbourne,ozzy.osbourne@acme.com,male,Financial Analyst,L3,Finance,EMP-0112,56000,2019-01-28
-EMP-0116,Zoe Saldana,zoe.saldana@acme.com,female,Finance Analyst,L2,Finance,EMP-0112,44000,2021-12-06
-EMP-0117,Stevie Nicks,stevie.nicks@acme.com,female,General Counsel,L7,Legal,,162000,2013-07-08
-EMP-0118,Michelle Yeoh,michelle.yeoh@acme.com,female,Senior Counsel,L5,Legal,EMP-0117,100000,2022-03-14
-EMP-0119,Eddie Van Halen,eddie.van.halen@acme.com,male,Counsel,L4,Legal,EMP-0118,78000,2017-01-22
-EMP-0120,Salma Hayek,salma.hayek@acme.com,female,Counsel,L4,Legal,EMP-0118,76000,2018-06-11
+employee_id,name,email,gender,job_title,level,department,manager_id,monthly_salary,employment_date,date_of_birth
+EMP-0001,David Bowie,david.bowie@acme.com,male,Chief Executive Officer,L8,Executive,,220000,2012-03-15,1970-07-15
+EMP-0002,Meryl Streep,meryl.streep@acme.com,female,Chief Technology Officer,L8,Executive,EMP-0001,195000,2012-07-01,1973-11-22
+EMP-0003,Freddie Mercury,freddie.mercury@acme.com,male,Chief Product Officer,L8,Executive,EMP-0001,190000,2013-01-10,1968-09-05
+EMP-0004,Audrey Hepburn,audrey.hepburn@acme.com,female,Chief Financial Officer,L8,Executive,EMP-0001,195000,2012-11-20,1964-08-04
+EMP-0005,Elvis Presley,elvis.presley@acme.com,male,Chief Marketing Officer,L8,Executive,EMP-0001,185000,2013-04-01,1971-06-12
+EMP-0006,Cate Blanchett,cate.blanchett@acme.com,female,Chief People Officer,L8,Executive,EMP-0001,180000,2013-08-12,1975-03-14
+EMP-0007,Michael Jackson,michael.jackson@acme.com,male,VP of Engineering,L7,Engineering,,160000,2013-02-28,1976-10-17
+EMP-0008,Marlon Brando,marlon.brando@acme.com,male,Engineering Manager,L5,Engineering,EMP-0007,105000,2015-06-01,1979-11-03
+EMP-0009,Aretha Franklin,aretha.franklin@acme.com,female,Engineering Manager,L5,Engineering,EMP-0007,100000,2023-09-11,1982-12-07
+EMP-0010,Al Pacino,al.pacino@acme.com,male,Engineering Manager,L5,Engineering,EMP-0007,98000,2016-03-14,1977-07-22
+EMP-0011,Whitney Houston,whitney.houston@acme.com,female,Senior Software Engineer,L3,Engineering,EMP-0008,65000,2018-05-07,1991-09-23
+EMP-0012,Jack Nicholson,jack.nicholson@acme.com,male,Senior Software Engineer,L3,Engineering,EMP-0008,68000,2017-09-18,1989-06-14
+EMP-0013,Tina Turner,tina.turner@acme.com,female,Senior Software Engineer,L3,Engineering,EMP-0008,62000,2019-03-04,1993-11-27
+EMP-0014,Katharine Hepburn,katharine.hepburn@acme.com,female,Senior QA Engineer,L3,Engineering,EMP-0008,60000,2018-07-23,1990-07-31
+EMP-0015,Prince,prince@acme.com,male,Software Engineer,L2,Engineering,EMP-0008,48000,2020-01-13,1999-08-17
+EMP-0016,Sophia Loren,sophia.loren@acme.com,female,Software Engineer,L2,Engineering,EMP-0008,45000,2023-11-06,2001-10-12
+EMP-0017,Bob Dylan,bob.dylan@acme.com,male,Software Engineer,L2,Engineering,EMP-0008,50000,2020-08-17,1998-03-24
+EMP-0018,Ingrid Bergman,ingrid.bergman@acme.com,female,QA Engineer,L2,Engineering,EMP-0008,44000,2021-04-06,1998-11-06
+EMP-0019,Mick Jagger,mick.jagger@acme.com,male,Junior Software Engineer,L1,Engineering,EMP-0008,35000,2024-02-19,2003-09-28
+EMP-0020,Grace Kelly,grace.kelly@acme.com,female,Junior QA Engineer,L1,Engineering,EMP-0008,33000,2024-05-01,2004-11-02
+EMP-0021,Jimi Hendrix,jimi.hendrix@acme.com,male,Senior Software Engineer,L3,Engineering,EMP-0009,66000,2017-10-11,1992-08-05
+EMP-0022,Marilyn Monroe,marilyn.monroe@acme.com,female,Senior Software Engineer,L3,Engineering,EMP-0009,64000,2018-02-26,1990-04-17
+EMP-0023,Bruce Springsteen,bruce.springsteen@acme.com,male,Senior QA Engineer,L3,Engineering,EMP-0009,60000,2019-07-08,1989-02-11
+EMP-0024,Elizabeth Taylor,elizabeth.taylor@acme.com,female,Software Engineer,L2,Engineering,EMP-0009,47000,2020-11-02,1996-12-29
+EMP-0025,Kurt Cobain,kurt.cobain@acme.com,male,Software Engineer,L2,Engineering,EMP-0009,46000,2021-06-14,1999-02-20
+EMP-0026,Bette Davis,bette.davis@acme.com,female,Software Engineer,L2,Engineering,EMP-0009,49000,2020-09-21,1995-06-18
+EMP-0027,Stevie Wonder,stevie.wonder@acme.com,male,QA Engineer,L2,Engineering,EMP-0009,43000,2023-03-27,2001-05-13
+EMP-0028,Humphrey Bogart,humphrey.bogart@acme.com,male,Junior Software Engineer,L1,Engineering,EMP-0009,34000,2023-08-14,2003-01-07
+EMP-0029,Janis Joplin,janis.joplin@acme.com,female,Junior Software Engineer,L1,Engineering,EMP-0009,36000,2024-09-02,2004-05-16
+EMP-0030,Cary Grant,cary.grant@acme.com,male,Senior Software Engineer,L3,Engineering,EMP-0010,67000,2016-12-05,1988-01-25
+EMP-0031,Billie Holiday,billie.holiday@acme.com,female,Senior Software Engineer,L3,Engineering,EMP-0010,63000,2018-11-19,1992-05-19
+EMP-0032,James Dean,james.dean@acme.com,male,Senior QA Engineer,L3,Engineering,EMP-0010,59000,2019-10-28,1994-09-06
+EMP-0033,Nina Simone,nina.simone@acme.com,female,Software Engineer,L2,Engineering,EMP-0010,47000,2021-01-11,1998-07-04
+EMP-0034,Marlon Wayans,marlon.wayans@acme.com,male,Software Engineer,L2,Engineering,EMP-0010,45000,2021-07-19,2000-03-15
+EMP-0035,Ray Charles,ray.charles@acme.com,male,Software Engineer,L2,Engineering,EMP-0010,50000,2020-04-30,1997-06-09
+EMP-0036,Denzel Washington,denzel.washington@acme.com,male,Director of Product,L7,Product,,155000,2013-06-17,1972-08-25
+EMP-0037,Beyonce Knowles,beyonce.knowles@acme.com,female,Group Product Manager,L5,Product,EMP-0036,110000,2015-01-26,1981-09-17
+EMP-0038,Robert De Niro,robert.de.niro@acme.com,male,Group Product Manager,L5,Product,EMP-0036,105000,2015-11-09,1979-08-04
+EMP-0039,Madonna Ciccone,madonna.ciccone@acme.com,female,Senior Product Manager,L4,Product,EMP-0037,80000,2022-10-03,1988-12-19
+EMP-0040,Tom Hanks,tom.hanks@acme.com,male,Senior Product Manager,L4,Product,EMP-0038,78000,2017-04-24,1984-02-08
+EMP-0041,Rihanna Fenty,rihanna.fenty@acme.com,female,Group Product Manager,L5,Product,EMP-0036,108000,2015-08-31,1983-06-13
+EMP-0042,Dustin Hoffman,dustin.hoffman@acme.com,male,Product Manager,L3,Product,EMP-0037,58000,2020-06-15,1995-04-08
+EMP-0043,Adele Adkins,adele.adkins@acme.com,female,Product Manager,L3,Product,EMP-0038,56000,2020-02-10,1997-01-22
+EMP-0044,Jodie Foster,jodie.foster@acme.com,female,Senior Product Manager,L4,Product,EMP-0041,77000,2017-07-03,1986-11-14
+EMP-0045,Elton John,elton.john@acme.com,male,Product Manager,L3,Product,EMP-0041,57000,2019-11-18,1992-11-03
+EMP-0046,Natalie Portman,natalie.portman@acme.com,female,Product Analyst,L2,Product,EMP-0037,43000,2023-05-22,2000-02-09
+EMP-0047,Johnny Cash,johnny.cash@acme.com,male,Product Analyst,L2,Product,EMP-0038,42000,2022-03-07,1999-04-13
+EMP-0048,Charlize Theron,charlize.theron@acme.com,female,Director of Design,L7,Design,,150000,2014-02-19,1978-04-07
+EMP-0049,Frank Sinatra,frank.sinatra@acme.com,male,Design Manager,L5,Design,EMP-0048,95000,2015-04-14,1978-10-30
+EMP-0050,Penelope Cruz,penelope.cruz@acme.com,female,Design Manager,L5,Design,EMP-0048,92000,2022-07-18,1986-02-16
+EMP-0051,Jim Morrison,jim.morrison@acme.com,male,Senior UX Designer,L3,Design,EMP-0049,65000,2018-08-14,1989-12-21
+EMP-0052,Halle Berry,halle.berry@acme.com,female,Senior UX Designer,L3,Design,EMP-0049,63000,2018-04-11,1992-02-14
+EMP-0053,Leonard Cohen,leonard.cohen@acme.com,male,UX Designer,L2,Design,EMP-0049,46000,2021-10-04,1997-01-27
+EMP-0054,Sandra Bullock,sandra.bullock@acme.com,female,Senior Visual Designer,L3,Design,EMP-0050,64000,2018-12-03,1988-11-07
+EMP-0055,Lou Reed,lou.reed@acme.com,male,Visual Designer,L2,Design,EMP-0050,44000,2023-07-31,1999-09-28
+EMP-0056,Anthony Hopkins,anthony.hopkins@acme.com,male,VP of Sales,L7,Sales,,175000,2012-09-03,1969-12-29
+EMP-0057,Amy Winehouse,amy.winehouse@acme.com,female,Regional Sales Manager,L5,Sales,EMP-0056,100000,2015-03-23,1981-04-08
+EMP-0058,Clint Eastwood,clint.eastwood@acme.com,male,Regional Sales Manager,L5,Sales,EMP-0056,98000,2015-07-06,1974-09-01
+EMP-0059,Joni Mitchell,joni.mitchell@acme.com,female,Regional Sales Manager,L5,Sales,EMP-0056,95000,2016-01-11,1976-07-25
+EMP-0060,Paul Newman,paul.newman@acme.com,male,Senior Account Executive,L4,Sales,EMP-0057,83000,2016-10-17,1982-10-03
+EMP-0061,Dolly Parton,dolly.parton@acme.com,female,Senior Account Executive,L4,Sales,EMP-0057,81000,2017-06-29,1981-01-22
+EMP-0062,Gene Hackman,gene.hackman@acme.com,male,Account Executive,L4,Sales,EMP-0057,73000,2017-11-14,1984-08-30
+EMP-0063,Taylor Swift,taylor.swift@acme.com,female,Account Executive,L4,Sales,EMP-0057,75000,2022-08-29,1995-12-13
+EMP-0064,Orson Welles,orson.welles@acme.com,male,Account Executive,L4,Sales,EMP-0057,72000,2018-10-16,1987-07-19
+EMP-0065,Alicia Keys,alicia.keys@acme.com,female,Sales Development Rep,L2,Sales,EMP-0057,43000,2023-02-13,2001-01-25
+EMP-0066,Sidney Poitier,sidney.poitier@acme.com,male,Sales Development Rep,L2,Sales,EMP-0057,41000,2022-05-16,2002-07-20
+EMP-0067,Shakira Mebarak,shakira.mebarak@acme.com,female,Senior Account Executive,L4,Sales,EMP-0058,82000,2017-03-28,1985-09-11
+EMP-0068,Gregory Peck,gregory.peck@acme.com,male,Senior Account Executive,L4,Sales,EMP-0058,80000,2017-08-07,1982-04-24
+EMP-0069,Cardi B,cardi.b@acme.com,female,Account Executive,L4,Sales,EMP-0058,72000,2019-04-22,1992-10-11
+EMP-0070,Laurence Olivier,laurence.olivier@acme.com,male,Account Executive,L4,Sales,EMP-0058,74000,2018-01-08,1987-02-28
+EMP-0071,Nicki Minaj,nicki.minaj@acme.com,female,Sales Development Rep,L2,Sales,EMP-0058,42000,2022-11-28,2000-10-08
+EMP-0072,Marlon Wayans,m.wayans@acme.com,male,Sales Development Rep,L2,Sales,EMP-0058,41000,2024-01-15,2003-04-19
+EMP-0073,Lady Gaga,lady.gaga@acme.com,female,Account Executive,L4,Sales,EMP-0059,71000,2018-06-25,1990-05-17
+EMP-0074,Cillian Murphy,cillian.murphy@acme.com,male,Account Executive,L4,Sales,EMP-0059,73000,2018-03-19,1986-01-05
+EMP-0075,Billie Eilish,billie.eilish@acme.com,female,Sales Development Rep,L2,Sales,EMP-0059,40000,2024-07-08,2005-12-18
+EMP-0076,Bette Midler,bette.midler@acme.com,female,Director of Marketing,L7,Marketing,,165000,2012-06-25,1973-02-11
+EMP-0077,Bruno Mars,bruno.mars@acme.com,male,Regional Marketing Manager,L5,Marketing,EMP-0076,96000,2015-09-14,1983-10-11
+EMP-0078,Viola Davis,viola.davis@acme.com,female,Senior Content Strategist,L3,Marketing,EMP-0077,62000,2022-04-04,1994-03-10
+EMP-0079,Eminem Mathers,eminem.mathers@acme.com,male,Senior Demand Gen Manager,L3,Marketing,EMP-0077,64000,2018-07-30,1987-10-22
+EMP-0080,Julianne Moore,julianne.moore@acme.com,female,Marketing Specialist,L2,Marketing,EMP-0077,44000,2021-09-13,1997-11-30
+EMP-0081,Jay-Z Carter,jay-z.carter@acme.com,male,Regional Marketing Manager,L5,Marketing,EMP-0076,92000,2015-05-20,1980-12-04
+EMP-0082,Chadwick Boseman,chadwick.boseman@acme.com,male,,,,,61000,2022-01-31,1992-11-29
+EMP-0083,Kendrick Lamar,kendrick.lamar@acme.com,male,Content Specialist,L2,Marketing,EMP-0081,43000,2021-11-22,1999-06-17
+EMP-0084,Lupita Nyong'o,lupita.nyongo@acme.com,female,Marketing Specialist,L2,Marketing,EMP-0081,42000,2021-08-09,1997-03-01
+EMP-0085,Eddie Vedder,eddie.vedder@acme.com,male,Regional Marketing Manager,L5,Marketing,EMP-0076,90000,2016-05-02,1977-01-19
+EMP-0086,Zendaya Coleman,zendaya.coleman@acme.com,female,Senior Marketing Manager,L3,Marketing,EMP-0085,60000,2020-12-07,1996-09-01
+EMP-0087,Chris Martin,chris.martin@acme.com,male,Marketing Coordinator,L1,Marketing,EMP-0085,33000,2024-10-14,2006-02-03
+EMP-0088,Nicole Kidman,nicole.kidman@acme.com,female,Director of Customer Success,L7,Customer Success,,160000,2013-10-07,1975-06-20
+EMP-0089,Thom Yorke,thom.yorke@acme.com,male,CS Manager,L5,Customer Success,EMP-0088,98000,2015-12-01,1982-05-28
+EMP-0090,Cate Winslet,cate.winslet@acme.com,female,CS Manager,L5,Customer Success,EMP-0088,95000,2016-04-11,1985-03-16
+EMP-0091,Kanye West,kanye.west@acme.com,male,Senior Customer Success Manager,L4,Customer Success,EMP-0089,76000,2018-09-24,1988-08-14
+EMP-0092,Tilda Swinton,tilda.swinton@acme.com,female,Senior Customer Success Manager,L4,Customer Success,EMP-0089,78000,2017-02-06,1987-04-22
+EMP-0093,Pharrell Williams,pharrell.williams@acme.com,male,Customer Success Manager,L3,Customer Success,EMP-0089,60000,2022-06-20,1994-07-16
+EMP-0094,Jessica Lange,jessica.lange@acme.com,female,Customer Success Manager,L3,Customer Success,EMP-0089,58000,2020-03-02,1992-12-29
+EMP-0095,Jack White,jack.white@acme.com,male,CS Manager,L5,Customer Success,EMP-0088,96000,2016-07-18,1981-07-09
+EMP-0096,Judi Dench,judi.dench@acme.com,female,Customer Success Specialist,L2,Customer Success,EMP-0089,44000,2021-05-17,2000-06-14
+EMP-0097,Dua Lipa,dua.lipa@acme.com,female,Senior Customer Success Manager,L4,Customer Success,EMP-0090,76000,2022-09-12,1997-08-22
+EMP-0098,Daniel Day-Lewis,daniel.day-lewis@acme.com,male,Customer Success Manager,L3,Customer Success,EMP-0090,58000,2020-05-11,1993-06-04
+EMP-0099,Post Malone,post.malone@acme.com,male,Customer Success Manager,L3,Customer Success,EMP-0090,56000,2021-03-08,1997-02-16
+EMP-0100,Olivia Colman,olivia.colman@acme.com,female,Customer Success Specialist,L2,Customer Success,EMP-0090,44000,2022-02-14,1999-08-03
+EMP-0101,Harry Styles,harry.styles@acme.com,male,Customer Success Manager,L3,Customer Success,EMP-0095,56000,2022-12-05,1997-05-11
+EMP-0102,Florence Pugh,florence.pugh@acme.com,female,Customer Success Manager,L3,Customer Success,EMP-0095,55000,2021-07-26,1998-01-03
+EMP-0103,Paul McCartney,paul.mccartney@acme.com,male,Director of People,L7,People & HR,,155000,2013-09-02,1970-11-30
+EMP-0104,Margot Robbie,margot.robbie@acme.com,female,HR Manager,L5,People & HR,EMP-0103,92000,2016-06-27,1985-11-23
+EMP-0105,Mick Fleetwood,mick.fleetwood@acme.com,male,Senior HR Business Partner,L4,People & HR,EMP-0104,76000,2017-12-11,1983-03-07
+EMP-0106,Ana de Armas,ana.de.armas@acme.com,female,HR Business Partner,L4,People & HR,EMP-0104,72000,2018-11-05,1989-04-30
+EMP-0107,John Lennon,john.lennon@acme.com,male,Senior Recruiter,L3,People & HR,EMP-0104,60000,2019-08-19,1992-04-28
+EMP-0108,Saoirse Ronan,saoirse.ronan@acme.com,female,HR Specialist,L2,People & HR,EMP-0105,45000,2023-04-17,2002-08-07
+EMP-0109,Patti Smith,patti.smith@acme.com,female,Recruiter,L2,People & HR,EMP-0107,43000,2022-07-04,2000-01-16
+EMP-0110,Anya Taylor-Joy,anya.taylor-joy@acme.com,female,People Operations Specialist,L2,People & HR,EMP-0104,42000,2023-10-23,2002-04-16
+EMP-0111,Roger Waters,roger.waters@acme.com,male,Director of Finance,L7,Finance,,158000,2013-03-18,1967-05-17
+EMP-0112,Cynthia Erivo,cynthia.erivo@acme.com,female,Finance Manager,L5,Finance,EMP-0111,93000,2016-08-22,1984-08-15
+EMP-0113,David Gilmour,david.gilmour@acme.com,male,Senior Financial Analyst,L4,Finance,EMP-0112,78000,2017-05-15,1984-01-17
+EMP-0114,Regina King,regina.king@acme.com,female,Financial Analyst,L3,Finance,EMP-0112,58000,2020-10-26,1995-08-14
+EMP-0115,Ozzy Osbourne,ozzy.osbourne@acme.com,male,Financial Analyst,L3,Finance,EMP-0112,56000,2019-01-28,1988-06-18
+EMP-0116,Zoe Saldana,zoe.saldana@acme.com,female,Finance Analyst,L2,Finance,EMP-0112,44000,2021-12-06,1999-07-24
+EMP-0117,Stevie Nicks,stevie.nicks@acme.com,female,General Counsel,L7,Legal,,162000,2013-07-08,1977-09-08
+EMP-0118,Michelle Yeoh,michelle.yeoh@acme.com,female,Senior Counsel,L5,Legal,EMP-0117,100000,2022-03-14,1983-01-27
+EMP-0119,Eddie Van Halen,eddie.van.halen@acme.com,male,Counsel,L4,Legal,EMP-0118,78000,2017-01-22,1987-06-14
+EMP-0120,Salma Hayek,salma.hayek@acme.com,female,Counsel,L4,Legal,EMP-0118,76000,2018-06-11,1988-09-02

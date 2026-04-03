@@ -251,6 +251,7 @@
         <div class="import-map-row"><div class="import-map-label">Salary (monthly)</div><div class="imap-field-wrap"><select class="form-control" id="imap-salary"></select><span class="imap-sample" id="imap-sample-salary"></span></div></div>
         <div class="import-map-row"><div class="import-map-label">Gender</div><div class="imap-field-wrap"><div class="imap-field-top"><select class="form-control" id="imap-gender"></select><button class="imap-vmap-btn" id="imap-vmap-btn-gender" style="display:none">↔ Map values</button></div><span class="imap-sample" id="imap-sample-gender"></span></div></div>
         <div class="imap-vmap-panel" id="imap-vmap-gender" style="display:none"></div>
+        <div class="import-map-row"><div class="import-map-label">Date of birth</div><div class="imap-field-wrap"><select class="form-control" id="imap-dateOfBirth"></select><span class="imap-sample" id="imap-sample-dateOfBirth"></span></div></div>
       </div>
       <div class="import-map-group">
         <div class="import-map-group-label">Role</div>
@@ -4148,6 +4149,7 @@ const IMPORT_TARGET_FIELDS = [
   { id: 'employeeId',  hints: ['id','emp id','employee id','staff id','medarbejder id','nr','number'] },
   { id: 'salary',      hints: ['salary','pay','løn','wage','monthly','compensation','comp'] },
   { id: 'gender',      hints: ['gender','køn','sex'], enumValues: ['male','female','other'] },
+  { id: 'dateOfBirth', hints: ['date of birth','dob','birth date','birthday','born','fødselsdato'] },
   { id: 'roleTitle',   hints: ['title','job title','role','position','jobtitle','stilling','job'] },
   { id: 'roleLevel',   hints: ['level','grade','rang','tier'], get enumValues() { return LEVELS.map(l => l.id); } },
   { id: 'roleDept',    hints: ['department','dept','afdeling','division','team dept'] },
@@ -4675,14 +4677,17 @@ function runImport(rows, mapping, mode, dryRun = false, valueTransforms = {}, bu
       if (!person) person = wPersons.find(p => p.name.toLowerCase() === name.toLowerCase());
     }
 
+    const dob = get(row, 'dateOfBirth').trim() || undefined;
+
     if (person) {
       person.name = name;
       if (salary) person.salary = salary;
       if (gender) person.gender = gender;
       if (empId) person.employeeId = empId;
+      if (dob) person.dateOfBirth = dob;
       result.personsUpdated++;
     } else {
-      person = { id: nextWPersonId(), name, salary: salary || 0, gender, employeeId: empId || undefined, salaryReviewNeeded: false, performanceReviewNeeded: false, isNew: false, onLeave: false };
+      person = { id: nextWPersonId(), name, salary: salary || 0, gender, employeeId: empId || undefined, dateOfBirth: dob, salaryReviewNeeded: false, performanceReviewNeeded: false, isNew: false, onLeave: false };
       wPersons.push(person);
       result.personsCreated++;
     }

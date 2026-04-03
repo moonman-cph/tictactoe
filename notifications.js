@@ -16,6 +16,13 @@
   //   detail — full description shown in the modal (plain text or simple HTML)
   const RELEASE_NOTES = [
     {
+      id:     'release-0.9.18-csv-full-fields',
+      date:   '3 Apr 2026',
+      title:  'CSV import: full field mapping (0.9.18)',
+      body:   'CSV import now maps all person fields — email, phone, hire date, location, employment type, and more.',
+      detail: 'The CSV field mapper in Step 2 is now fully dynamic. It covers all person fields in the database: preferred name, email, phone, address, nationality, hire date, employment type, contract type, probation end, FTE, working hours, job family, country, city, legal entity, cost centre, emergency contact name and phone — in addition to the original core fields. Fields are grouped into Person, Employment, Location, Contact, Role, and Hierarchy sections. Auto-hint matching and value mapping (↔ Map values) work for all enum fields. The Hierarchy group (manager name, manager ID, dotted-line manager ID) now has a callout explaining these resolve relationships during import rather than being stored directly.',
+    },
+    {
       id:     'release-0.9.17-security',
       date:   '3 Apr 2026',
       title:  'Security hardening (0.9.17)',

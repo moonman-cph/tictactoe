@@ -242,28 +242,9 @@
         <div class="import-col-preview" id="import-col-chips"></div>
       </div>
     </div>
-    <!-- Step 2: Map fields -->
+    <!-- Step 2: Map fields (rendered dynamically by populateMappingStep) -->
     <div class="import-panel" id="import-panel-2">
-      <div class="import-map-group">
-        <div class="import-map-group-label">Person</div>
-        <div class="import-map-row"><div class="import-map-label">Full name <span>*</span></div><div class="imap-field-wrap"><select class="form-control" id="imap-name"></select><span class="imap-sample" id="imap-sample-name"></span></div></div>
-        <div class="import-map-row"><div class="import-map-label">Employee ID</div><div class="imap-field-wrap"><select class="form-control" id="imap-employeeId"></select><span class="imap-sample" id="imap-sample-employeeId"></span></div></div>
-        <div class="import-map-row"><div class="import-map-label">Salary (monthly)</div><div class="imap-field-wrap"><select class="form-control" id="imap-salary"></select><span class="imap-sample" id="imap-sample-salary"></span></div></div>
-        <div class="import-map-row"><div class="import-map-label">Gender</div><div class="imap-field-wrap"><div class="imap-field-top"><select class="form-control" id="imap-gender"></select><button class="imap-vmap-btn" id="imap-vmap-btn-gender" style="display:none">↔ Map values</button></div><span class="imap-sample" id="imap-sample-gender"></span></div></div>
-        <div class="imap-vmap-panel" id="imap-vmap-gender" style="display:none"></div>
-        <div class="import-map-row"><div class="import-map-label">Date of birth</div><div class="imap-field-wrap"><select class="form-control" id="imap-dateOfBirth"></select><span class="imap-sample" id="imap-sample-dateOfBirth"></span></div></div>
-      </div>
-      <div class="import-map-group">
-        <div class="import-map-group-label">Role</div>
-        <div class="import-map-row"><div class="import-map-label">Job title <span>*</span></div><div class="imap-field-wrap"><select class="form-control" id="imap-roleTitle"></select><span class="imap-sample" id="imap-sample-roleTitle"></span></div></div>
-        <div class="import-map-row"><div class="import-map-label">Level (L1–L8)</div><div class="imap-field-wrap"><div class="imap-field-top"><select class="form-control" id="imap-roleLevel"></select><button class="imap-vmap-btn" id="imap-vmap-btn-roleLevel" style="display:none">↔ Map values</button></div><span class="imap-sample" id="imap-sample-roleLevel"></span></div></div>
-        <div class="imap-vmap-panel" id="imap-vmap-roleLevel" style="display:none"></div>
-        <div class="import-map-row"><div class="import-map-label">Department</div><div class="imap-field-wrap"><select class="form-control" id="imap-roleDept"></select><span class="imap-sample" id="imap-sample-roleDept"></span></div></div>
-        <div class="import-map-row"><div class="import-map-label">Team</div><div class="imap-field-wrap"><select class="form-control" id="imap-roleTeam"></select><span class="imap-sample" id="imap-sample-roleTeam"></span></div></div>
-        <div class="import-map-row"><div class="import-map-label">Manager name</div><div class="imap-field-wrap"><select class="form-control" id="imap-managerName"></select><span class="imap-sample" id="imap-sample-managerName"></span></div></div>
-        <div class="import-map-row"><div class="import-map-label">Manager ID</div><div class="imap-field-wrap"><select class="form-control" id="imap-managerEmployeeId"></select><span class="imap-sample" id="imap-sample-managerEmployeeId"></span></div></div>
-        <div class="import-map-row"><div class="import-map-label">Dotted-line mgr ID</div><div class="imap-field-wrap"><select class="form-control" id="imap-dottedLineManagerId"></select><span class="imap-sample" id="imap-sample-dottedLineManagerId"></span></div></div>
-      </div>
+      <div id="import-map-container"></div>
     </div>
     <!-- Step 3: Options -->
     <div class="import-panel" id="import-panel-3">
@@ -4151,18 +4132,42 @@ document.getElementById('reparent-role-dept').addEventListener('change', reparen
 const IMPORT_MAPPING_KEY = 'orgchart_import_mapping_v1';
 
 const IMPORT_TARGET_FIELDS = [
-  { id: 'name',        hints: ['name','full name','employee name','fullname','person','navn'] },
-  { id: 'employeeId',  hints: ['id','emp id','employee id','staff id','medarbejder id','nr','number'] },
-  { id: 'salary',      hints: ['salary','pay','løn','wage','monthly','compensation','comp'] },
-  { id: 'gender',      hints: ['gender','køn','sex'], enumValues: ['male','female','other'] },
-  { id: 'dateOfBirth', hints: ['date of birth','dob','birth date','birthday','born','fødselsdato'] },
-  { id: 'roleTitle',   hints: ['title','job title','role','position','jobtitle','stilling','job'] },
-  { id: 'roleLevel',   hints: ['level','grade','rang','tier'], get enumValues() { return LEVELS.map(l => l.id); } },
-  { id: 'roleDept',    hints: ['department','dept','afdeling','division','team dept'] },
-  { id: 'roleTeam',    hints: ['team','gruppe','group','squad'] },
-  { id: 'managerName',           hints: ['manager','leder','reports to','reportsto','supervisor','chef'] },
-  { id: 'managerEmployeeId',     hints: ['manager id','manager employee id','leder id','reports to id','supervisor id','mgr id'] },
-  { id: 'dottedLineManagerId',   hints: ['dotted line','dotted-line','also reporting to','secondary manager','matrix manager','dotted manager id'] },
+  // ── Person (core) ──
+  { id: 'name',            group: 'Person',      label: 'Full name',               required: true,  hints: ['name','full name','employee name','fullname','person','navn'] },
+  { id: 'employeeId',      group: 'Person',      label: 'Employee ID',                              hints: ['id','emp id','employee id','staff id','medarbejder id','nr','number'] },
+  { id: 'preferredName',   group: 'Person',      label: 'Preferred / goes-by name',                hints: ['preferred name','preferred','nickname','goes by','known as'] },
+  { id: 'gender',          group: 'Person',      label: 'Gender',                  enumValues: ['male','female','other'], hints: ['gender','køn','sex'] },
+  { id: 'dateOfBirth',     group: 'Person',      label: 'Date of birth',                           hints: ['date of birth','dob','birth date','birthday','born','fødselsdato'] },
+  { id: 'nationality',     group: 'Person',      label: 'Nationality',                             hints: ['nationality','citizenship','national'] },
+  // ── Employment ──
+  { id: 'salary',          group: 'Employment',  label: 'Salary (monthly)',                        hints: ['salary','pay','løn','wage','monthly','compensation','comp'] },
+  { id: 'hireDate',        group: 'Employment',  label: 'Hire date',                               hints: ['hire date','start date','joined','startdato','ansaettelsesdato','hired'] },
+  { id: 'employmentType',  group: 'Employment',  label: 'Employment type',         enumValues: ['full-time','part-time','contractor','intern'], hints: ['employment type','emp type','ansættelsestype','employment'] },
+  { id: 'contractType',    group: 'Employment',  label: 'Contract type',           enumValues: ['permanent','fixed-term','zero-hours'], hints: ['contract type','contract','kontrakt','permanent'] },
+  { id: 'probationEnd',    group: 'Employment',  label: 'Probation end date',                      hints: ['probation','probation end','prøvetid','trial end'] },
+  { id: 'fte',             group: 'Employment',  label: 'FTE (e.g. 1.0, 0.5)',                     hints: ['fte','full time equivalent','hours fraction','allocation'] },
+  { id: 'workingHours',    group: 'Employment',  label: 'Working hours / week',                    hints: ['working hours','hours per week','hours','arbejdstimer','weekly hours'] },
+  { id: 'jobFamily',       group: 'Employment',  label: 'Job family',                              hints: ['job family','job category','function','faggruppe','family'] },
+  // ── Location ──
+  { id: 'country',         group: 'Location',    label: 'Country',                                 hints: ['country','land','nation'] },
+  { id: 'city',            group: 'Location',    label: 'City / office',                           hints: ['city','by','town','location','office','office location'] },
+  { id: 'legalEntity',     group: 'Location',    label: 'Legal entity',                            hints: ['legal entity','entity','selskab','company','legal'] },
+  { id: 'costCenter',      group: 'Location',    label: 'Cost centre',                             hints: ['cost center','cost centre','costcenter','omkostningssted','cost code'] },
+  // ── Contact ──
+  { id: 'email',           group: 'Contact',     label: 'Email',                                   hints: ['email','e-mail','mail','work email'] },
+  { id: 'phone',           group: 'Contact',     label: 'Phone',                                   hints: ['phone','tel','telephone','mobile','mobil','work phone'] },
+  { id: 'address',         group: 'Contact',     label: 'Address',                                 hints: ['address','adresse','street','home address'] },
+  { id: 'emergencyName',   group: 'Contact',     label: 'Emergency contact name',                  hints: ['emergency name','emergency contact','next of kin','nok name'] },
+  { id: 'emergencyPhone',  group: 'Contact',     label: 'Emergency contact phone',                 hints: ['emergency phone','emergency number','nok phone','emergency tel'] },
+  // ── Role ──
+  { id: 'roleTitle',       group: 'Role',        label: 'Job title',               required: true,  hints: ['title','job title','role','position','jobtitle','stilling','job'] },
+  { id: 'roleLevel',       group: 'Role',        label: 'Level (L1–L8)',           get enumValues() { return LEVELS.map(l => l.id); }, hints: ['level','grade','rang','tier'] },
+  { id: 'roleDept',        group: 'Role',        label: 'Department',                              hints: ['department','dept','afdeling','division','team dept'] },
+  { id: 'roleTeam',        group: 'Role',        label: 'Team',                                    hints: ['team','gruppe','group','squad'] },
+  // ── Hierarchy (virtual — resolved during import, not stored as fields) ──
+  { id: 'managerName',         group: 'Hierarchy', label: 'Manager name',           virtual: true, hints: ['manager','leder','reports to','reportsto','supervisor','chef'] },
+  { id: 'managerEmployeeId',   group: 'Hierarchy', label: 'Manager employee ID',    virtual: true, hints: ['manager id','manager employee id','leder id','reports to id','supervisor id','mgr id'] },
+  { id: 'dottedLineManagerId', group: 'Hierarchy', label: 'Dotted-line manager ID', virtual: true, hints: ['dotted line','dotted-line','also reporting to','secondary manager','matrix manager','dotted manager id'] },
 ];
 
 let importState = {
@@ -4360,8 +4365,62 @@ function renderValueMapPanel(fieldId) {
 
 function populateMappingStep() {
   importState.mapping = autoSuggestMapping(importState.headers);
+
+  // Group fields preserving order
+  const groupOrder = [];
+  const groupMap = {};
+  IMPORT_TARGET_FIELDS.forEach(f => {
+    if (!groupMap[f.group]) { groupOrder.push(f.group); groupMap[f.group] = []; }
+    groupMap[f.group].push(f);
+  });
+
+  const container = document.getElementById('import-map-container');
+  container.innerHTML = '';
+
+  groupOrder.forEach(groupName => {
+    const fields = groupMap[groupName];
+    const groupEl = document.createElement('div');
+    groupEl.className = 'import-map-group';
+
+    let html = `<div class="import-map-group-label">${groupName}</div>`;
+    if (groupName === 'Hierarchy') {
+      html += `<div class="import-map-group-note">These fields resolve manager relationships during import — they are not stored as person fields.</div>`;
+    }
+
+    fields.forEach(field => {
+      const labelHtml = field.label + (field.required ? ' <span>*</span>' : '');
+      const hasEnum = field.enumValues && field.enumValues.length;
+      if (hasEnum) {
+        html += `<div class="import-map-row">
+          <div class="import-map-label">${labelHtml}</div>
+          <div class="imap-field-wrap">
+            <div class="imap-field-top">
+              <select class="form-control" id="imap-${field.id}"></select>
+              <button class="imap-vmap-btn" id="imap-vmap-btn-${field.id}" style="display:none">↔ Map values</button>
+            </div>
+            <span class="imap-sample" id="imap-sample-${field.id}"></span>
+          </div>
+        </div>
+        <div class="imap-vmap-panel" id="imap-vmap-${field.id}" style="display:none"></div>`;
+      } else {
+        html += `<div class="import-map-row">
+          <div class="import-map-label">${labelHtml}</div>
+          <div class="imap-field-wrap">
+            <select class="form-control" id="imap-${field.id}"></select>
+            <span class="imap-sample" id="imap-sample-${field.id}"></span>
+          </div>
+        </div>`;
+      }
+    });
+
+    groupEl.innerHTML = html;
+    container.appendChild(groupEl);
+  });
+
+  // Wire up selects now that the DOM exists
   IMPORT_TARGET_FIELDS.forEach(field => {
     const sel = document.getElementById(`imap-${field.id}`);
+    if (!sel) return;
     sel.innerHTML = '<option value="">— skip</option>';
     importState.headers.forEach(h => {
       const opt = document.createElement('option');
@@ -4685,15 +4744,37 @@ function runImport(rows, mapping, mode, dryRun = false, valueTransforms = {}, bu
 
     const dob = get(row, 'dateOfBirth').trim() || undefined;
 
+    // Simple string pass-through fields
+    const strFields = ['preferredName','email','phone','address','nationality',
+                       'hireDate','employmentType','contractType','probationEnd',
+                       'legalEntity','costCenter','country','city','jobFamily',
+                       'emergencyName','emergencyPhone'];
+    const strVals = {};
+    strFields.forEach(f => { const v = get(row, f).trim(); if (v) strVals[f] = v; });
+
+    // Numeric fields
+    const fteRaw = get(row, 'fte').trim();
+    const fteVal = fteRaw ? parseFloat(fteRaw) : undefined;
+    const hoursRaw = get(row, 'workingHours').replace(/[^0-9.]/g, '');
+    const hoursVal = hoursRaw ? Math.round(parseFloat(hoursRaw)) : undefined;
+
     if (person) {
       person.name = name;
       if (salary) person.salary = salary;
       if (gender) person.gender = gender;
       if (empId) person.employeeId = empId;
       if (dob) person.dateOfBirth = dob;
+      Object.assign(person, strVals);
+      if (fteVal !== undefined && !isNaN(fteVal)) person.fte = fteVal;
+      if (hoursVal !== undefined && !isNaN(hoursVal)) person.workingHours = hoursVal;
       result.personsUpdated++;
     } else {
-      person = { id: nextWPersonId(), name, salary: salary || 0, gender, employeeId: empId || undefined, dateOfBirth: dob, salaryReviewNeeded: false, performanceReviewNeeded: false, isNew: false, onLeave: false };
+      person = { id: nextWPersonId(), name, salary: salary || 0, gender,
+                 employeeId: empId || undefined, dateOfBirth: dob,
+                 ...strVals,
+                 ...(fteVal !== undefined && !isNaN(fteVal) ? { fte: fteVal } : {}),
+                 ...(hoursVal !== undefined && !isNaN(hoursVal) ? { workingHours: hoursVal } : {}),
+                 salaryReviewNeeded: false, performanceReviewNeeded: false, isNew: false, onLeave: false };
       wPersons.push(person);
       result.personsCreated++;
     }

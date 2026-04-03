@@ -558,6 +558,12 @@ async function saveToStorage(opts = {}) {
 }
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
+function escHtml(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
 function getInitials(name) {
   return (name || '?').split(' ').map(p => p[0]).join('').slice(0, 2).toUpperCase();
 }
@@ -1031,8 +1037,8 @@ function populateModal(personId) {
 
   // Job tab
   if (role) {
-    document.getElementById('pm-d-title').innerHTML = role.title;
-    document.getElementById('pm-d-level').innerHTML = `<span class="level-badge ${levelTierClass(role.level)}">${role.level}</span>`;
+    document.getElementById('pm-d-title').textContent = role.title;
+    document.getElementById('pm-d-level').innerHTML = `<span class="level-badge ${levelTierClass(role.level)}">${escHtml(role.level)}</span>`;
   } else {
     document.getElementById('pm-d-title').textContent = '—';
     document.getElementById('pm-d-level').textContent = '—';

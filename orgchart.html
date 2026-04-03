@@ -1027,6 +1027,12 @@ let collapsedTeams = new Set();    // team IDs (or '__general__<deptId>') whose 
 
 // ── Utilities ─────────────────────────────────────────────────────────────────
 
+function escHtml(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
 function getInitials(name) {
   return name.split(' ').map(p => p[0]).join('').slice(0, 2).toUpperCase();
 }
@@ -1248,12 +1254,12 @@ function renderCard(role, isOrphaned = false) {
   info.className = 'emp-info';
 
   if (isVacant) {
-    info.innerHTML = `<div class="emp-name">Vacant</div><div class="emp-title">${role.title}</div>`;
+    info.innerHTML = `<div class="emp-name">Vacant</div><div class="emp-title">${escHtml(role.title)}</div>`;
   } else if (person.noLongerHired) {
-    info.innerHTML = `<div class="emp-name" style="color:var(--text-muted)">Employee #${person.id}</div><div class="emp-title">${role.title}</div>`;
+    info.innerHTML = `<div class="emp-name" style="color:var(--text-muted)">Employee #${escHtml(person.id)}</div><div class="emp-title">${escHtml(role.title)}</div>`;
   } else {
     const badges = PERSON_FLAGS.filter(f => person[f.key]).map(f => `<span class="person-flag-badge ${f.color}">${f.label}</span>`).join('');
-    info.innerHTML = `<div class="emp-name">${person.name}</div><div class="emp-title">${role.title}</div><div class="emp-salary">${formatSalary(person.salary)}</div>${badges}`;
+    info.innerHTML = `<div class="emp-name">${escHtml(person.name)}</div><div class="emp-title">${escHtml(role.title)}</div><div class="emp-salary">${formatSalary(person.salary)}</div>${badges}`;
   }
 
   const badge = document.createElement('div');
@@ -1960,7 +1966,7 @@ function renderUnassignedColumn() {
     avatar.textContent = getInitials(person.name);
     const info = document.createElement('div');
     info.className = 'emp-info';
-    info.innerHTML = `<div class="emp-name">${person.name}</div><div class="emp-title">(no position)</div>`;
+    info.innerHTML = `<div class="emp-name">${escHtml(person.name)}</div><div class="emp-title">(no position)</div>`;
     const handle = document.createElement('div');
     handle.className = 'drag-handle';
     handle.innerHTML = '&#8942;&#8942;';
@@ -2003,7 +2009,7 @@ function renderFilterBar() {
     pill.className = 'filter-pill' + (hiddenDepts.has(dept.id) ? ' hidden-dept' : '');
     pill.dataset.dept = dept.id;
     const vacantLabel = vacantCount > 0 ? ` (${vacantCount} vacant)` : '';
-    pill.innerHTML = `<span class="pill-dot" style="background:${dept.color}"></span>${dept.name}${vacantLabel}`;
+    pill.innerHTML = `<span class="pill-dot" style="background:${escHtml(dept.color)}"></span>${escHtml(dept.name)}${vacantLabel}`;
     pill.addEventListener('click', () => { hiddenDepts.has(dept.id) ? hiddenDepts.delete(dept.id) : hiddenDepts.add(dept.id); render(); });
     bar.insertBefore(pill, document.getElementById('dnd-toggle-wrap'));
   });

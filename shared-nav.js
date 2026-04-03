@@ -5,6 +5,12 @@
 // on orgchart.html; all event-listener wiring remains in orgchart.html's own script.
 
 (function () {
+  function escHtml(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
   const page = location.pathname.split('/').pop() || 'orgchart.html';
 
   function hasRight(r) {
@@ -173,9 +179,9 @@
     var banner = document.createElement('div');
     banner.id = 'impersonation-banner';
     banner.innerHTML =
-      'Viewing as <strong>' + displayName + '</strong>' +
+      'Viewing as <strong>' + escHtml(displayName) + '</strong>' +
       ' &nbsp;—&nbsp; ' +
-      '<button id="impersonation-end-btn">Return to ' + (user.originalEmail || 'admin') + '</button>';
+      '<button id="impersonation-end-btn">Return to ' + escHtml(user.originalEmail || 'admin') + '</button>';
     document.body.insertBefore(banner, document.body.firstChild);
     document.body.classList.add('has-impersonation-banner');
 
@@ -328,7 +334,7 @@
       }).slice(0, 8);
       if (!hits.length) { personMatches.style.display = 'none'; return; }
       personMatches.innerHTML = hits.map(function(p) {
-        return '<div class="sum-person-match" data-id="' + p.id + '">' + p.name + '</div>';
+        return '<div class="sum-person-match" data-id="' + escHtml(p.id) + '">' + escHtml(p.name) + '</div>';
       }).join('');
       personMatches.style.display = 'block';
     });
@@ -438,11 +444,11 @@
         var initials = (name || '?').split(' ').map(function(p) { return p[0]; }).join('').slice(0,2).toUpperCase();
         return '<tr>' +
           '<td><div class="sum-person-cell">' +
-            '<div class="sum-avatar">' + initials + '</div>' +
-            '<div><div class="sum-person-name">' + name + '</div>' +
+            '<div class="sum-avatar">' + escHtml(initials) + '</div>' +
+            '<div><div class="sum-person-name">' + escHtml(name) + '</div>' +
             (subtitle ? '<div class="sum-person-sub">' + subtitle + '</div>' : '') +
           '</div></div></td>' +
-          '<td><span style="font-size:12px;color:var(--text-secondary);">' + (jobTitle || '—') + '</span></td>' +
+          '<td><span style="font-size:12px;color:var(--text-secondary);">' + escHtml(jobTitle || '—') + '</span></td>' +
           '<td>' + btnHtml + '</td>' +
           '</tr>';
       }
@@ -457,7 +463,7 @@
         var jobTitle   = personJobTitle[String(p.id)] || '';
         var isCurrent  = linkedUser && linkedUser.id === myId;
         var subtitle   = linkedUser
-          ? '<span style="color:var(--text-muted);">' + linkedUser.email + '</span>'
+          ? '<span style="color:var(--text-muted);">' + escHtml(linkedUser.email) + '</span>'
           : '';
         var btn = isCurrent
           ? '<span style="font-size:11px;color:var(--text-muted)">Current</span>'

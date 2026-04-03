@@ -16,6 +16,13 @@
   //   detail — full description shown in the modal (plain text or simple HTML)
   const RELEASE_NOTES = [
     {
+      id:     'release-0.9.17-security',
+      date:   '3 Apr 2026',
+      title:  'Security hardening (0.9.17)',
+      body:   'XSS protections and HTTP security headers added across the app.',
+      detail: 'All user-supplied values rendered into HTML (person names, role titles, department names, emails) are now HTML-escaped before insertion. An escHtml() helper has been added to orgchart.html, directory.html, and shared-nav.js. The impersonation banner, person autocomplete, and user list in the Switch User modal are all covered. The server now sets X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, and Referrer-Policy headers on every response.',
+    },
+    {
       id:     'release-0.9.16-dashboard-grid',
       date:   '3 Apr 2026',
       title:  'Dashboard: 6-column layout + responsive (0.9.16)',

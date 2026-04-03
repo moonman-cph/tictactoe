@@ -455,6 +455,7 @@ kpiDefs.forEach(k => {
 // ── Row 2a: Gender Overview ────────────────────────────────────────
 {
   const card = makeCard('span-1', 'Gender Overview', `${activePersons.length} employees`);
+  card.style.justifyContent = 'center';
   const total = activePersons.length;
   if (total === 0) {
     const nd = document.createElement('div'); nd.className = 'no-data'; nd.textContent = 'No employees yet.';
@@ -511,6 +512,7 @@ kpiDefs.forEach(k => {
 // ── Row 2b: Age Distribution ───────────────────────────────────────
 {
   const card = makeCard('span-1', 'Age Distribution', canViewDemographics && ageKnown > 0 ? `${ageKnown} employees` : null);
+  card.style.justifyContent = 'center';
   if (!canViewDemographics) {
     const div = document.createElement('div');
     div.className = 'payroll-hidden';

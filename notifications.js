@@ -16,6 +16,13 @@
   //   detail — full description shown in the modal (plain text or simple HTML)
   const RELEASE_NOTES = [
     {
+      id:     'release-0.9.14-demo-login',
+      date:   '3 Apr 2026',
+      title:  'One-click demo login (0.9.14)',
+      body:   'The login page now has a single "Continue with demo account" button — no need to copy credentials manually.',
+      detail: 'Previously the login page showed a demo credentials box with separate "Fill" buttons for email and password, which caused confusion for new users. It has been replaced with a single "Continue with demo account" button that fills both fields and submits the form automatically.',
+    },
+    {
       id:     'release-0.9.13-remove-seed-data',
       date:   '27 Mar 2026',
       title:  'Org Chart no longer pre-loads 120 default employees (0.9.13)',

@@ -1,6 +1,6 @@
 {
   "name": "orgchart",
-  "version": "0.9.13",
+  "version": "0.9.14",
   "scripts": {
     "start": "node server.js"
   },

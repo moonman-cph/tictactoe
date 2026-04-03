@@ -16,6 +16,13 @@
   //   detail — full description shown in the modal (plain text or simple HTML)
   const RELEASE_NOTES = [
     {
+      id:     'release-0.9.15-ai-changelog',
+      date:   '3 Apr 2026',
+      title:  'AI changes now tracked in changelog (0.9.15)',
+      body:   'Changes made via the AI Assistant are now recorded in the changelog with an "AI Assistant" label and can be filtered separately.',
+      detail: 'Previously AI-applied changes (department/role/person operations) were stored in the changelog with source "ui", making them indistinguishable from manual edits. They are now stored with source "ai". The changelog page shows a purple "AI Assistant" badge on these batches, and a new "AI Assistant" checkbox in the Source filter lets you view or hide them independently.',
+    },
+    {
       id:     'release-0.9.14-demo-login',
       date:   '3 Apr 2026',
       title:  'One-click demo login (0.9.14)',

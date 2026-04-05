@@ -130,7 +130,7 @@
     <!-- ── Organisations Tab ─────────────────────────────────────────────── -->
     <div id="tab-orgs" class="tab-panel active">
       <div class="toolbar">
-        <input class="search-input" id="org-search" type="text" placeholder="Filter by name or slug…" oninput="renderOrgs()">
+        <input class="search-input" id="org-search" type="search" placeholder="Filter by name or slug…" autocomplete="off" oninput="renderOrgs()">
         <div class="toolbar-spacer"></div>
         <button class="btn btn-primary" onclick="openCreateOrg()">+ New Organisation</button>
       </div>
@@ -154,7 +154,7 @@
     <!-- ── Users Tab ─────────────────────────────────────────────────────── -->
     <div id="tab-users" class="tab-panel">
       <div class="toolbar">
-        <input class="search-input" id="user-search" type="text" placeholder="Search by email…" oninput="searchUsers()">
+        <input class="search-input" id="user-search" type="search" placeholder="Search by email…" autocomplete="off" oninput="searchUsers()">
         <select class="form-select" id="user-org-filter" onchange="searchUsers()" style="width:160px;height:34px;">
           <option value="">All orgs</option>
         </select>
@@ -366,7 +366,8 @@ function badge(text, cls) { return `<span class="badge badge-${escHtml(cls)}">${
 // ── Organisations ─────────────────────────────────────────────────────────────
 async function loadOrgs() {
   try {
-    allOrgs = await api('GET', '/orgs');
+    const result = await api('GET', '/orgs');
+    allOrgs = Array.isArray(result) ? result : [];
     renderOrgs();
     populateOrgFilter();
   } catch (e) {
@@ -375,8 +376,12 @@ async function loadOrgs() {
 }
 
 function renderOrgs() {
-  const q = document.getElementById('org-search').value.toLowerCase();
-  const orgs = q ? allOrgs.filter(o => o.name.toLowerCase().includes(q) || o.slug.toLowerCase().includes(q)) : allOrgs;
+  if (!Array.isArray(allOrgs)) return; // guard against bad API response
+  const q = document.getElementById('org-search').value.trim().toLowerCase();
+  const orgs = q ? allOrgs.filter(o =>
+    (o.name  || '').toLowerCase().includes(q) ||
+    (o.slug  || '').toLowerCase().includes(q)
+  ) : allOrgs;
   const tbody = document.getElementById('orgs-tbody');
   if (!orgs.length) {
     tbody.innerHTML = '<tr class="empty-row"><td colspan="6">No organisations found.</td></tr>';

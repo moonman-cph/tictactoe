@@ -16,6 +16,34 @@
   //   detail — full description shown in the modal (plain text or simple HTML)
   const RELEASE_NOTES = [
     {
+      id:     'release-0.9.23-admin-console',
+      date:   '5 Apr 2026',
+      title:  'Operator Console (0.9.23)',
+      body:   'New admin.html page for managing all customer organisations and users — super_admin only.',
+      detail: 'The Operator Console is accessible from the left nav (super_admin accounts only) at admin.html. Organisations tab: view all orgs with tier and status badges, create new organisations, edit name/plan tier/trial expiry, suspend or reactivate, and offboard (exports full JSON then permanently deletes all data). Users tab: search users cross-org by email with org and status filters, view user detail, force-logout (invalidates session immediately), lock/unlock account, reset password, and delete user. All actions are written to the audit log.',
+    },
+    {
+      id:     'release-0.9.22-m4-org-admin',
+      date:   '5 Apr 2026',
+      title:  'Org-admin self-service: invite & manage users (0.9.22)',
+      body:   'Org admins can now invite users by email, set roles, and remove access without operator help.',
+      detail: 'A new self-service user management API allows org_admin users to invite colleagues (POST /api/v1/users), update their role or person link (PATCH /api/v1/users/:id), and revoke access (DELETE /api/v1/users/:id). Assignable roles are limited to hr, manager, and employee — org_admin cannot elevate to super_admin or org_admin. All actions are recorded in the audit log.',
+    },
+    {
+      id:     'release-0.9.21-m4-admin-apis',
+      date:   '5 Apr 2026',
+      title:  'Org management & admin user APIs (0.9.21)',
+      body:   'New server-side APIs for managing organisations and users across all orgs — used by the Operator Console.',
+      detail: 'Added /api/v1/orgs (list, create, edit, suspend, reactivate, offboard) and /api/v1/admin/users (cross-org search, lock/unlock, force-logout, password reset, delete). Force-logout sets a force_logout_at timestamp on the user record; any JWT issued before this timestamp is immediately rejected on the next request. Org suspension blocks all logins for that org without touching data.',
+    },
+    {
+      id:     'release-0.9.20-m4-organisations',
+      date:   '5 Apr 2026',
+      title:  'Organisations table & multi-tenant foundation (0.9.20)',
+      body:   'Added the organisations registry table and migration v5 — the authoritative record of all customer orgs.',
+      detail: 'A new organisations table stores org id, name, slug, plan tier, status, and trial expiry. Migration v5 seeds the default org on first boot. The force_logout_at column was added to the users table, enabling server-side session invalidation. These are foundation changes for the M4 operator console and future multi-tenant management.',
+    },
+    {
       id:     'release-0.9.19-scheduler',
       date:   '4 Apr 2026',
       title:  'Server-side scheduler & planned changes (0.9.19)',

@@ -1,0 +1,1534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reports — Teampura</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="reports.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<div id="loading-overlay" style="position:fixed;inset:0;background:#fff;display:flex;align-items:center;justify-content:center;font-family:inherit;color:#6b7280;z-index:9999;font-size:1.1rem;">Loading…</div>
+
+<nav id="left-nav"></nav>
+<script src="shared-auth.js"></script>
+<script src="shared-nav.js"></script>
+
+<div id="app-content">
+  <div id="sim-banner">
+    <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h4M7 2v4L3 13a1 1 0 00.9 1.5h8.2A1 1 0 0013 13L9 6V2"/><path d="M5 10.5h6" opacity="0.5"/></svg>
+    <span>Simulation Mode — data shown is not live</span>
+  </div>
+  <div id="planned-change-banner">
+    <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="12" height="12" rx="1.5"/><line x1="5" y1="1" x2="5" y2="5"/><line x1="11" y1="1" x2="11" y2="5"/><line x1="2" y1="7" x2="14" y2="7"/></svg>
+    <span id="pc-banner-label">Planned change scheduled</span>
+  </div>
+  <div id="app-header">
+    <div class="header-crumb">
+      <span class="header-crumb-root">Teampura</span>
+      <span class="header-crumb-sep">/</span>
+      <span class="header-crumb-current">Reports</span>
+    </div>
+    <div class="header-spacer"></div>
+    <div class="header-divider"></div>
+    <div class="header-icon-btn" title="Notifications">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M8 1.5a4.5 4.5 0 014.5 4.5c0 2.5.5 4 1.5 5H2c1-1 1.5-2.5 1.5-5A4.5 4.5 0 018 1.5z"/><line x1="6.5" y1="14" x2="9.5" y2="14"/></svg>
+    </div>
+  </div>
+  <div id="reports-body">
+    <!-- Left Sidebar: Template Library + Saved Reports -->
+    <div id="sidebar">
+      <div id="sidebar-header">
+        <div id="sidebar-title">Reports</div>
+        <button id="new-custom-btn" onclick="openConfig(null, null)">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="8" y1="2" x2="8" y2="14"/><line x1="2" y1="8" x2="14" y2="8"/></svg>
+          Custom Report
+        </button>
+      </div>
+      <div id="sidebar-body"><!-- rendered by JS --></div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="main-area">
+      <div id="saved-grid"><!-- rendered by JS --></div>
+      <div id="report-view" style="display:none">
+        <div id="report-header">
+          <span id="report-category-badge" class="saved-card-cat"></span>
+          <span id="report-title">Report</span>
+          <div class="header-spacer"></div>
+          <div id="report-header-btns">
+            <button class="btn-sm" id="edit-config-btn" onclick="openCurrentConfig()">Edit</button>
+            <button class="btn-sm primary" id="save-as-btn" onclick="openSaveDialog()">Save</button>
+          </div>
+        </div>
+        <div id="chart-area">
+          <div id="chart-wrap">
+            <canvas id="chart-canvas" style="display:none"></canvas>
+            <div id="kpi-wrap" style="display:none"></div>
+            <div id="chart-placeholder" class="empty-state"><div class="spinner"></div></div>
+          </div>
+          <div id="chart-summary" style="display:none"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Config Panel (right, slides in) -->
+    <div id="config-panel" class="hidden">
+      <div id="config-panel-inner">
+        <div id="config-panel-header">
+          <span id="config-panel-title">Configure Report</span>
+          <button id="config-close-btn" onclick="closeConfig()">✕</button>
+        </div>
+        <div id="config-body"><!-- dynamic form --></div>
+        <div id="config-footer">
+          <button id="run-report-btn" onclick="runReport()">Run Report</button>
+          <button id="save-report-btn" onclick="openSaveDialog()">Save Report</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Save Dialog -->
+<div id="save-dialog" class="modal-overlay hidden">
+  <div class="modal-box">
+    <div class="modal-title">Save Report</div>
+    <div>
+      <div class="modal-label">Report name</div>
+      <input id="save-name-input" class="modal-input" type="text" placeholder="e.g. Q2 Gender Analysis" maxlength="80">
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn secondary" onclick="closeSaveDialog()">Cancel</button>
+      <button class="modal-btn primary" onclick="confirmSave()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+// ── Constants ────────────────────────────────────────────────────
+const CHART_COLORS = ['#2a9aaa','#e8622a','#4caf7d','#f5a623','#7c6af5','#a8a29e','#ef4444','#8b5cf6'];
+const GENDER_COLORS = { male:'#2a9aaa', female:'#e8622a', other:'#7c6af5', unknown:'#a8a29e' };
+const GENDER_LABELS = { male:'Male', female:'Female', other:'Other', unknown:'Unknown' };
+const LEVEL_ORDER   = ['L1','L2','L3','L4','L5','L6','L7','L8','Unleveled','Unassigned'];
+const CATEGORY_INFO = {
+  headcount:    { label:'Headcount & Hiring',         cls:'cat-headcount'    },
+  compensation: { label:'Compensation & Pay Equity',  cls:'cat-compensation' },
+  diversity:    { label:'Diversity & Inclusion',      cls:'cat-diversity'    },
+  org:          { label:'Org Structure',              cls:'cat-org'          },
+  custom:       { label:'Custom',                     cls:'cat-custom'       },
+};
+
+// ── Template Definitions ─────────────────────────────────────────
+const TEMPLATES = [
+  // ── Headcount & Hiring ───────────────────────────────────────
+  { id:'hc-total-snapshot',   name:'Total Headcount',             category:'headcount',    type:'snapshot', chartType:'doughnut', desc:'Overview of total active employees with gender breakdown.',
+    opts:[{k:'filterStatus',label:'Include',type:'select',choices:[{v:'active',l:'Active only'},{v:'all',l:'All employees'}]}],
+    def:{filterStatus:'active'} },
+  { id:'hc-by-dept',          name:'Headcount by Department',     category:'headcount',    type:'snapshot', chartType:'bar', desc:'Employee count broken down by department.',
+    opts:[{k:'filterStatus',label:'Include',type:'select',choices:[{v:'active',l:'Active only'},{v:'all',l:'All employees'}]},{k:'showVacant',label:'Show vacant roles',type:'toggle'},{k:'sortBy',label:'Sort by',type:'select',choices:[{v:'count',l:'Count (high→low)'},{v:'alpha',l:'Alphabetically'}]}],
+    def:{filterStatus:'active',showVacant:false,sortBy:'count'} },
+  { id:'hc-by-level',         name:'Headcount by Level',          category:'headcount',    type:'snapshot', chartType:'bar', desc:'Employee count per seniority level (L1–L8).',
+    opts:[{k:'filterStatus',label:'Include',type:'select',choices:[{v:'active',l:'Active only'},{v:'all',l:'All employees'}]}],
+    def:{filterStatus:'active'} },
+  { id:'hc-trend',            name:'Headcount Trend',             category:'headcount',    type:'trend',    chartType:'line', desc:'Net headcount change per time bucket, reconstructed from audit history.',
+    opts:[{k:'dateFrom',label:'From',type:'date'},{k:'dateTo',label:'To',type:'date'},{k:'bucket',label:'Bucket',type:'select',choices:[{v:'month',l:'Monthly'},{v:'quarter',l:'Quarterly'},{v:'week',l:'Weekly'}]}],
+    def:{dateFrom:'',dateTo:'',bucket:'month'} },
+  { id:'hc-vacancy-rate',     name:'Vacancy Rate by Department',  category:'headcount',    type:'snapshot', chartType:'bar', desc:'Filled vs. vacant roles per department.',
+    opts:[],  def:{} },
+  { id:'hc-new-joiners',      name:'New Joiners Over Time',       category:'headcount',    type:'trend',    chartType:'bar', desc:'Count of new employee records created per time period.',
+    opts:[{k:'dateFrom',label:'From',type:'date'},{k:'dateTo',label:'To',type:'date'},{k:'bucket',label:'Bucket',type:'select',choices:[{v:'month',l:'Monthly'},{v:'quarter',l:'Quarterly'},{v:'week',l:'Weekly'}]}],
+    def:{dateFrom:'',dateTo:'',bucket:'month'} },
+
+  // ── Compensation & Pay Equity ────────────────────────────────
+  { id:'pay-gender-gap',      name:'Gender Pay Gap by Level',     category:'compensation', type:'snapshot', chartType:'bar', requiresRight:'view_salaries', desc:'Average salary by gender for each seniority level.',
+    opts:[{k:'filterLevel',label:'Level filter',type:'select',choices:[{v:'',l:'All levels'},{v:'L1',l:'L1'},{v:'L2',l:'L2'},{v:'L3',l:'L3'},{v:'L4',l:'L4'},{v:'L5',l:'L5'},{v:'L6',l:'L6'},{v:'L7',l:'L7'},{v:'L8',l:'L8'}]}],
+    def:{filterLevel:''} },
+  { id:'pay-band-health',     name:'Salary Band Compliance',      category:'compensation', type:'snapshot', chartType:'doughnut', requiresRight:'view_salaries', desc:'How many employees are in-band, above-band, or below-band.',
+    opts:[], def:{} },
+  { id:'pay-dist-dept',       name:'Average Salary by Department',category:'compensation', type:'snapshot', chartType:'bar', requiresRight:'view_salaries', desc:'Average monthly salary per department.',
+    opts:[{k:'sortBy',label:'Sort by',type:'select',choices:[{v:'value',l:'Salary (high→low)'},{v:'alpha',l:'Alphabetically'}]}],
+    def:{sortBy:'value'} },
+  { id:'pay-budget-trend',    name:'Payroll Budget Over Time',    category:'compensation', type:'trend',    chartType:'line', requiresRight:'view_salaries', desc:'Total monthly payroll reconstructed from salary change history.',
+    opts:[{k:'dateFrom',label:'From',type:'date'},{k:'dateTo',label:'To',type:'date'},{k:'bucket',label:'Bucket',type:'select',choices:[{v:'month',l:'Monthly'},{v:'quarter',l:'Quarterly'}]}],
+    def:{dateFrom:'',dateTo:'',bucket:'month'} },
+  { id:'pay-avg-by-level',    name:'Average Salary by Level',     category:'compensation', type:'snapshot', chartType:'bar', requiresRight:'view_salaries', desc:'Average salary at each seniority level.',
+    opts:[], def:{} },
+  { id:'pay-review-flags',    name:'Salary Review Flags',         category:'compensation', type:'snapshot', chartType:'bar', requiresRight:'view_salaries', desc:'Employees flagged for salary review, broken down by department.',
+    opts:[], def:{} },
+
+  // ── Diversity & Inclusion ────────────────────────────────────
+  { id:'div-gender-split',    name:'Gender Split',                category:'diversity',    type:'snapshot', chartType:'doughnut', desc:'Overall gender distribution of active employees.',
+    opts:[{k:'filterStatus',label:'Include',type:'select',choices:[{v:'active',l:'Active only'},{v:'all',l:'All employees'}]}],
+    def:{filterStatus:'active'} },
+  { id:'div-gender-by-dept',  name:'Gender by Department',        category:'diversity',    type:'snapshot', chartType:'bar', desc:'Gender breakdown per department (stacked).',
+    opts:[{k:'stacked',label:'Stacked (100%)',type:'toggle'}],
+    def:{stacked:false} },
+  { id:'div-gender-by-level', name:'Gender by Level',             category:'diversity',    type:'snapshot', chartType:'bar', desc:'Gender representation at each seniority level.',
+    opts:[], def:{} },
+  { id:'div-age-dist',        name:'Age Distribution',            category:'diversity',    type:'snapshot', chartType:'bar', requiresRight:'view_directory', desc:'Headcount grouped into age brackets (from date of birth).',
+    opts:[], def:{} },
+  { id:'div-senior-diversity',name:'Diversity in Senior Roles',   category:'diversity',    type:'snapshot', chartType:'doughnut', desc:'Gender breakdown for employees at L6 and above.',
+    opts:[{k:'seniorThreshold',label:'Senior from',type:'select',choices:[{v:'L5',l:'L5 and above'},{v:'L6',l:'L6 and above'},{v:'L7',l:'L7 and above'}]}],
+    def:{seniorThreshold:'L6'} },
+  { id:'div-country-split',   name:'Headcount by Country',        category:'diversity',    type:'snapshot', chartType:'bar', desc:'Employee count per country of work location.',
+    opts:[{k:'topN',label:'Show top',type:'select',choices:[{v:'5',l:'5 countries'},{v:'10',l:'10 countries'},{v:'0',l:'All countries'}]}],
+    def:{topN:'10'} },
+
+  // ── Org Structure & Efficiency ───────────────────────────────
+  { id:'org-span-control',    name:'Span of Control',             category:'org',          type:'snapshot', chartType:'bar', desc:'Distribution of how many direct reports each manager has.',
+    opts:[], def:{} },
+  { id:'org-hierarchy-depth', name:'Hierarchy Depth by Dept',     category:'org',          type:'snapshot', chartType:'bar', desc:'Maximum number of reporting layers in each department.',
+    opts:[], def:{} },
+  { id:'org-manager-ratio',   name:'Manager-to-IC Ratio',         category:'org',          type:'snapshot', chartType:'doughnut', desc:'Proportion of managers vs individual contributors.',
+    opts:[], def:{} },
+  { id:'org-multi-role',      name:'Multi-Role Employees',        category:'org',          type:'snapshot', chartType:'kpi', desc:'Employees who hold more than one role simultaneously.',
+    opts:[], def:{} },
+  { id:'org-orphans',         name:'Orphaned Roles',              category:'org',          type:'snapshot', chartType:'kpi', desc:'Roles whose manager role no longer exists in the hierarchy.',
+    opts:[], def:{} },
+  { id:'org-dept-payroll-share',name:'Payroll Share by Dept',     category:'org',          type:'snapshot', chartType:'doughnut', requiresRight:'view_salaries', desc:'Each department\'s share of total monthly payroll.',
+    opts:[], def:{} },
+];
+
+// ── Custom Builder Field Manifest ────────────────────────────────
+const FIELD_MANIFEST = {
+  person: {
+    label: 'Person',
+    fields: {
+      '*':                     { label:'Count of people',        type:'identity',    aggs:['count'] },
+      gender:                  { label:'Gender',                 type:'categorical', aggs:['count'],                       groupable:true  },
+      salary:                  { label:'Salary',                 type:'numeric',     aggs:['avg','sum','median','min','max'], requiresRight:'view_salaries' },
+      country:                 { label:'Country',                type:'categorical', aggs:['count'],                       groupable:true  },
+      city:                    { label:'City',                   type:'categorical', aggs:['count'],                       groupable:true  },
+      salaryReviewNeeded:      { label:'Salary Review Flag',     type:'boolean',     aggs:['count'] },
+      performanceReviewNeeded: { label:'Perf Review Flag',       type:'boolean',     aggs:['count'] },
+      isNew:                   { label:'New Employees',          type:'boolean',     aggs:['count'] },
+      onLeave:                 { label:'On Leave',               type:'boolean',     aggs:['count'] },
+    }
+  },
+  role: {
+    label: 'Role',
+    fields: {
+      '*':    { label:'Count of roles', type:'identity',    aggs:['count'] },
+      level:  { label:'Level',          type:'categorical', aggs:['count'], groupable:true },
+    }
+  }
+};
+
+const DIMENSION_OPTIONS = [
+  { v:'',           l:'No grouping (total)'     },
+  { v:'department', l:'By Department'            },
+  { v:'level',      l:'By Level'                 },
+  { v:'gender',     l:'By Gender'                },
+  { v:'country',    l:'By Country'               },
+];
+
+// ── App State ────────────────────────────────────────────────────
+let appData = { departments:[], roles:[], persons:[], roleAssignments:[], salaryBands:{}, settings:{} };
+let savedReports  = [];
+let activeConfig  = null;   // current report config (template + options)
+let activeChart   = null;   // Chart.js instance
+let activeSavedId = null;   // ID of the saved report currently open (null if unsaved run)
+let configOpen    = false;
+
+// ── Helpers ──────────────────────────────────────────────────────
+function getActivePersons(filterStatus) {
+  const all = appData.persons;
+  return filterStatus === 'all' ? all : all.filter(p => !p.noLongerHired);
+}
+function getPrimaryRoleForPerson(personId) {
+  const a = appData.roleAssignments.find(a => a.personId === personId);
+  return a ? appData.roles.find(r => r.id === a.roleId) || null : null;
+}
+function getDeptForRole(role) {
+  if (!role) return null;
+  return appData.departments.find(d => d.id === (role.departmentId || role.department)) || null;
+}
+function genderKey(p) {
+  const g = (p.gender || '').toLowerCase().trim();
+  if (g === 'male' || g === 'm') return 'male';
+  if (g === 'female' || g === 'f') return 'female';
+  if (g === '') return 'unknown';
+  return 'other';
+}
+function ageFromDOB(dob) {
+  if (!dob) return null;
+  const diff = Date.now() - new Date(dob).getTime();
+  return Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
+}
+function ageBucket(age) {
+  if (age == null) return 'Unknown';
+  if (age < 25)  return 'Under 25';
+  if (age < 35)  return '25–34';
+  if (age < 45)  return '35–44';
+  if (age < 55)  return '45–54';
+  return '55+';
+}
+function levelNum(lvl) {
+  if (!lvl) return 99;
+  const m = lvl.toUpperCase().match(/[CL](\d+)/);
+  return m ? parseInt(m[1], 10) : 99;
+}
+function levelSortKey(lvl) { return LEVEL_ORDER.indexOf(lvl) >= 0 ? LEVEL_ORDER.indexOf(lvl) : 99; }
+function median(arr) {
+  if (!arr.length) return 0;
+  const s = [...arr].sort((a, b) => a - b);
+  const mid = Math.floor(s.length / 2);
+  return s.length % 2 ? s[mid] : (s[mid - 1] + s[mid]) / 2;
+}
+function avg(arr) { return arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0; }
+function fmt(n) {
+  if (!n) return '0';
+  const cur = appData.settings.currency || 'DKK';
+  const r = Math.round(n);
+  if (r >= 1000000) return cur === 'EUR' ? '€'+(r/1000000).toFixed(1)+'M' : (r/1000000).toFixed(1)+'M kr';
+  if (r >= 1000)    return cur === 'EUR' ? '€'+Math.round(r/1000)+'k' : Math.round(r/1000)+'k kr';
+  return cur === 'EUR' ? '€'+r.toLocaleString() : r.toLocaleString('da-DK')+' kr';
+}
+function generateId() { return typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2); }
+function escHtml(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function showToast(msg, type = '') {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.className = 'visible' + (type ? ' '+type : '');
+  clearTimeout(el._t);
+  el._t = setTimeout(() => { el.className = ''; }, 2800);
+}
+
+// ── Storage ──────────────────────────────────────────────────────
+function getStorageKey() { return `reports-saved-${window.__currentUser?.orgId || 'default'}`; }
+function loadSavedReports() {
+  try {
+    const raw = localStorage.getItem(getStorageKey());
+    if (!raw) return [];
+    const obj = JSON.parse(raw);
+    return Array.isArray(obj.reports) ? obj.reports : [];
+  } catch { return []; }
+}
+function persistSavedReports() {
+  localStorage.setItem(getStorageKey(), JSON.stringify({ version: 1, reports: savedReports }));
+}
+function addSavedReport(config) {
+  if (savedReports.length >= 50) { showToast('Limit of 50 saved reports reached.', 'error'); return null; }
+  const r = { ...config, id: generateId(), createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
+  savedReports.unshift(r);
+  persistSavedReports();
+  return r;
+}
+function updateSavedReport(id, config) {
+  const i = savedReports.findIndex(r => r.id === id);
+  if (i < 0) return;
+  savedReports[i] = { ...savedReports[i], ...config, updatedAt: new Date().toISOString() };
+  persistSavedReports();
+}
+function deleteSavedReport(id) {
+  savedReports = savedReports.filter(r => r.id !== id);
+  persistSavedReports();
+}
+
+// ── Chart defaults ────────────────────────────────────────────────
+function setupChartDefaults() {
+  Chart.defaults.font.family = "Outfit, -apple-system, sans-serif";
+  Chart.defaults.font.size   = 12;
+  Chart.defaults.color       = '#57534e';
+}
+function destroyChart() {
+  if (activeChart) { activeChart.destroy(); activeChart = null; }
+}
+function makeGridColor()   { return '#e6e4df'; }
+function makeTickColor()   { return '#57534e'; }
+
+// ── Sidebar Rendering ─────────────────────────────────────────────
+function renderSidebar() {
+  const categories = ['headcount','compensation','diversity','org'];
+  let html = '';
+  for (const cat of categories) {
+    const tpls = TEMPLATES.filter(t => t.category === cat);
+    html += `<div class="sidebar-cat-label">${CATEGORY_INFO[cat].label}</div>`;
+    for (const t of tpls) {
+      const active = activeConfig && activeConfig.templateId === t.id ? ' active' : '';
+      html += `<div class="tpl-item${active}" onclick="openConfig('${t.id}',null)" title="${escHtml(t.desc)}">
+        ${escHtml(t.name)}
+        <span class="tpl-type-badge ${t.type}">${t.type === 'trend' ? 'trend' : 'snap'}</span>
+      </div>`;
+    }
+  }
+  // Saved reports
+  html += `<div class="sidebar-divider"></div>
+  <div class="sidebar-cat-label">Saved Reports <span style="font-size:10px;color:var(--text-3)">(${savedReports.length})</span></div>`;
+  if (savedReports.length === 0) {
+    html += `<div class="saved-empty-hint">Run a report and click Save to store it here.</div>`;
+  } else {
+    for (const r of savedReports) {
+      const active = activeSavedId === r.id ? ' active' : '';
+      html += `<div class="saved-tpl-item${active}" onclick="runSaved('${r.id}')">
+        <span class="saved-tpl-name" title="${escHtml(r.name)}">${escHtml(r.name)}</span>
+        <button class="saved-del-btn" onclick="event.stopPropagation();confirmDelete('${r.id}')" title="Delete">✕</button>
+      </div>`;
+    }
+  }
+  document.getElementById('sidebar-body').innerHTML = html;
+}
+
+// ── Main Grid Rendering ───────────────────────────────────────────
+function renderSavedGrid() {
+  const el = document.getElementById('saved-grid');
+  if (savedReports.length === 0) {
+    el.innerHTML = `<div class="empty-state">
+      <div class="empty-state-icon">📊</div>
+      <div class="empty-state-title">No saved reports yet</div>
+      <div class="empty-state-body">Pick a template from the left sidebar, configure it, run it, and click Save to build your library.</div>
+    </div>`;
+    return;
+  }
+  let cards = `<div id="saved-grid-title">Saved Reports</div><div class="saved-cards-grid">`;
+  for (const r of savedReports) {
+    const ci = CATEGORY_INFO[r.category] || CATEGORY_INFO.custom;
+    const dateStr = new Date(r.updatedAt).toLocaleDateString(undefined, { year:'numeric', month:'short', day:'numeric' });
+    cards += `<div class="saved-card" onclick="runSaved('${r.id}')">
+      <div class="saved-card-header">
+        <div class="saved-card-icon">${categoryIcon(r.category)}</div>
+        <div>
+          <div class="saved-card-name">${escHtml(r.name)}</div>
+          <span class="saved-card-cat ${ci.cls}">${ci.label}</span>
+        </div>
+      </div>
+      <div class="saved-card-meta">Updated ${dateStr}</div>
+      <div class="saved-card-actions">
+        <button class="btn-sm primary" onclick="event.stopPropagation();runSaved('${r.id}')">Run</button>
+        <button class="btn-sm" onclick="event.stopPropagation();openSavedConfig('${r.id}')">Edit</button>
+        <button class="btn-sm danger" onclick="event.stopPropagation();confirmDelete('${r.id}')">Delete</button>
+      </div>
+    </div>`;
+  }
+  cards += '</div>';
+  el.innerHTML = cards;
+}
+
+function categoryIcon(cat) {
+  const icons = {
+    headcount:    '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="4" r="2"/><path d="M1 13c0-2.8 2.2-5 5-5s5 2.2 5 5"/><circle cx="12" cy="5" r="1.5"/><path d="M14 13c0-2-1-3.5-2.5-4.5"/></svg>',
+    compensation: '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6.5"/><path d="M8 5v6M6.5 6.5h2a1 1 0 010 2H7a1 1 0 000 2h2.5"/></svg>',
+    diversity:    '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="5" r="2.2"/><circle cx="11" cy="5" r="2.2"/><circle cx="8" cy="11" r="2.2"/></svg>',
+    org:          '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="9" width="3" height="5" rx="0.5"/><rect x="6" y="5" width="3" height="9" rx="0.5"/><rect x="11" y="2" width="3" height="12" rx="0.5"/></svg>',
+    custom:       '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>',
+  };
+  return icons[cat] || icons.custom;
+}
+
+function setView(view) {
+  document.getElementById('saved-grid').style.display  = view === 'grid'   ? '' : 'none';
+  document.getElementById('report-view').style.display = view === 'report' ? '' : 'none';
+}
+
+// ── Config Panel ──────────────────────────────────────────────────
+function openConfig(templateId, existingConfig) {
+  activeSavedId = null;
+  const isCustom = templateId === null;
+  const tpl = isCustom ? null : TEMPLATES.find(t => t.id === templateId);
+
+  document.getElementById('config-panel-title').textContent = isCustom ? 'Custom Report' : (tpl ? tpl.name : 'Configure');
+  document.getElementById('config-body').innerHTML = isCustom ? buildCustomForm({}) : buildTemplateForm(tpl, existingConfig?.options || tpl?.def || {});
+
+  // Store pending config
+  activeConfig = { templateId: templateId, options: existingConfig?.options || tpl?.def || {}, name: existingConfig?.name || '' };
+
+  document.getElementById('config-panel').classList.remove('hidden');
+  document.getElementById('save-report-btn').style.display = '';
+  configOpen = true;
+  renderSidebar();
+}
+
+function openSavedConfig(id) {
+  const r = savedReports.find(s => s.id === id);
+  if (!r) return;
+  activeSavedId = id;
+  openConfig(r.templateId, r);
+}
+
+function openCurrentConfig() {
+  if (!activeConfig) return;
+  openConfig(activeConfig.templateId, activeConfig);
+}
+
+function closeConfig() {
+  document.getElementById('config-panel').classList.add('hidden');
+  configOpen = false;
+  renderSidebar();
+}
+
+function buildTemplateForm(tpl, currentOptions) {
+  if (!tpl) return '';
+  let html = `<div class="config-field"><div class="config-label">Template</div><div class="config-desc">${escHtml(tpl.desc)}</div></div>`;
+  for (const opt of (tpl.opts || [])) {
+    if (opt.type === 'select') {
+      html += `<div class="config-field">
+        <label class="config-label" for="cfg-${opt.k}">${escHtml(opt.label)}</label>
+        <select class="config-select" id="cfg-${opt.k}" data-key="${opt.k}" onchange="onConfigChange()">
+          ${opt.choices.map(c => `<option value="${c.v}" ${currentOptions[opt.k] == c.v ? 'selected':''}>${escHtml(c.l)}</option>`).join('')}
+        </select></div>`;
+    } else if (opt.type === 'toggle') {
+      const checked = currentOptions[opt.k] ? 'checked' : '';
+      html += `<div class="config-field config-toggle-row">
+        <label class="config-label">${escHtml(opt.label)}</label>
+        <label class="config-toggle"><input type="checkbox" id="cfg-${opt.k}" data-key="${opt.k}" ${checked} onchange="onConfigChange()"><span class="config-toggle-slider"></span></label>
+      </div>`;
+    } else if (opt.type === 'date') {
+      html += `<div class="config-field">
+        <label class="config-label" for="cfg-${opt.k}">${escHtml(opt.label)}</label>
+        <input type="date" class="config-input" id="cfg-${opt.k}" data-key="${opt.k}" value="${escHtml(currentOptions[opt.k] || '')}" onchange="onConfigChange()">
+      </div>`;
+    }
+  }
+  return html;
+}
+
+function buildCustomForm(opts) {
+  const entities = Object.entries(FIELD_MANIFEST).map(([k, v]) => `<option value="${k}" ${opts.entity === k ? 'selected':''}>${v.label}</option>`).join('');
+  const fields = opts.entity ? buildFieldOptions(opts.entity, opts.field) : '<option value="">— select entity first —</option>';
+  const aggs = opts.entity && opts.field ? buildAggOptions(opts.entity, opts.field, opts.aggregation) : '<option value="">— select field first —</option>';
+  const dims = opts.entity && opts.field ? buildDimOptions(opts.aggregation, opts.dimension) : '<option value="">— select aggregation first —</option>';
+
+  return `
+    <div class="custom-step">
+      <div class="custom-step-num">Step 1</div>
+      <div class="custom-step-label">What to measure</div>
+      <select class="config-select" id="cfg-entity" onchange="onCustomEntityChange()">
+        <option value="">— select entity —</option>${entities}
+      </select>
+    </div>
+    <div class="custom-step ${opts.entity ? '' : 'custom-step-disabled'}">
+      <div class="custom-step-num">Step 2</div>
+      <div class="custom-step-label">Which field</div>
+      <select class="config-select" id="cfg-field" onchange="onCustomFieldChange()">
+        ${fields}
+      </select>
+    </div>
+    <div class="custom-step ${opts.field ? '' : 'custom-step-disabled'}">
+      <div class="custom-step-num">Step 3</div>
+      <div class="custom-step-label">Aggregation</div>
+      <select class="config-select" id="cfg-aggregation" onchange="onCustomAggChange()">
+        ${aggs}
+      </select>
+    </div>
+    <div class="custom-step ${opts.aggregation ? '' : 'custom-step-disabled'}">
+      <div class="custom-step-num">Step 4</div>
+      <div class="custom-step-label">Group by</div>
+      <select class="config-select" id="cfg-dimension" onchange="onConfigChange()">
+        ${dims}
+      </select>
+    </div>`;
+}
+
+function buildFieldOptions(entity, selectedField) {
+  const fields = FIELD_MANIFEST[entity]?.fields || {};
+  return Object.entries(fields).map(([k, v]) => `<option value="${k}" ${selectedField === k ? 'selected':''}>${v.label}</option>`).join('');
+}
+function buildAggOptions(entity, field, selectedAgg) {
+  const f = FIELD_MANIFEST[entity]?.fields?.[field];
+  if (!f) return '';
+  const AGG_LABELS = { count:'Count', avg:'Average', sum:'Sum', median:'Median', min:'Minimum', max:'Maximum' };
+  return f.aggs.map(a => `<option value="${a}" ${selectedAgg === a ? 'selected':''}>${AGG_LABELS[a]}</option>`).join('');
+}
+function buildDimOptions(agg, selectedDim) {
+  return DIMENSION_OPTIONS.map(d => `<option value="${d.v}" ${selectedDim === d.v ? 'selected':''}>${d.l}</option>`).join('');
+}
+
+function onConfigChange() {
+  if (!activeConfig) return;
+  activeConfig.options = collectFormValues();
+}
+function onCustomEntityChange() {
+  const entity = document.getElementById('cfg-entity').value;
+  if (!activeConfig) activeConfig = { templateId: null, options: {}, name: '' };
+  activeConfig.options = { entity, field:'', aggregation:'', dimension:'' };
+  document.getElementById('config-body').innerHTML = buildCustomForm(activeConfig.options);
+}
+function onCustomFieldChange() {
+  const entity = document.getElementById('cfg-entity')?.value || '';
+  const field  = document.getElementById('cfg-field')?.value || '';
+  if (!activeConfig) return;
+  activeConfig.options = { entity, field, aggregation:'', dimension:'' };
+  document.getElementById('config-body').innerHTML = buildCustomForm(activeConfig.options);
+}
+function onCustomAggChange() {
+  const entity = document.getElementById('cfg-entity')?.value || '';
+  const field  = document.getElementById('cfg-field')?.value || '';
+  const agg    = document.getElementById('cfg-aggregation')?.value || '';
+  if (!activeConfig) return;
+  activeConfig.options = { entity, field, aggregation: agg, dimension: '' };
+  document.getElementById('config-body').innerHTML = buildCustomForm(activeConfig.options);
+}
+function collectFormValues() {
+  const opts = {};
+  document.querySelectorAll('#config-body [data-key]').forEach(el => {
+    opts[el.dataset.key] = el.type === 'checkbox' ? el.checked : el.value;
+  });
+  // For custom, also collect step fields without data-key
+  const entity = document.getElementById('cfg-entity')?.value;
+  const field  = document.getElementById('cfg-field')?.value;
+  const agg    = document.getElementById('cfg-aggregation')?.value;
+  const dim    = document.getElementById('cfg-dimension')?.value;
+  if (entity !== undefined) {
+    opts.entity = entity; opts.field = field || ''; opts.aggregation = agg || ''; opts.dimension = dim || '';
+  }
+  return opts;
+}
+
+// ── Run Report ────────────────────────────────────────────────────
+async function runReport() {
+  const opts = collectFormValues();
+  if (activeConfig) activeConfig.options = opts;
+
+  const btn = document.getElementById('run-report-btn');
+  btn.disabled = true; btn.textContent = 'Running…';
+
+  setView('report');
+  showChartLoading();
+
+  try {
+    const result = await executeReport(activeConfig);
+    renderResult(result);
+    // Set title and badge
+    const tpl = activeConfig.templateId ? TEMPLATES.find(t => t.id === activeConfig.templateId) : null;
+    const name = activeConfig.name || (tpl ? tpl.name : 'Custom Report');
+    document.getElementById('report-title').textContent = name;
+    const cat  = activeConfig.category || tpl?.category || 'custom';
+    const ci   = CATEGORY_INFO[cat] || CATEGORY_INFO.custom;
+    const badge = document.getElementById('report-category-badge');
+    badge.textContent = ci.label; badge.className = 'saved-card-cat ' + ci.cls;
+    // Show/hide save button (hide if already saved and unchanged)
+    const editBtn = document.getElementById('save-as-btn');
+    editBtn.textContent = activeSavedId ? 'Update' : 'Save';
+    editBtn.onclick = activeSavedId ? updateSaved : openSaveDialog;
+  } catch (e) {
+    showChartError(e.message || 'Failed to run report.');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Run Report';
+  }
+  renderSidebar();
+}
+
+async function runSaved(id) {
+  const r = savedReports.find(s => s.id === id);
+  if (!r) return;
+  activeSavedId = id;
+  activeConfig  = { ...r };
+  closeConfig();
+  setView('report');
+  showChartLoading();
+  try {
+    const result = await executeReport(activeConfig);
+    renderResult(result);
+    document.getElementById('report-title').textContent = r.name;
+    const ci = CATEGORY_INFO[r.category] || CATEGORY_INFO.custom;
+    const badge = document.getElementById('report-category-badge');
+    badge.textContent = ci.label; badge.className = 'saved-card-cat ' + ci.cls;
+    document.getElementById('save-as-btn').textContent = 'Update';
+    document.getElementById('save-as-btn').onclick = updateSaved;
+  } catch(e) {
+    showChartError(e.message || 'Failed to run report.');
+  }
+  renderSidebar();
+}
+
+function showChartLoading() {
+  document.getElementById('chart-canvas').style.display = 'none';
+  document.getElementById('kpi-wrap').style.display = 'none';
+  document.getElementById('chart-summary').style.display = 'none';
+  document.getElementById('chart-placeholder').innerHTML = '<div class="chart-loading"><div class="spinner"></div><span>Running report…</span></div>';
+  document.getElementById('chart-placeholder').style.display = 'flex';
+  destroyChart();
+}
+function showChartError(msg) {
+  document.getElementById('chart-placeholder').innerHTML = `<div class="chart-error"><span style="font-size:24px">⚠️</span><span>${escHtml(msg)}</span><button class="btn-sm" onclick="runReport()">Retry</button></div>`;
+  document.getElementById('chart-placeholder').style.display = 'flex';
+}
+
+// ── Execute Report ────────────────────────────────────────────────
+const EXECUTORS = {
+  'hc-total-snapshot':   execHcTotal,
+  'hc-by-dept':          execHcByDept,
+  'hc-by-level':         execHcByLevel,
+  'hc-trend':            execHcTrend,
+  'hc-vacancy-rate':     execHcVacancy,
+  'hc-new-joiners':      execHcNewJoiners,
+  'pay-gender-gap':      execPayGenderGap,
+  'pay-band-health':     execPayBandHealth,
+  'pay-dist-dept':       execPayDistDept,
+  'pay-budget-trend':    execPayBudgetTrend,
+  'pay-avg-by-level':    execPayAvgByLevel,
+  'pay-review-flags':    execPayReviewFlags,
+  'div-gender-split':    execDivGenderSplit,
+  'div-gender-by-dept':  execDivGenderByDept,
+  'div-gender-by-level': execDivGenderByLevel,
+  'div-age-dist':        execDivAgeDist,
+  'div-senior-diversity':execDivSeniorDiversity,
+  'div-country-split':   execDivCountrySplit,
+  'org-span-control':    execOrgSpan,
+  'org-hierarchy-depth': execOrgDepth,
+  'org-manager-ratio':   execOrgManagerRatio,
+  'org-multi-role':      execOrgMultiRole,
+  'org-orphans':         execOrgOrphans,
+  'org-dept-payroll-share': execOrgPayrollShare,
+};
+
+async function executeReport(config) {
+  if (!config.templateId) return execCustom(config.options);
+  const fn = EXECUTORS[config.templateId];
+  if (!fn) throw new Error('Unknown report: ' + config.templateId);
+  return await fn(config.options);
+}
+
+// ── Snapshot: Headcount ───────────────────────────────────────────
+function execHcTotal(opts) {
+  const persons = getActivePersons(opts.filterStatus || 'active');
+  const counts = { male:0, female:0, other:0, unknown:0 };
+  persons.forEach(p => counts[genderKey(p)]++);
+  const total = persons.length;
+  return {
+    type: 'doughnut',
+    data: {
+      labels: ['Male','Female','Other','Unknown'],
+      datasets: [{ data: [counts.male, counts.female, counts.other, counts.unknown], backgroundColor: Object.values(GENDER_COLORS), borderWidth: 2, borderColor: '#fff' }]
+    },
+    options: donutOptions(`Total: ${total}`),
+    summary: [{ label:'Total Employees', value:total }, { label:'Male', value:counts.male }, { label:'Female', value:counts.female }, { label:'Other/Unknown', value:counts.other+counts.unknown }],
+    summaryHeaders: ['Metric','Count'],
+  };
+}
+
+function execHcByDept(opts) {
+  const persons = getActivePersons(opts.filterStatus || 'active');
+  const deptCounts = {};
+  appData.departments.forEach(d => { deptCounts[d.id] = { name:d.name, count:0, vacant:0 }; });
+  persons.forEach(p => {
+    const r = getPrimaryRoleForPerson(p.id);
+    const dId = r?.departmentId || r?.department;
+    if (dId && deptCounts[dId]) deptCounts[dId].count++;
+  });
+  if (opts.showVacant) {
+    appData.roles.forEach(r => {
+      const dId = r.departmentId || r.department;
+      const person = appData.roleAssignments.find(a => a.roleId === r.id) ? appData.persons.find(p => appData.roleAssignments.find(a => a.roleId === r.id && a.personId === p.id)) : null;
+      if (!person && dId && deptCounts[dId]) deptCounts[dId].vacant++;
+    });
+  }
+  let entries = Object.values(deptCounts).filter(d => d.count > 0 || d.vacant > 0);
+  entries.sort(opts.sortBy === 'alpha' ? (a,b) => a.name.localeCompare(b.name) : (a,b) => b.count - a.count);
+  const labels  = entries.map(e => e.name);
+  const datasets = [{ label:'Employees', data:entries.map(e => e.count), backgroundColor:CHART_COLORS[0]+'cc', borderRadius:4 }];
+  if (opts.showVacant) datasets.push({ label:'Vacant', data:entries.map(e => e.vacant), backgroundColor:CHART_COLORS[1]+'cc', borderRadius:4 });
+  return {
+    type:'bar',
+    data:{ labels, datasets },
+    options: barOptions(true, opts.showVacant),
+    summary: entries.map(e => ({ label:e.name, value:`${e.count} employees${opts.showVacant ? ` · ${e.vacant} vacant` : ''}` })),
+    summaryHeaders:['Department','Count'],
+  };
+}
+
+function execHcByLevel(opts) {
+  const persons = getActivePersons(opts.filterStatus || 'active');
+  const counts = {};
+  persons.forEach(p => {
+    const r = getPrimaryRoleForPerson(p.id);
+    const lvl = r ? (r.level || 'Unleveled') : 'Unassigned';
+    counts[lvl] = (counts[lvl] || 0) + 1;
+  });
+  const labels = LEVEL_ORDER.filter(l => counts[l]);
+  const data   = labels.map(l => counts[l]);
+  return {
+    type:'bar',
+    data:{ labels, datasets:[{ label:'Employees', data, backgroundColor:CHART_COLORS[0]+'cc', borderRadius:4 }] },
+    options: barOptions(false),
+    summary: labels.map((l,i) => ({ label:l, value:data[i] })),
+    summaryHeaders:['Level','Count'],
+  };
+}
+
+function execHcVacancy(opts) {
+  const deptMap = {};
+  appData.departments.forEach(d => { deptMap[d.id] = { name:d.name, filled:0, vacant:0 }; });
+  appData.roles.forEach(r => {
+    const dId = r.departmentId || r.department;
+    if (!dId || !deptMap[dId]) return;
+    const filled = appData.roleAssignments.some(a => a.roleId === r.id && appData.persons.find(p => p.id === a.personId && !p.noLongerHired));
+    if (filled) deptMap[dId].filled++; else deptMap[dId].vacant++;
+  });
+  const entries = Object.values(deptMap).filter(d => d.filled + d.vacant > 0);
+  entries.sort((a,b) => b.vacant - a.vacant);
+  return {
+    type:'bar',
+    data:{ labels:entries.map(e=>e.name), datasets:[
+      { label:'Filled', data:entries.map(e=>e.filled), backgroundColor:CHART_COLORS[0]+'cc', borderRadius:4 },
+      { label:'Vacant', data:entries.map(e=>e.vacant), backgroundColor:CHART_COLORS[1]+'cc', borderRadius:4 },
+    ]},
+    options: barOptions(true, true),
+    summary: entries.map(e => ({ label:e.name, value:`${e.filled} filled · ${e.vacant} vacant (${e.filled+e.vacant > 0 ? Math.round(e.vacant/(e.filled+e.vacant)*100) : 0}% vacant)` })),
+    summaryHeaders:['Department','Status'],
+  };
+}
+
+// ── Trend: Headcount ──────────────────────────────────────────────
+async function execHcTrend(opts) {
+  const creates = await fetchChangelogAll({ entityType:'person', operation:'CREATE' });
+  const deletes = await fetchChangelogAll({ entityType:'person', operation:'DELETE' });
+  const events = [
+    ...creates.map(e => ({ ts: e.timestamp, delta: +1 })),
+    ...deletes.map(e => ({ ts: e.timestamp, delta: -1 })),
+  ].sort((a,b) => a.ts.localeCompare(b.ts));
+
+  const from  = opts.dateFrom || (events.length ? events[0].ts.slice(0,10) : null);
+  const to    = opts.dateTo   || new Date().toISOString().slice(0,10);
+  const bucket = opts.bucket || 'month';
+  const buckets = generateBuckets(bucket, from, to);
+
+  const series = buckets.map(b => {
+    let count = 0;
+    events.forEach(e => { if (e.ts <= b.end) count += e.delta; });
+    return count < 0 ? 0 : count;
+  });
+
+  return {
+    type:'line',
+    data:{ labels:buckets.map(b=>b.label), datasets:[{ label:'Headcount', data:series, borderColor:CHART_COLORS[0], backgroundColor:CHART_COLORS[0]+'22', fill:true, tension:0.3, pointRadius:3 }]},
+    options: lineOptions('Headcount'),
+    summary: buckets.map((b,i) => ({ label:b.label, value:series[i] })),
+    summaryHeaders:['Period','Headcount'],
+  };
+}
+
+async function execHcNewJoiners(opts) {
+  const creates = await fetchChangelogAll({ entityType:'person', operation:'CREATE', from: opts.dateFrom || undefined, to: opts.dateTo || undefined });
+  creates.sort((a,b) => a.timestamp.localeCompare(b.timestamp));
+  const from  = opts.dateFrom || (creates.length ? creates[0].timestamp.slice(0,10) : new Date(Date.now() - 365*24*60*60*1000).toISOString().slice(0,10));
+  const to    = opts.dateTo   || new Date().toISOString().slice(0,10);
+  const bucket = opts.bucket || 'month';
+  const buckets = generateBuckets(bucket, from, to);
+  const series = buckets.map(b => creates.filter(e => e.timestamp >= b.start && e.timestamp <= b.end).length);
+  return {
+    type:'bar',
+    data:{ labels:buckets.map(b=>b.label), datasets:[{ label:'New Joiners', data:series, backgroundColor:CHART_COLORS[2]+'cc', borderRadius:4 }]},
+    options: barOptions(false),
+    summary: buckets.map((b,i) => ({ label:b.label, value:series[i] })),
+    summaryHeaders:['Period','New Joiners'],
+  };
+}
+
+// ── Snapshot: Compensation ────────────────────────────────────────
+function execPayGenderGap(opts) {
+  const persons = getActivePersons('active').filter(p => p.salary);
+  const data = {};
+  persons.forEach(p => {
+    const r = getPrimaryRoleForPerson(p.id);
+    if (!r) return;
+    const lvl = r.level || 'Unleveled';
+    if (opts.filterLevel && lvl !== opts.filterLevel) return;
+    if (!data[lvl]) data[lvl] = { male:[], female:[], other:[] };
+    const g = genderKey(p);
+    if (g === 'unknown') return;
+    data[lvl][g].push(p.salary);
+  });
+  const levels = Object.keys(data).sort((a,b) => levelSortKey(a)-levelSortKey(b));
+  return {
+    type:'bar',
+    data:{ labels:levels, datasets:[
+      { label:'Male',   data:levels.map(l => avg(data[l].male)   || null), backgroundColor:GENDER_COLORS.male+'cc',   borderRadius:4 },
+      { label:'Female', data:levels.map(l => avg(data[l].female) || null), backgroundColor:GENDER_COLORS.female+'cc', borderRadius:4 },
+      { label:'Other',  data:levels.map(l => avg(data[l].other)  || null), backgroundColor:GENDER_COLORS.other+'cc',  borderRadius:4 },
+    ]},
+    options: barOptions(false, true, 'Avg Salary'),
+    summary: levels.map(l => ({ label:l, value:`M: ${fmt(avg(data[l].male))} · F: ${fmt(avg(data[l].female))}` })),
+    summaryHeaders:['Level','Avg Salary by Gender'],
+  };
+}
+
+function execPayBandHealth(opts) {
+  const persons = getActivePersons('active').filter(p => p.salary);
+  const bands = appData.salaryBands || {};
+  let inBand=0, below=0, above=0, noBand=0;
+  persons.forEach(p => {
+    const r = getPrimaryRoleForPerson(p.id);
+    const lvl = r?.level;
+    const band = lvl ? (bands[lvl] || null) : null;
+    if (!band) { noBand++; return; }
+    if (p.salary < band.min) below++;
+    else if (p.salary > band.max) above++;
+    else inBand++;
+  });
+  const total = inBand + below + above;
+  return {
+    type:'doughnut',
+    data:{ labels:['In Band','Below Band','Above Band'], datasets:[{ data:[inBand,below,above], backgroundColor:[CHART_COLORS[2]+'cc',CHART_COLORS[1]+'cc',CHART_COLORS[0]+'cc'], borderWidth:2, borderColor:'#fff' }]},
+    options: donutOptions(`${total} employees`),
+    summary:[{label:'In Band',value:`${inBand} (${total?Math.round(inBand/total*100):0}%)`},{label:'Below Band',value:`${below}`},{label:'Above Band',value:`${above}`},{label:'No band defined',value:`${noBand}`}],
+    summaryHeaders:['Status','Count'],
+  };
+}
+
+function execPayDistDept(opts) {
+  const deptAvg = {};
+  appData.departments.forEach(d => { deptAvg[d.id] = { name:d.name, salaries:[] }; });
+  getActivePersons('active').forEach(p => {
+    if (!p.salary) return;
+    const r = getPrimaryRoleForPerson(p.id);
+    const dId = r?.departmentId || r?.department;
+    if (dId && deptAvg[dId]) deptAvg[dId].salaries.push(p.salary);
+  });
+  let entries = Object.values(deptAvg).filter(d => d.salaries.length > 0);
+  entries.forEach(d => { d.avg = avg(d.salaries); });
+  entries.sort(opts.sortBy === 'alpha' ? (a,b)=>a.name.localeCompare(b.name) : (a,b)=>b.avg-a.avg);
+  return {
+    type:'bar',
+    data:{ labels:entries.map(e=>e.name), datasets:[{ label:'Avg Monthly Salary', data:entries.map(e=>Math.round(e.avg)), backgroundColor:CHART_COLORS[0]+'cc', borderRadius:4 }]},
+    options: barOptions(true, false, 'Avg Salary'),
+    summary: entries.map(e => ({ label:e.name, value:fmt(e.avg) })),
+    summaryHeaders:['Department','Avg Salary'],
+  };
+}
+
+async function execPayBudgetTrend(opts) {
+  // Reconstruct salary state at each bucket end by replaying salary changes
+  const salaryChanges = await fetchChangelogAll({ entityType:'person', field:'salary' });
+  salaryChanges.sort((a,b) => a.timestamp.localeCompare(b.timestamp));
+
+  const from   = opts.dateFrom || (salaryChanges.length ? salaryChanges[0].timestamp.slice(0,10) : new Date(Date.now()-365*24*60*60*1000).toISOString().slice(0,10));
+  const to     = opts.dateTo   || new Date().toISOString().slice(0,10);
+  const bucket = opts.bucket   || 'month';
+  const buckets = generateBuckets(bucket, from, to);
+
+  // Build per-person salary at each point in time
+  const currentSalaries = {}; // personId → salary (from current data)
+  getActivePersons('all').forEach(p => { if (p.salary) currentSalaries[p.id] = p.salary; });
+
+  // Replay backwards from current state, or replay forwards
+  // Replay forward: start with earliest known salary, apply changes
+  const personSalaryAtTime = {}; // personId → salary at time T
+  // Seed from first appearance in changes
+  salaryChanges.forEach(e => {
+    if (!e.entityId) return;
+    if (!personSalaryAtTime[e.entityId]) {
+      personSalaryAtTime[e.entityId] = parseFloat(e.oldValue) || 0;
+    }
+  });
+
+  const series = buckets.map(b => {
+    // Clone state at start
+    const state = { ...personSalaryAtTime };
+    salaryChanges.filter(e => e.timestamp <= b.end).forEach(e => {
+      if (e.entityId) state[e.entityId] = parseFloat(e.newValue) || 0;
+    });
+    return Object.values(state).filter(v => v > 0).reduce((sum, v) => sum + v, 0);
+  });
+
+  return {
+    type:'line',
+    data:{ labels:buckets.map(b=>b.label), datasets:[{ label:'Total Monthly Payroll', data:series.map(v=>Math.round(v)), borderColor:CHART_COLORS[0], backgroundColor:CHART_COLORS[0]+'22', fill:true, tension:0.3, pointRadius:3 }]},
+    options: lineOptions(fmt(series[series.length-1])+' total'),
+    summary: buckets.map((b,i) => ({ label:b.label, value:fmt(series[i]) })),
+    summaryHeaders:['Period','Total Payroll'],
+  };
+}
+
+function execPayAvgByLevel(opts) {
+  const data = {};
+  getActivePersons('active').forEach(p => {
+    if (!p.salary) return;
+    const r = getPrimaryRoleForPerson(p.id);
+    const lvl = r ? (r.level || 'Unleveled') : 'Unassigned';
+    if (!data[lvl]) data[lvl] = [];
+    data[lvl].push(p.salary);
+  });
+  const levels = Object.keys(data).sort((a,b) => levelSortKey(a)-levelSortKey(b));
+  return {
+    type:'bar',
+    data:{ labels:levels, datasets:[{ label:'Avg Salary', data:levels.map(l=>Math.round(avg(data[l]))), backgroundColor:CHART_COLORS[0]+'cc', borderRadius:4 }]},
+    options: barOptions(false, false, 'Avg Salary'),
+    summary: levels.map(l => ({ label:l, value:fmt(avg(data[l])) })),
+    summaryHeaders:['Level','Avg Salary'],
+  };
+}
+
+function execPayReviewFlags(opts) {
+  const deptData = {};
+  appData.departments.forEach(d => { deptData[d.id] = { name:d.name, flagged:0, ok:0 }; });
+  getActivePersons('active').forEach(p => {
+    const r = getPrimaryRoleForPerson(p.id);
+    const dId = r?.departmentId || r?.department;
+    if (!dId || !deptData[dId]) return;
+    if (p.salaryReviewNeeded) deptData[dId].flagged++;
+    else deptData[dId].ok++;
+  });
+  const entries = Object.values(deptData).filter(d => d.flagged + d.ok > 0);
+  entries.sort((a,b) => b.flagged - a.flagged);
+  return {
+    type:'bar',
+    data:{ labels:entries.map(e=>e.name), datasets:[
+      { label:'Review Needed', data:entries.map(e=>e.flagged), backgroundColor:CHART_COLORS[1]+'cc', borderRadius:4 },
+      { label:'No Flag',      data:entries.map(e=>e.ok),      backgroundColor:CHART_COLORS[0]+'44', borderRadius:4 },
+    ]},
+    options: barOptions(true, true),
+    summary: entries.map(e => ({ label:e.name, value:`${e.flagged} flagged of ${e.flagged+e.ok}` })),
+    summaryHeaders:['Department','Flags'],
+  };
+}
+
+// ── Snapshot: Diversity ───────────────────────────────────────────
+function execDivGenderSplit(opts) {
+  const persons = getActivePersons(opts.filterStatus || 'active');
+  const counts = { male:0, female:0, other:0, unknown:0 };
+  persons.forEach(p => counts[genderKey(p)]++);
+  const total = persons.length;
+  return {
+    type:'doughnut',
+    data:{ labels:['Male','Female','Other','Unknown'], datasets:[{ data:[counts.male,counts.female,counts.other,counts.unknown], backgroundColor:Object.values(GENDER_COLORS), borderWidth:2, borderColor:'#fff' }]},
+    options: donutOptions(`Total: ${total}`),
+    summary: Object.entries(counts).map(([k,v]) => ({ label:GENDER_LABELS[k], value:`${v} (${total?Math.round(v/total*100):0}%)` })),
+    summaryHeaders:['Gender','Count'],
+  };
+}
+
+function execDivGenderByDept(opts) {
+  const deptMap = {};
+  appData.departments.forEach(d => { deptMap[d.id] = { name:d.name, male:0, female:0, other:0, unknown:0 }; });
+  getActivePersons('active').forEach(p => {
+    const r = getPrimaryRoleForPerson(p.id);
+    const dId = r?.departmentId || r?.department;
+    if (dId && deptMap[dId]) deptMap[dId][genderKey(p)]++;
+  });
+  const entries = Object.values(deptMap).filter(d => d.male+d.female+d.other+d.unknown > 0);
+  entries.sort((a,b) => (b.male+b.female+b.other+b.unknown)-(a.male+a.female+a.other+a.unknown));
+  const chartOpts = barOptions(true, true);
+  if (opts.stacked) { chartOpts.scales.x.stacked = true; chartOpts.scales.y.stacked = true; }
+  return {
+    type:'bar',
+    data:{ labels:entries.map(e=>e.name), datasets:[
+      { label:'Male',    data:entries.map(e=>e.male),    backgroundColor:GENDER_COLORS.male+'cc',    borderRadius:2 },
+      { label:'Female',  data:entries.map(e=>e.female),  backgroundColor:GENDER_COLORS.female+'cc',  borderRadius:2 },
+      { label:'Other',   data:entries.map(e=>e.other),   backgroundColor:GENDER_COLORS.other+'cc',   borderRadius:2 },
+      { label:'Unknown', data:entries.map(e=>e.unknown),  backgroundColor:GENDER_COLORS.unknown+'cc', borderRadius:2 },
+    ]},
+    options: chartOpts,
+    summary: entries.map(e => { const t=e.male+e.female+e.other+e.unknown; return { label:e.name, value:`${t} total · ${t?Math.round(e.female/t*100):0}% female` }; }),
+    summaryHeaders:['Department','Breakdown'],
+  };
+}
+
+function execDivGenderByLevel(opts) {
+  const lvlMap = {};
+  getActivePersons('active').forEach(p => {
+    const r = getPrimaryRoleForPerson(p.id);
+    const lvl = r ? (r.level || 'Unleveled') : 'Unassigned';
+    if (!lvlMap[lvl]) lvlMap[lvl] = { male:0, female:0, other:0, unknown:0 };
+    lvlMap[lvl][genderKey(p)]++;
+  });
+  const levels = Object.keys(lvlMap).sort((a,b) => levelSortKey(a)-levelSortKey(b));
+  return {
+    type:'bar',
+    data:{ labels:levels, datasets:[
+      { label:'Male',    data:levels.map(l=>lvlMap[l].male),    backgroundColor:GENDER_COLORS.male+'cc',    borderRadius:2 },
+      { label:'Female',  data:levels.map(l=>lvlMap[l].female),  backgroundColor:GENDER_COLORS.female+'cc',  borderRadius:2 },
+      { label:'Other',   data:levels.map(l=>lvlMap[l].other),   backgroundColor:GENDER_COLORS.other+'cc',   borderRadius:2 },
+      { label:'Unknown', data:levels.map(l=>lvlMap[l].unknown),  backgroundColor:GENDER_COLORS.unknown+'cc', borderRadius:2 },
+    ]},
+    options: barOptions(false, true),
+    summary: levels.map(l => { const e=lvlMap[l]; const t=e.male+e.female+e.other+e.unknown; return { label:l, value:`${t} total · ${t?Math.round(e.female/t*100):0}% female` }; }),
+    summaryHeaders:['Level','Breakdown'],
+  };
+}
+
+function execDivAgeDist(opts) {
+  const buckets = { 'Under 25':0, '25–34':0, '35–44':0, '45–54':0, '55+':0, 'Unknown':0 };
+  getActivePersons('active').forEach(p => {
+    const b = ageBucket(ageFromDOB(p.dateOfBirth));
+    buckets[b] = (buckets[b] || 0) + 1;
+  });
+  const labels = Object.keys(buckets);
+  const data   = Object.values(buckets);
+  return {
+    type:'bar',
+    data:{ labels, datasets:[{ label:'Employees', data, backgroundColor:CHART_COLORS[0]+'cc', borderRadius:4 }]},
+    options: barOptions(false),
+    summary: labels.map((l,i) => ({ label:l, value:data[i] })),
+    summaryHeaders:['Age Group','Count'],
+  };
+}
+
+function execDivSeniorDiversity(opts) {
+  const thresh = parseInt((opts.seniorThreshold || 'L6').replace('L',''), 10);
+  const persons = getActivePersons('active').filter(p => {
+    const r = getPrimaryRoleForPerson(p.id);
+    return r && levelNum(r.level) >= thresh;
+  });
+  const counts = { male:0, female:0, other:0, unknown:0 };
+  persons.forEach(p => counts[genderKey(p)]++);
+  const total = persons.length;
+  return {
+    type:'doughnut',
+    data:{ labels:['Male','Female','Other','Unknown'], datasets:[{ data:[counts.male,counts.female,counts.other,counts.unknown], backgroundColor:Object.values(GENDER_COLORS), borderWidth:2, borderColor:'#fff' }]},
+    options: donutOptions(`${total} seniors`),
+    summary: Object.entries(counts).map(([k,v]) => ({ label:GENDER_LABELS[k], value:`${v} (${total?Math.round(v/total*100):0}%)` })),
+    summaryHeaders:['Gender','Senior Count'],
+  };
+}
+
+function execDivCountrySplit(opts) {
+  const countryCounts = {};
+  getActivePersons('active').forEach(p => {
+    const c = p.country || 'Unknown';
+    countryCounts[c] = (countryCounts[c] || 0) + 1;
+  });
+  let entries = Object.entries(countryCounts).sort((a,b) => b[1]-a[1]);
+  const topN = parseInt(opts.topN || '10', 10);
+  if (topN > 0) entries = entries.slice(0, topN);
+  return {
+    type:'bar',
+    data:{ labels:entries.map(e=>e[0]), datasets:[{ label:'Employees', data:entries.map(e=>e[1]), backgroundColor:CHART_COLORS[0]+'cc', borderRadius:4 }]},
+    options: barOptions(true),
+    summary: entries.map(e => ({ label:e[0], value:e[1] })),
+    summaryHeaders:['Country','Count'],
+  };
+}
+
+// ── Snapshot: Org Structure ───────────────────────────────────────
+function execOrgSpan(opts) {
+  const managerIds = new Set();
+  appData.roles.forEach(r => { if (r.managerRoleId) managerIds.add(r.managerRoleId); });
+  const spans = {};
+  managerIds.forEach(mId => {
+    const count = appData.roles.filter(r => r.managerRoleId === mId).length;
+    const b = count === 0 ? '0' : count <= 2 ? '1–2' : count <= 5 ? '3–5' : count <= 10 ? '6–10' : '11+';
+    spans[b] = (spans[b] || 0) + 1;
+  });
+  const order = ['0','1–2','3–5','6–10','11+'];
+  const labels = order.filter(b => spans[b]);
+  return {
+    type:'bar',
+    data:{ labels, datasets:[{ label:'Managers', data:labels.map(l=>spans[l]||0), backgroundColor:CHART_COLORS[0]+'cc', borderRadius:4 }]},
+    options: barOptions(false),
+    summary: labels.map(l => ({ label:`Span: ${l}`, value:spans[l] })),
+    summaryHeaders:['Span of Control','# Managers'],
+  };
+}
+
+function execOrgDepth(opts) {
+  const memo = {};
+  function maxDepth(roleId) {
+    if (memo[roleId] !== undefined) return memo[roleId];
+    const children = appData.roles.filter(r => r.managerRoleId === roleId);
+    memo[roleId] = children.length ? 1 + Math.max(...children.map(c => maxDepth(c.id))) : 1;
+    return memo[roleId];
+  }
+  const roots = appData.roles.filter(r => !r.managerRoleId || !appData.roles.find(x => x.id === r.managerRoleId));
+  const deptDepths = {};
+  appData.departments.forEach(d => { deptDepths[d.id] = { name:d.name, depth:0 }; });
+  roots.forEach(r => {
+    const d = parseInt(maxDepth(r.id), 10);
+    const dId = r.departmentId || r.department;
+    if (dId && deptDepths[dId]) deptDepths[dId].depth = Math.max(deptDepths[dId].depth, d);
+  });
+  const entries = Object.values(deptDepths).filter(d => d.depth > 0).sort((a,b) => b.depth-a.depth);
+  return {
+    type:'bar',
+    data:{ labels:entries.map(e=>e.name), datasets:[{ label:'Hierarchy Depth', data:entries.map(e=>e.depth), backgroundColor:CHART_COLORS[0]+'cc', borderRadius:4 }]},
+    options: barOptions(true),
+    summary: entries.map(e => ({ label:e.name, value:`${e.depth} levels` })),
+    summaryHeaders:['Department','Max Depth'],
+  };
+}
+
+function execOrgManagerRatio(opts) {
+  const managerRoleIds = new Set();
+  appData.roles.forEach(r => { if (r.managerRoleId) managerRoleIds.add(r.managerRoleId); });
+  const managers = [...managerRoleIds].filter(mId => appData.roleAssignments.some(a => a.roleId === mId)).length;
+  const activePersons = getActivePersons('active');
+  const ics = activePersons.length - managers;
+  const total = activePersons.length;
+  return {
+    type:'doughnut',
+    data:{ labels:['Managers','Individual Contributors'], datasets:[{ data:[managers, Math.max(0,ics)], backgroundColor:[CHART_COLORS[0]+'cc',CHART_COLORS[2]+'cc'], borderWidth:2, borderColor:'#fff' }]},
+    options: donutOptions(`${total} total`),
+    summary:[{ label:'Managers', value:`${managers} (${total?Math.round(managers/total*100):0}%)` },{ label:'ICs', value:`${Math.max(0,ics)}` },{ label:'Ratio (IC:Mgr)', value:managers?`${Math.round(ics/managers)}:1`:'N/A' }],
+    summaryHeaders:['Role Type','Count'],
+  };
+}
+
+function execOrgMultiRole(opts) {
+  const multiRole = getActivePersons('active').filter(p => appData.roleAssignments.filter(a => a.personId === p.id).length > 1);
+  const kpiData = [{ label:'Employees with multiple roles', value:String(multiRole.length) }, { label:'Total active employees', value:String(getActivePersons('active').length) }];
+  return { kpi: kpiData, summary: multiRole.map(p => ({ label:p.name, value:`${appData.roleAssignments.filter(a=>a.personId===p.id).length} roles` })), summaryHeaders:['Employee','Roles'] };
+}
+
+function execOrgOrphans(opts) {
+  const roleIds = new Set(appData.roles.map(r => r.id));
+  const orphans = appData.roles.filter(r => r.managerRoleId && !roleIds.has(r.managerRoleId));
+  return {
+    kpi:[{ label:'Orphaned roles', value:String(orphans.length) },{ label:'(Roles with missing parent)', value:'' }],
+    summary: orphans.map(r => ({ label:r.title || r.id, value:`Parent: ${r.managerRoleId}` })),
+    summaryHeaders:['Role','Missing Parent ID'],
+  };
+}
+
+function execOrgPayrollShare(opts) {
+  const deptSalary = {};
+  appData.departments.forEach(d => { deptSalary[d.id] = { name:d.name, total:0 }; });
+  getActivePersons('active').forEach(p => {
+    if (!p.salary) return;
+    const r = getPrimaryRoleForPerson(p.id);
+    const dId = r?.departmentId || r?.department;
+    if (dId && deptSalary[dId]) deptSalary[dId].total += p.salary;
+  });
+  const entries = Object.values(deptSalary).filter(d => d.total > 0).sort((a,b) => b.total-a.total);
+  const totalAll = entries.reduce((s,e) => s+e.total, 0);
+  return {
+    type:'doughnut',
+    data:{ labels:entries.map(e=>e.name), datasets:[{ data:entries.map(e=>Math.round(e.total)), backgroundColor:CHART_COLORS.slice(0,entries.length).map(c=>c+'cc'), borderWidth:2, borderColor:'#fff' }]},
+    options: donutOptions(fmt(totalAll)+'/mo'),
+    summary: entries.map(e => ({ label:e.name, value:`${fmt(e.total)} (${totalAll?Math.round(e.total/totalAll*100):0}%)` })),
+    summaryHeaders:['Department','Payroll Share'],
+  };
+}
+
+// ── Custom Builder Executor ───────────────────────────────────────
+async function execCustom(opts) {
+  const { entity, field, aggregation, dimension } = opts;
+  if (!entity || !field || !aggregation) throw new Error('Please complete all custom report steps.');
+
+  // Get base data
+  let rows = [];
+  if (entity === 'person') {
+    rows = getActivePersons('active').map(p => {
+      const role = getPrimaryRoleForPerson(p.id);
+      const dept = getDeptForRole(role);
+      return {
+        value: field === '*' ? 1 : (p[field] ?? null),
+        dimDepartment: dept?.name || 'Unknown',
+        dimLevel:      role?.level || 'Unleveled',
+        dimGender:     GENDER_LABELS[genderKey(p)] || 'Unknown',
+        dimCountry:    p.country || 'Unknown',
+      };
+    }).filter(r => {
+      if (field === 'salary') return r.value != null && r.value > 0;
+      if (['salaryReviewNeeded','performanceReviewNeeded','isNew','onLeave'].includes(field)) return r.value === true;
+      return true;
+    });
+  } else if (entity === 'role') {
+    rows = appData.roles.map(r => {
+      const dept = getDeptForRole(r);
+      return { value: field === '*' ? 1 : (r[field] ?? null), dimDepartment: dept?.name || 'Unknown', dimLevel: r.level || 'Unleveled', dimGender:'N/A', dimCountry:'N/A' };
+    });
+  }
+
+  const DIM_KEY = { department:'dimDepartment', level:'dimLevel', gender:'dimGender', country:'dimCountry' };
+  const dimKey = DIM_KEY[dimension] || null;
+
+  if (!dimKey) {
+    // No grouping — single aggregate
+    const values = rows.map(r => parseFloat(r.value) || 0).filter(v => !isNaN(v));
+    const result = aggregate(values, aggregation);
+    const aggLabel = aggregation.charAt(0).toUpperCase() + aggregation.slice(1);
+    const fieldInfo = FIELD_MANIFEST[entity]?.fields?.[field];
+    return { kpi:[{ label:`${aggLabel} of ${fieldInfo?.label || field}`, value:String(result) }], summary:[], summaryHeaders:['Metric','Value'] };
+  }
+
+  // Group by dimension
+  const groups = {};
+  rows.forEach(r => {
+    const key = String(r[dimKey] || 'Unknown');
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(parseFloat(r.value) || 0);
+  });
+  const entries = Object.entries(groups).sort((a,b) => b[1].length - a[1].length);
+  const labels  = entries.map(e => e[0]);
+  const data    = entries.map(e => aggregate(e[1], aggregation));
+  const aggLabel = aggregation.charAt(0).toUpperCase() + aggregation.slice(1);
+
+  return {
+    type: aggregation === 'count' ? 'bar' : 'bar',
+    data:{ labels, datasets:[{ label:aggLabel, data, backgroundColor:CHART_COLORS[0]+'cc', borderRadius:4 }]},
+    options: barOptions(entries.length > 5, false),
+    summary: entries.map((e,i) => ({ label:e[0], value:String(data[i]) })),
+    summaryHeaders:[dimension, aggLabel],
+  };
+}
+
+function aggregate(values, agg) {
+  if (!values.length) return 0;
+  switch(agg) {
+    case 'count':  return values.length;
+    case 'sum':    return Math.round(values.reduce((a,b)=>a+b,0));
+    case 'avg':    return Math.round(avg(values));
+    case 'median': return Math.round(median(values));
+    case 'min':    return Math.min(...values);
+    case 'max':    return Math.max(...values);
+    default:       return values.length;
+  }
+}
+
+// ── Chart Rendering ───────────────────────────────────────────────
+function renderResult(result) {
+  const canvas   = document.getElementById('chart-canvas');
+  const kpiWrap  = document.getElementById('kpi-wrap');
+  const placeholder = document.getElementById('chart-placeholder');
+  const summaryEl   = document.getElementById('chart-summary');
+
+  destroyChart();
+  placeholder.style.display = 'none';
+
+  if (result.kpi) {
+    // KPI tile view
+    canvas.style.display = 'none';
+    kpiWrap.style.display = 'flex';
+    kpiWrap.innerHTML = result.kpi.map(k => `<div class="kpi-card"><div class="kpi-card-value">${escHtml(k.value)}</div><div class="kpi-card-label">${escHtml(k.label)}</div></div>`).join('');
+  } else {
+    kpiWrap.style.display = 'none';
+    canvas.style.display = 'block';
+    activeChart = new Chart(canvas, { type:result.type, data:result.data, options:result.options });
+  }
+
+  // Summary table
+  if (result.summary && result.summary.length) {
+    summaryEl.style.display = '';
+    summaryEl.innerHTML = `<table class="summary-table">
+      <thead><tr>${(result.summaryHeaders||['Label','Value']).map(h=>`<th>${escHtml(h)}</th>`).join('')}</tr></thead>
+      <tbody>${result.summary.map(r=>`<tr>${['label','value'].map(k=>`<td>${escHtml(String(r[k]??''))}</td>`).join('')}</tr>`).join('')}</tbody>
+    </table>`;
+  } else {
+    summaryEl.style.display = 'none';
+  }
+}
+
+function barOptions(horizontal, stacked, yLabel) {
+  return {
+    responsive:true, maintainAspectRatio:false,
+    indexAxis: horizontal ? 'y' : 'x',
+    plugins:{
+      legend:{ display:!!stacked, position:'top', labels:{ boxWidth:12, color:makeTickColor() } },
+      tooltip:{ callbacks:{ label: ctx => ` ${ctx.parsed.y ?? ctx.parsed.x}` } },
+    },
+    scales:{
+      x:{ grid:{color:makeGridColor()}, ticks:{color:makeTickColor()}, stacked:!!stacked },
+      y:{ grid:{color:makeGridColor()}, ticks:{color:makeTickColor()}, stacked:!!stacked, title: yLabel ? {display:true,text:yLabel,color:makeTickColor()} : undefined },
+    },
+  };
+}
+
+function lineOptions(subtitle) {
+  return {
+    responsive:true, maintainAspectRatio:false,
+    plugins:{
+      legend:{ display:false },
+      tooltip:{ callbacks:{ label: ctx => ` ${ctx.parsed.y}` } },
+      subtitle: subtitle ? { display:true, text:subtitle, color:makeTickColor(), font:{size:11} } : undefined,
+    },
+    scales:{
+      x:{ grid:{color:makeGridColor()}, ticks:{color:makeTickColor()} },
+      y:{ grid:{color:makeGridColor()}, ticks:{color:makeTickColor()}, beginAtZero:true },
+    },
+  };
+}
+
+function donutOptions(centerText) {
+  return {
+    responsive:true, maintainAspectRatio:false,
+    plugins:{
+      legend:{ display:true, position:'right', labels:{ boxWidth:12, color:makeTickColor() } },
+      tooltip:{ callbacks:{ label: ctx => ` ${ctx.label}: ${ctx.parsed} (${ctx.dataset.data.reduce((a,b)=>a+b,0) ? Math.round(ctx.parsed/ctx.dataset.data.reduce((a,b)=>a+b,0)*100) : 0}%)` } },
+    },
+    cutout:'60%',
+  };
+}
+
+// ── Changelog Fetching ────────────────────────────────────────────
+async function fetchChangelogAll(params) {
+  const PAGE = 1000;
+  let offset = 0, all = [];
+  while (true) {
+    const p = {};
+    if (params.entityType) p.entityType = params.entityType;
+    if (params.operation)  p.operation  = params.operation;
+    if (params.field)      p.field      = params.field;
+    if (params.from)       p.from       = params.from;
+    if (params.to)         p.to         = params.to;
+    p.limit  = PAGE;
+    p.offset = offset;
+    const qs = new URLSearchParams(p);
+    try {
+      const res = await fetch(`/api/changelog?${qs}`);
+      if (!res.ok) throw new Error('Changelog API error ' + res.status);
+      const { total, entries } = await res.json();
+      if (!entries || entries.length === 0) break;
+      all = all.concat(entries);
+      if (all.length >= total) break;
+      if (params.from && entries.length > 0 && entries[entries.length-1].timestamp < params.from) break;
+      offset += PAGE;
+    } catch(e) {
+      break; // Fail gracefully — return what we have
+    }
+  }
+  return all;
+}
+
+function generateBuckets(bucket, from, to) {
+  if (!from) from = new Date(Date.now() - 365*24*60*60*1000).toISOString().slice(0,10);
+  if (!to)   to   = new Date().toISOString().slice(0,10);
+  const buckets = [];
+  let cur = new Date(from + 'T00:00:00Z');
+  const end = new Date(to + 'T23:59:59Z');
+
+  while (cur <= end) {
+    let label, startISO, endISO, next;
+    const y = cur.getUTCFullYear(), m = cur.getUTCMonth(), d = cur.getUTCDate();
+    if (bucket === 'week') {
+      next = new Date(cur); next.setUTCDate(next.getUTCDate() + 7);
+      label = `${y}-W${String(Math.ceil(d/7)).padStart(2,'0')}`;
+      startISO = cur.toISOString();
+      endISO   = new Date(next.getTime()-1).toISOString();
+    } else if (bucket === 'quarter') {
+      const q = Math.floor(m/3);
+      next = new Date(Date.UTC(y, q*3+3, 1));
+      label = `${y} Q${q+1}`;
+      startISO = new Date(Date.UTC(y, q*3, 1)).toISOString();
+      endISO   = new Date(next.getTime()-1).toISOString();
+    } else { // month
+      next = new Date(Date.UTC(y, m+1, 1));
+      label = cur.toLocaleDateString(undefined, { month:'short', year:'numeric', timeZone:'UTC' });
+      startISO = new Date(Date.UTC(y, m, 1)).toISOString();
+      endISO   = new Date(next.getTime()-1).toISOString();
+    }
+    buckets.push({ label, start:startISO, end:endISO });
+    cur = next;
+    if (bucket === 'quarter' || bucket === 'month') {
+      // Snap to bucket start to avoid drift
+      const yy = cur.getUTCFullYear(), mm = cur.getUTCMonth();
+      cur = new Date(Date.UTC(yy, mm, 1));
+    }
+    if (buckets.length > 200) break; // Safety cap
+  }
+  return buckets;
+}
+
+// ── Save Dialog ───────────────────────────────────────────────────
+function openSaveDialog() {
+  if (!activeConfig) return;
+  const input = document.getElementById('save-name-input');
+  const tpl = activeConfig.templateId ? TEMPLATES.find(t => t.id === activeConfig.templateId) : null;
+  input.value = activeConfig.name || (tpl ? tpl.name : 'Custom Report');
+  document.getElementById('save-dialog').classList.remove('hidden');
+  setTimeout(() => { input.select(); input.focus(); }, 50);
+}
+function closeSaveDialog() { document.getElementById('save-dialog').classList.add('hidden'); }
+function confirmSave() {
+  const name = document.getElementById('save-name-input').value.trim();
+  if (!name) return;
+  closeSaveDialog();
+  const tpl = activeConfig.templateId ? TEMPLATES.find(t => t.id === activeConfig.templateId) : null;
+  const config = {
+    ...activeConfig,
+    name,
+    category: activeConfig.category || tpl?.category || 'custom',
+    reportType: activeConfig.reportType || tpl?.type || 'snapshot',
+  };
+  const saved = addSavedReport(config);
+  if (saved) {
+    activeSavedId = saved.id;
+    activeConfig  = { ...saved };
+    document.getElementById('report-title').textContent = name;
+    document.getElementById('save-as-btn').textContent  = 'Update';
+    document.getElementById('save-as-btn').onclick      = updateSaved;
+    renderSidebar();
+    renderSavedGrid();
+    showToast('Report saved!', 'success');
+  }
+}
+function updateSaved() {
+  if (!activeSavedId || !activeConfig) return;
+  updateSavedReport(activeSavedId, activeConfig);
+  renderSidebar();
+  renderSavedGrid();
+  showToast('Report updated!', 'success');
+}
+
+function confirmDelete(id) {
+  const r = savedReports.find(s => s.id === id);
+  if (!r) return;
+  if (!confirm(`Delete "${r.name}"?`)) return;
+  deleteSavedReport(id);
+  if (activeSavedId === id) {
+    activeSavedId = null;
+    activeConfig  = null;
+    setView('grid');
+    closeConfig();
+  }
+  renderSidebar();
+  renderSavedGrid();
+  showToast('Report deleted.');
+}
+
+// ── Init ──────────────────────────────────────────────────────────
+async function init() {
+  const overlay = document.getElementById('loading-overlay');
+  let simActive = false;
+  let rawData = null;
+
+  try {
+    const simRes = await fetch('/api/sim-data');
+    const dataRes = simRes.ok ? simRes : await fetch('/api/data');
+    if (!dataRes.ok) throw new Error('Server returned ' + dataRes.status);
+    simActive = simRes.ok;
+    rawData = await dataRes.json();
+    if (rawData.departments)    appData.departments    = rawData.departments;
+    if (rawData.roles)          appData.roles          = rawData.roles;
+    if (rawData.persons)        appData.persons        = rawData.persons;
+    if (rawData.roleAssignments) appData.roleAssignments = rawData.roleAssignments;
+    if (rawData.settings)       Object.assign(appData.settings, rawData.settings);
+    if (rawData.salaryBands)    appData.salaryBands    = rawData.salaryBands;
+  } catch(e) {
+    overlay.innerHTML = `<div style="text-align:center;padding:2rem">
+      <div style="font-size:1.25rem;font-weight:600;color:#111110;margin-bottom:0.5rem">Cannot connect to server</div>
+      <div style="color:#57534e;margin-bottom:1.5rem">Make sure the server is running: <code style="background:#f0eeea;padding:2px 6px;border-radius:4px">npm start</code></div>
+      <button onclick="location.reload()" style="padding:0.5rem 1.5rem;background:#1a7a8a;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:1rem">Retry</button>
+    </div>`;
+    return;
+  }
+
+  if (simActive) document.body.classList.add('sim-mode');
+  if (rawData?.plannedChange) {
+    const pc = rawData.plannedChange;
+    const d = new Date(pc.effectiveAt);
+    document.getElementById('pc-banner-label').textContent = `Planned change: "${pc.label||'Untitled'}" — effective ${d.toLocaleDateString()}`;
+    document.body.classList.add('planned-change-mode');
+  }
+
+  // Wait for auth
+  if (!window.__currentUser) {
+    await new Promise(resolve => document.addEventListener('auth:ready', resolve, { once: true }));
+  }
+  const rights = (window.__currentUser && window.__currentUser.rights) || [];
+  const canViewSalaries = rights.includes('view_salaries');
+
+  // Disable compensation templates if no salary access
+  if (!canViewSalaries) {
+    TEMPLATES.filter(t => t.requiresRight === 'view_salaries').forEach(t => {
+      t._locked = true;
+    });
+  }
+
+  setupChartDefaults();
+  savedReports = loadSavedReports();
+  renderSidebar();
+  renderSavedGrid();
+  setView('grid');
+  overlay.style.display = 'none';
+}
+
+init();
+</script>
+<script src="/notifications.js"></script>
+</body>
+</html>

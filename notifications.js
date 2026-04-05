@@ -16,6 +16,13 @@
   //   detail — full description shown in the modal (plain text or simple HTML)
   const RELEASE_NOTES = [
     {
+      id:     'release-0.10.0-reports',
+      date:   '5 Apr 2026',
+      title:  'Reports (0.10.0)',
+      body:   'New Reports page with 24 pre-built HR report templates, trend charts from audit history, and a custom field-level report builder.',
+      detail: 'The Reports page (accessible from the left nav) lets you start from pre-built templates across four categories — Headcount & Hiring, Compensation & Pay Equity, Diversity & Inclusion, and Org Structure & Efficiency — configure each with filters, grouping, and date ranges, then save them as named reports. Trend reports reconstruct historical data from the audit changelog (headcount over time, payroll budget trend, new joiners). A custom builder lets you pick any field in the data model, choose an aggregation, group by a dimension, and render it as a chart. Saved reports are stored per-organisation in your browser and reload automatically.',
+    },
+    {
       id:     'release-0.9.31-operator-console-fixes',
       date:   '5 Apr 2026',
       title:  'Operator Console & Changelog fixes (0.9.31)',

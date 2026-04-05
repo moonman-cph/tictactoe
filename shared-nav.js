@@ -45,6 +45,7 @@
     reset:       `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l14 14M1 8a7 7 0 0 1 12-4.9M15 8a7 7 0 0 1-12 4.9"/></svg>`,
     permissions: `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 1l5 2v4c0 3-2.2 5.5-5 6.5C5.2 12.5 3 10 3 7V3z"/><path d="M6 8l1.5 1.5L10 6" stroke-width="1.4"/></svg>`,
     operator:    `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="14" height="10" rx="1.5"/><line x1="5" y1="7" x2="5" y2="9"/><line x1="8" y1="6" x2="8" y2="10"/><line x1="11" y1="7" x2="11" y2="9"/></svg>`,
+    reports:     `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="9" width="3" height="5" rx="0.5"/><rect x="6" y="5" width="3" height="9" rx="0.5"/><rect x="11" y="2" width="3" height="12" rx="0.5"/></svg>`,
   };
 
   // ── Admin section: hrefs differ on orgchart vs other pages ────────────────
@@ -103,6 +104,7 @@
       ${item('dashboard.html', 'Dashboard',    ico.dashboard)}
       ${hasRight('view_org_chart') ? item('orgchart.html', 'Org Chart', ico.orgchart) : ''}
       ${item('ai.html',        'AI Assistant', ico.ai)}
+      ${item('reports.html',   'Reports',      ico.reports)}
     </div>
     ${peopleItems.length ? `<div class="nav-section">
       <div class="nav-section-label">People</div>

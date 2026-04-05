@@ -17,6 +17,7 @@ HR org chart app served by a minimal Node.js/Express server. All HTML files are 
 - **`paybands.html`** — Pay Bands configuration page. Reads and writes salary bands and location multipliers via `/api/data`.
 - **`changelog.html`** — Read-only audit log viewer. Shows every data change grouped by save event, with filters and field-level detail. Reads from `/api/changelog`.
 - **`ai.html`** — AI Assistant page UI shell. Reads data from `/api/data`. (Backend not yet implemented — M6.)
+- **`reports.html`** — HR Reports page. 24 pre-built report templates (snapshot + trend), custom field-level report builder, saved reports in localStorage. Uses Chart.js 4.x via CDN. Reads `/api/data` (snapshots) and `/api/changelog` (trend reports).
 - **`shared-nav.js`** — Left navigation component shared by all pages. Auto-detects current page.
 - **`shared.css`** / **`[page].css`** — Shared base styles and per-page stylesheets.
 - **`fixtures/`** — Sample CSV files for testing the CSV import feature.

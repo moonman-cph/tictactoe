@@ -59,11 +59,15 @@ router.post('/logout', (req, res) => {
 // GET /api/v1/auth/me
 router.get('/me', requireAuth, async (req, res) => {
   try {
-    const data   = await db.getData(req.user.orgId);
+    const [data, org] = await Promise.all([
+      db.getData(req.user.orgId),
+      db.getOrgById(req.user.orgId),
+    ]);
     const rights = getEffectiveRights(req.user, data);
     res.json({
       userId:          req.user.userId,
       orgId:           req.user.orgId,
+      orgName:         org?.name ?? null,
       email:           req.user.email,
       role:            req.user.role,
       personId:        req.user.personId || null,
@@ -77,6 +81,7 @@ router.get('/me', requireAuth, async (req, res) => {
     res.json({
       userId:          req.user.userId,
       orgId:           req.user.orgId,
+      orgName:         null,
       email:           req.user.email,
       role:            req.user.role,
       personId:        req.user.personId || null,

@@ -92,10 +92,12 @@
       ${destructiveItems}
     </div>` : '';
 
+    var orgName = window.__currentUser && window.__currentUser.orgName;
     return `
   <div id="nav-logo">
     <img src="/images/teampura-petrol-small.svg" alt="Teampura" class="nav-logo-img">
   </div>
+  ${orgName ? `<div id="nav-org-name">${escHtml(orgName)}</div>` : ''}
   <div id="nav-body">
     <div class="nav-section">
       ${item('dashboard.html', 'Dashboard',    ico.dashboard)}

@@ -16,6 +16,13 @@
   //   detail — full description shown in the modal (plain text or simple HTML)
   const RELEASE_NOTES = [
     {
+      id:     'release-0.9.27-org-name-nav',
+      date:   '5 Apr 2026',
+      title:  'Organisation name in navigation (0.9.27)',
+      body:   'Your organisation name now appears below the Teampura logo in the left navigation after you log in.',
+      detail: 'The organisation name is now shown as a small label below the Teampura logo in the left nav bar. This makes it clear which organisation you are operating in at all times. The label is hidden gracefully if no name is available.',
+    },
+    {
       id:     'release-0.9.26-autofill-fix',
       date:   '5 Apr 2026',
       title:  'Operator Console search autofill fix (0.9.26)',

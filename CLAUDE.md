@@ -120,7 +120,7 @@ Every `POST /api/data` is intercepted server-side: the previous and new state ar
 
 ### Ignored Fields (never generate log entries)
 
-`orgId`, `_simLabel`, `isNew`, `snapshots`, `plannedChange`
+`orgId`, `_simLabel`, `isNew`, `snapshots`, `plannedChange`, `dragMode`, `matrixMode`, `hideLevels`
 
 ### Bulk Operation Detection
 

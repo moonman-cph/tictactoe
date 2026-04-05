@@ -16,6 +16,13 @@
   //   detail — full description shown in the modal (plain text or simple HTML)
   const RELEASE_NOTES = [
     {
+      id:     'release-0.9.28-autofill-readonly-fix',
+      date:   '5 Apr 2026',
+      title:  'Operator Console autofill fix (0.9.28)',
+      body:   'Fixed Chrome autofilling the Operator Console search fields with saved credentials.',
+      detail: 'Chrome was ignoring autocomplete hints and autofilling the org and user search fields with the logged-in email address. Fixed using the readonly-on-load technique — fields start as readonly (which Chrome never autofills) and become editable on first focus.',
+    },
+    {
       id:     'release-0.9.27-org-name-nav',
       date:   '5 Apr 2026',
       title:  'Organisation name in navigation (0.9.27)',

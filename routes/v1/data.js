@@ -105,6 +105,7 @@ router.post('/', async (req, res) => {
     const actorUserAgent = (req.headers['user-agent'] || '').slice(0, 500) || null;
 
     const meta = {
+      orgId:      req.user.orgId,
       changeReason,
       source,
       bulkId,

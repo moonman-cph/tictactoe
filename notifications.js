@@ -16,6 +16,13 @@
   //   detail — full description shown in the modal (plain text or simple HTML)
   const RELEASE_NOTES = [
     {
+      id:     'release-0.9.31-operator-console-fixes',
+      date:   '5 Apr 2026',
+      title:  'Operator Console & Changelog fixes (0.9.31)',
+      body:   'Several fixes to the Operator Console and Changelog, including a multi-org changelog bug and org name in the navigation.',
+      detail: 'This release bundles several fixes made since 0.9.30: (1) Changelog entries were hardcoded to the default organisation — changes made by any other org were invisible to them and leaked into the default org\'s log. Fixed. (2) Last Login dates were not showing in the Operator Console due to a camelCase field name mismatch. Fixed. (3) Last login IP address is now recorded and shown next to Last Login in the Operator Console — the IPv4-mapped IPv6 prefix (::ffff:) is stripped so addresses display cleanly. (4) Organisation name now appears below the Teampura logo in the left navigation after login. (5) The stale "single-user mode" banner has been removed from the Changelog page.',
+    },
+    {
       id:     'release-0.9.30-changelog-improvements',
       date:   '5 Apr 2026',
       title:  'Changelog improvements (0.9.30)',

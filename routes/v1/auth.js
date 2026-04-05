@@ -32,7 +32,8 @@ router.post('/login', async (req, res) => {
       }
     }
 
-    await db.updateUserLastLogin(user.id, req.ip);
+    const loginIp = (req.ip || '').replace(/^::ffff:/, '') || null;
+    await db.updateUserLastLogin(user.id, loginIp);
 
     const token = signToken({
       userId:   user.id,

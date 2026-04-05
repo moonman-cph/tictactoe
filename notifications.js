@@ -16,6 +16,13 @@
   //   detail — full description shown in the modal (plain text or simple HTML)
   const RELEASE_NOTES = [
     {
+      id:     'release-0.9.26-autofill-fix',
+      date:   '5 Apr 2026',
+      title:  'Operator Console search autofill fix (0.9.26)',
+      body:   'Fixed Chrome autofilling the org/user search fields with saved credentials on login.',
+      detail: 'Chrome was ignoring autocomplete="off" on the search inputs in the Operator Console and autofilling them with the logged-in user\'s email address (treating them as credential fields due to nearby email/password inputs in modals). Fixed by using autocomplete="new-password", which Chrome never autofills.',
+    },
+    {
       id:     'release-0.9.25-create-org-user',
       date:   '5 Apr 2026',
       title:  'Create users per organisation (0.9.25)',

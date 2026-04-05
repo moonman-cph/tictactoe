@@ -16,6 +16,13 @@
   //   detail — full description shown in the modal (plain text or simple HTML)
   const RELEASE_NOTES = [
     {
+      id:     'release-0.10.1-planned-change-crash',
+      date:   '5 Apr 2026',
+      title:  'Bug fix: planned-change crash on load (0.10.1)',
+      body:   'Fixed a crash when loading the org chart after a planned change that had already passed its effective date.',
+      detail: 'When a planned change was auto-applied on page load (because the effective date had already passed), a notification line overwrote the status bar\'s inner HTML, destroying the #status-text element. A subsequent render() call then crashed with "Cannot set properties of null". Fixed by updating only the text node rather than replacing the entire status bar.',
+    },
+    {
       id:     'release-0.10.0-reports',
       date:   '5 Apr 2026',
       title:  'Reports (0.10.0)',

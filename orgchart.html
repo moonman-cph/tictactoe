@@ -3127,8 +3127,12 @@ function applyPlannedChange(silent = false) {
   // Cancel the server-side job so the scheduler doesn't double-apply (best-effort)
   if (jobId) fetch(`/api/v1/jobs/${jobId}`, { method: 'DELETE' }).catch(() => {});
   if (!silent) {
-    const bar = document.getElementById('status-bar');
-    if (bar) { bar.textContent = 'Planned change applied.'; bar.classList.add('visible'); setTimeout(() => bar.classList.remove('visible'), 3000); }
+    const statusText = document.getElementById('status-text');
+    if (statusText) {
+      const prev = statusText.textContent;
+      statusText.textContent = 'Planned change applied.';
+      setTimeout(() => { statusText.textContent = prev; }, 3000);
+    }
   }
 }
 

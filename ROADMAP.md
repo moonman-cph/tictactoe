@@ -92,8 +92,19 @@ Sensitive fields (salary, band, personal data) are **opt-in from the API** — n
 ---
 
 
-## M4 — Platform Operator Console & Org-Admin Self-Service (current)
+## M4 — Platform Operator Console & Org-Admin Self-Service ⚠ Partially Complete
 The operator console is a protected `/admin` section of the app, accessible only to `super_admin` role. It is the internal tool for managing all customer organisations. Org-admin self-service (inviting users, managing their own org) ships in the same milestone.
+
+**M4 Progress:**
+| Component | Status | Notes |
+|-----------|--------|-------|
+| `organisations` DB table | ✓ Done | Authoritative org registry with plan_tier, status, trial_expires_at |
+| Org-admin invite / user management | ✗ Not started | No `/admin` page exists yet |
+| Operator console UI | ✗ Not started | Deferred — internal tooling, not customer-facing |
+| Licence tier enforcement (headcount caps, feature flags) | ✗ Not started | `org_config` table exists; enforcement logic not implemented |
+| Trial expiry / suspension | ✗ Not started | — |
+
+**Decision — deprioritise M4 console:** The operator console is internal tooling and not customer-facing. Given the EU Pay Transparency deadline of **June 7, 2026 (≈8 weeks away)**, M5 is the higher-priority milestone. M4 console work can proceed in parallel or follow M5 without blocking anything customer-facing.
 
 **Operator console — Organisation Management:**
 - Org list: name, plan tier, headcount, last activity, status (Trial / Active / Suspended)
@@ -144,7 +155,7 @@ Trial orgs auto-suspend on expiry (30 days). Warning emails sent at T-7 and T-1.
 
 ---
 
-## M4.5 — Background Jobs, Scheduled Execution & Daily Metrics (current)
+## M4.5 — Background Jobs, Scheduled Execution & Daily Metrics ✓ Complete
 Server-side infrastructure for running tasks reliably without a browser — the foundation for all future workflow automation.
 
 **Problem solved:** The existing "Planned Change" (org freeze) feature relied on a browser-side `setInterval` timer. If no user was on the page at the scheduled time, the change never fired. Snapshots and planned change state were also not being persisted to PostgreSQL.
@@ -176,19 +187,73 @@ Server-side infrastructure for running tasks reliably without a browser — the 
 
 ---
 
-## M5 — Salary Bands & EU Pay Transparency
+## M4.6 — Reports & Analytics ✓ Complete
+Analytics dashboard and full reports page with pre-built templates, trend reports, custom builder, and insight callouts.
+
+**What shipped:**
+| Component | Status | Notes |
+|-----------|--------|-------|
+| `reports.html` — 24 pre-built templates | ✓ Done | Headcount, compensation, diversity, org structure |
+| Trend reports (changelog replay) | ✓ Done | Headcount trend, new joiners, payroll budget |
+| Custom report builder | ✓ Done | 4-step wizard: entity → field → aggregation → dimension |
+| Saved reports (localStorage) | ✓ Done | Up to 50 reports per user |
+| 5 new reports (v0.11.0) | ✓ Done | Attrition rate, pay spread by level, promotion rate, gender pipeline, org layering trend |
+| Insight callouts | ✓ Done | Amber callout surfaces key finding automatically on any report |
+| % breakdowns in count reports | ✓ Done | All headcount/distribution reports show count + percentage |
+| Demo history seeder | ✓ Done | Seeds 18mo synthetic data: hires, salary changes, promotions, attrition |
+| Empty states for trend reports | ✓ Done | Guides users to seed demo history when no changelog data exists |
+| `dashboard.html` | ✓ Done | Separate analytics page with KPI cards, charts, salary totals |
+
+**Remaining analytics gaps (feed into M5):**
+- `changeReason` audit trail not yet surfaced in pay equity reports
+- Salary band compliance report exists but band configuration UX is minimal (paybands.html)
+- No scheduled / cached reports (planned for M7)
+
+---
+
+## M5 — Salary Bands & EU Pay Transparency ⚡ URGENT — deadline June 7, 2026
 Full salary band management: define bands per role/level, flag employees outside their band, document rationale for individual salary decisions. Pay gap reporting across gender, department, and level.
 
-This milestone is driven by EU Pay Transparency regulation (implementation deadline: June 7, 2026), which requires organisations to be able to demonstrate and document why each employee receives their salary (fair pay, equal terms). The `changeReason` field captured in the changelog on every salary write (introduced in M1, made mandatory for sensitive fields in M3) is the primary compliance trail for this requirement. Pay gap reporting draws directly on `audit_log` to show the history of salary band assignments and documented justifications.
+**Deadline context:** EU Pay Transparency regulation requires organisations to demonstrate and document equal pay by **June 7, 2026 — approximately 8 weeks away**. This milestone is the highest priority.
+
+The `changeReason` field captured on every salary write (introduced in M1) is the primary compliance trail. Pay gap reporting draws on `audit_log` to show the history of salary band assignments and documented justifications.
+
+**Groundwork already in place from M4.6:**
+- `pay-gender-gap` report with gap % per level and widest-gap insight callout
+- `pay-level-spread` report showing P25–P75 range and coefficient of variation per level
+- `pay-band-health` report showing in/above/below band counts
+- `pay-review-flags` report with % flagged per department
+- `paybands.html` — band configuration page (read/write, per level min/max/midpoint)
+- `isSensitive` flag + `changeReason` field already captured in audit log for every salary write
+
+**Remaining M5 work:**
+| Component | Status | Notes |
+|-----------|--------|-------|
+| `changeReason` mandatory on salary writes | ✗ Not done | Server rejects if absent or < 10 chars; deferred from M3 |
+| Pay equity report with `changeReason` trail | ✗ Not done | Show documented justifications alongside pay gap data |
+| Band assignment history | ✗ Not done | When did each employee's band last change, and why? |
+| Pay gap narrative export | ✗ Not done | HR-facing summary report suitable for regulatory submission |
+| Salary band coverage enforcement | ✗ Not done | Warn when adding/editing a role with no band defined |
+| Location multipliers | ✓ Done | Already in `paybands.html` |
 
 This module should be designed with clean boundaries from the org-data module, as it is the most likely candidate for extraction into a dedicated microservice with its own security controls.
 
 ---
 
-## M6 — AI Assistant (role-scoped, data-aware)
-The AI assistant sits on top of the existing permission-filtered API. It receives a scoped view of data identical to what the logged-in user can see — it never bypasses the role layer or accesses data the user could not access directly. Every AI query (prompt, response summary, data entities accessed, timestamp, actor) is written to `audit_log` via the same changelog pipeline, using `entityType: null`, `operation: "AI_QUERY"`, and `source: "ai"`.
+## M6 — AI Assistant (role-scoped, data-aware) ⚠ Partially Complete
+The AI assistant sits on top of the existing permission-filtered API. It receives a scoped view of data identical to what the logged-in user can see — it never bypasses the role layer or accesses data the user could not access directly.
 
-The assistant should be capable of natural-language queries over HR data, observations about org health, salary equity insights, and surfacing relevant information based on the user's role and context. Managers see their team data; HR sees org-wide data; employees see only their own.
+**M6 Progress:**
+| Component | Status | Notes |
+|-----------|--------|-------|
+| `ai.html` — UI shell | ✓ Done | Chat interface wired up |
+| `routes/v1/ai.js` — backend route | ✓ Done | Identity from JWT, context includes manager names, role occupant map |
+| Role-scoped data context | ✓ Done | Passes permission-filtered org snapshot to AI |
+| AI action cards + apply flow | ✓ Done | Apply button gated on write rights; server enforces independently |
+| Audit log for AI queries | ✓ Done | `operation: "AI_QUERY"`, `source: "ai"` |
+| Conversational context / history | ✗ Not done | Currently stateless per message |
+| Proactive org insights | ✗ Not done | AI surfacing anomalies without being asked |
+| Natural-language report queries | ✗ Not done | "Show me headcount by dept" → runs report |
 
 Do not build the AI layer to call the database directly. It must go through the same API and permission checks as any other client.
 

@@ -193,6 +193,25 @@ const TEMPLATES = [
     opts:[], def:{} },
   { id:'org-dept-payroll-share',name:'Payroll Share by Dept',     category:'org',          type:'snapshot', chartType:'doughnut', requiresRight:'view_salaries', desc:'Each department\'s share of total monthly payroll.',
     opts:[], def:{} },
+
+  // ── New reports ──────────────────────────────────────────────
+  { id:'hc-attrition-rate',    name:'Attrition Rate by Dept',   category:'headcount',    type:'trend',    chartType:'bar', isNew:true,
+    desc:'Annualised attrition rate per department, derived from termination events in the audit log.',
+    opts:[{k:'dateFrom',label:'From',type:'date'},{k:'dateTo',label:'To',type:'date'}], def:{dateFrom:'',dateTo:''} },
+  { id:'hc-promotion-rate',    name:'Promotion Rate Over Time', category:'headcount',    type:'trend',    chartType:'bar', isNew:true,
+    desc:'Level-up events per period from the audit log. Requires seeded demo history with promotion events.',
+    opts:[{k:'dateFrom',label:'From',type:'date'},{k:'dateTo',label:'To',type:'date'},{k:'bucket',label:'Bucket',type:'select',choices:[{v:'month',l:'Monthly'},{v:'quarter',l:'Quarterly'}]}],
+    def:{dateFrom:'',dateTo:'',bucket:'quarter'} },
+  { id:'pay-level-spread',     name:'Pay Spread by Level',      category:'compensation', type:'snapshot', chartType:'bar', isNew:true, requiresRight:'view_salaries',
+    desc:'Interquartile salary range and pay consistency at each seniority level.',
+    opts:[], def:{} },
+  { id:'div-gender-pipeline',  name:'Gender Pipeline Analysis', category:'diversity',    type:'snapshot', chartType:'bar', isNew:true,
+    desc:'Female representation across career tiers — tracks whether diversity at entry level translates to leadership.',
+    opts:[], def:{} },
+  { id:'org-layering-trend',   name:'Org Layering Trend',       category:'org',          type:'trend',    chartType:'line', isNew:true,
+    desc:'Manager-to-IC ratio over time — detects whether the org is growing top-heavy.',
+    opts:[{k:'dateFrom',label:'From',type:'date'},{k:'dateTo',label:'To',type:'date'},{k:'bucket',label:'Bucket',type:'select',choices:[{v:'month',l:'Monthly'},{v:'quarter',l:'Quarterly'}]}],
+    def:{dateFrom:'',dateTo:'',bucket:'quarter'} },
 ];
 
 // ── Custom Builder Field Manifest ────────────────────────────────
@@ -282,6 +301,17 @@ function median(arr) {
   return s.length % 2 ? s[mid] : (s[mid - 1] + s[mid]) / 2;
 }
 function avg(arr) { return arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0; }
+function percentile(arr, p) {
+  if (!arr.length) return 0;
+  const s = [...arr].sort((a, b) => a - b);
+  return s[Math.max(0, Math.ceil(s.length * p / 100) - 1)];
+}
+function stddev(arr) {
+  if (arr.length < 2) return 0;
+  const m = avg(arr);
+  return Math.sqrt(arr.reduce((sum, v) => sum + (v - m) ** 2, 0) / (arr.length - 1));
+}
+function cv(arr) { const m = avg(arr); return m ? stddev(arr) / m * 100 : 0; }
 function fmt(n) {
   if (!n) return '0';
   const cur = appData.settings.currency || 'DKK';
@@ -348,11 +378,12 @@ function renderSidebar() {
   let html = '';
   for (const cat of categories) {
     const tpls = TEMPLATES.filter(t => t.category === cat);
-    html += `<div class="sidebar-cat-label">${CATEGORY_INFO[cat].label}</div>`;
+    html += `<div class="sidebar-cat-label">${CATEGORY_INFO[cat].label}<span class="sidebar-cat-count">${tpls.length}</span></div>`;
     for (const t of tpls) {
       const active = activeConfig && activeConfig.templateId === t.id ? ' active' : '';
       html += `<div class="tpl-item${active}" onclick="openConfig('${t.id}',null)" title="${escHtml(t.desc)}">
         ${escHtml(t.name)}
+        ${t.isNew ? '<span class="tpl-new-badge">New</span>' : ''}
         <span class="tpl-type-badge ${t.type}">${t.type === 'trend' ? 'trend' : 'snap'}</span>
       </div>`;
     }
@@ -718,6 +749,11 @@ const EXECUTORS = {
   'org-multi-role':      execOrgMultiRole,
   'org-orphans':         execOrgOrphans,
   'org-dept-payroll-share': execOrgPayrollShare,
+  'hc-attrition-rate':    execHcAttritionRate,
+  'hc-promotion-rate':    execHcPromotionRate,
+  'pay-level-spread':     execPayLevelSpread,
+  'div-gender-pipeline':  execDivGenderPipeline,
+  'org-layering-trend':   execOrgLayeringTrend,
 };
 
 async function executeReport(config) {
@@ -770,8 +806,11 @@ function execHcByDept(opts) {
     type:'bar',
     data:{ labels, datasets },
     options: barOptions(true, opts.showVacant),
-    summary: entries.map(e => ({ label:e.name, value:`${e.count} employees${opts.showVacant ? ` · ${e.vacant} vacant` : ''}` })),
-    summaryHeaders:['Department','Count'],
+    summary: [
+      ...entries.map(e => ({ label:e.name, value:`${e.count} (${persons.length ? Math.round(e.count/persons.length*100) : 0}%)${opts.showVacant ? ` · ${e.vacant} vacant` : ''}` })),
+      { label:'Total', value:persons.length },
+    ],
+    summaryHeaders:['Department','Employees'],
   };
 }
 
@@ -785,12 +824,16 @@ function execHcByLevel(opts) {
   });
   const labels = LEVEL_ORDER.filter(l => counts[l]);
   const data   = labels.map(l => counts[l]);
+  const total  = persons.length;
   return {
     type:'bar',
     data:{ labels, datasets:[{ label:'Employees', data, backgroundColor:CHART_COLORS[0]+'cc', borderRadius:4 }] },
     options: barOptions(false),
-    summary: labels.map((l,i) => ({ label:l, value:data[i] })),
-    summaryHeaders:['Level','Count'],
+    summary: [
+      ...labels.map((l,i) => ({ label:l, value:`${data[i]} (${total ? Math.round(data[i]/total*100) : 0}%)` })),
+      { label:'Total', value:total },
+    ],
+    summaryHeaders:['Level','Employees'],
   };
 }
 
@@ -829,6 +872,10 @@ async function execHcTrend(opts) {
     ...softTerms.map(e => ({ ts: e.timestamp, delta: e.newValue === true ? -1 : +1 })),
   ].sort((a,b) => a.ts.localeCompare(b.ts));
 
+  if (!events.length) {
+    return { kpi:[{ label:'No headcount history found', value:'—' }, { label:'Tip', value:'Use "Seed Demo History" to populate 18 months of synthetic data.' }], summary:[], summaryHeaders:[] };
+  }
+
   const from  = opts.dateFrom || (events.length ? events[0].ts.slice(0,10) : null);
   const to    = opts.dateTo   || new Date().toISOString().slice(0,10);
   const bucket = opts.bucket || 'month';
@@ -850,19 +897,40 @@ async function execHcTrend(opts) {
 }
 
 async function execHcNewJoiners(opts) {
-  const creates = await fetchChangelogAll({ entityType:'person', operation:'CREATE', from: opts.dateFrom || undefined, to: opts.dateTo || undefined });
+  const [creates, deletes, softTerms] = await Promise.all([
+    fetchChangelogAll({ entityType:'person', operation:'CREATE', from: opts.dateFrom || undefined, to: opts.dateTo || undefined }),
+    fetchChangelogAll({ entityType:'person', operation:'DELETE', from: opts.dateFrom || undefined, to: opts.dateTo || undefined }),
+    fetchChangelogAll({ entityType:'person', field:'noLongerHired', from: opts.dateFrom || undefined, to: opts.dateTo || undefined }),
+  ]);
+  const leaverEvents = [
+    ...deletes,
+    ...softTerms.filter(e => e.newValue === true),
+  ];
   creates.sort((a,b) => a.timestamp.localeCompare(b.timestamp));
-  const from  = opts.dateFrom || (creates.length ? creates[0].timestamp.slice(0,10) : new Date(Date.now() - 365*24*60*60*1000).toISOString().slice(0,10));
+  const allEvents = [...creates, ...leaverEvents];
+  const from  = opts.dateFrom || (allEvents.length ? allEvents.reduce((a,b) => a.timestamp < b.timestamp ? a : b).timestamp.slice(0,10) : new Date(Date.now() - 365*24*60*60*1000).toISOString().slice(0,10));
   const to    = opts.dateTo   || new Date().toISOString().slice(0,10);
   const bucket = opts.bucket || 'month';
   const buckets = generateBuckets(bucket, from, to);
-  const series = buckets.map(b => creates.filter(e => e.timestamp >= b.start && e.timestamp <= b.end).length);
+
+  if (!creates.length && !leaverEvents.length) {
+    return { kpi:[{ label:'No hiring data found', value:'—' }, { label:'Tip', value:'Use "Seed Demo History" to populate synthetic data.' }], summary:[], summaryHeaders:[] };
+  }
+
+  const hires   = buckets.map(b => creates.filter(e => e.timestamp >= b.start && e.timestamp <= b.end).length);
+  const leavers = buckets.map(b => leaverEvents.filter(e => e.timestamp >= b.start && e.timestamp <= b.end).length);
+  const net     = hires.map((h,i) => h - leavers[i]);
+
   return {
     type:'bar',
-    data:{ labels:buckets.map(b=>b.label), datasets:[{ label:'New Joiners', data:series, backgroundColor:CHART_COLORS[2]+'cc', borderRadius:4 }]},
-    options: barOptions(false),
-    summary: buckets.map((b,i) => ({ label:b.label, value:series[i] })),
-    summaryHeaders:['Period','New Joiners'],
+    data:{ labels:buckets.map(b=>b.label), datasets:[
+      { label:'New Hires',  data:hires,   backgroundColor:CHART_COLORS[2]+'cc', borderRadius:4 },
+      { label:'Leavers',    data:leavers, backgroundColor:CHART_COLORS[1]+'cc', borderRadius:4 },
+      { label:'Net Change', data:net,     type:'line', borderColor:CHART_COLORS[0], backgroundColor:'transparent', pointRadius:3, tension:0.3, yAxisID:'y' },
+    ]},
+    options: { ...barOptions(false, true), plugins: { ...barOptions(false,true).plugins, legend:{ display:true, position:'top', labels:{ boxWidth:12, color:makeTickColor() } } } },
+    summary: buckets.map((b,i) => ({ label:b.label, value:`+${hires[i]} hires · −${leavers[i]} leavers · net ${net[i] >= 0 ? '+' : ''}${net[i]}` })),
+    summaryHeaders:['Period','Movement'],
   };
 }
 
@@ -881,6 +949,15 @@ function execPayGenderGap(opts) {
     data[lvl][g].push(p.salary);
   });
   const levels = Object.keys(data).sort((a,b) => levelSortKey(a)-levelSortKey(b));
+  // Compute gaps per level
+  let widestGap = 0, widestGapLevel = '';
+  levels.forEach(l => {
+    const m = avg(data[l].male), f = avg(data[l].female);
+    if (m && f) {
+      const gap = Math.abs(m - f) / Math.max(m, f) * 100;
+      if (gap > widestGap) { widestGap = gap; widestGapLevel = l; }
+    }
+  });
   return {
     type:'bar',
     data:{ labels:levels, datasets:[
@@ -889,8 +966,13 @@ function execPayGenderGap(opts) {
       { label:'Other',  data:levels.map(l => avg(data[l].other)  || null), backgroundColor:GENDER_COLORS.other+'cc',  borderRadius:4 },
     ]},
     options: barOptions(false, true, 'Avg Salary'),
-    summary: levels.map(l => ({ label:l, value:`M: ${fmt(avg(data[l].male))} · F: ${fmt(avg(data[l].female))}` })),
+    summary: levels.map(l => {
+      const m = avg(data[l].male), f = avg(data[l].female);
+      const gap = (m && f) ? Math.round(Math.abs(m - f) / Math.max(m, f) * 100) : null;
+      return { label:l, value:`M: ${fmt(m)} · F: ${fmt(f)}${gap !== null ? ` · gap ${gap}%` : ''}` };
+    }),
     summaryHeaders:['Level','Avg Salary by Gender'],
+    _insight: widestGapLevel ? `Widest gender pay gap at ${widestGapLevel}: ${Math.round(widestGap)}% difference. Male avg: ${fmt(avg(data[widestGapLevel].male))}, female avg: ${fmt(avg(data[widestGapLevel].female))}.` : undefined,
   };
 }
 
@@ -942,6 +1024,10 @@ async function execPayBudgetTrend(opts) {
   // Reconstruct salary state at each bucket end by replaying salary changes
   const salaryChanges = await fetchChangelogAll({ entityType:'person', field:'salary' });
   salaryChanges.sort((a,b) => a.timestamp.localeCompare(b.timestamp));
+
+  if (!salaryChanges.length) {
+    return { kpi:[{ label:'No salary history found', value:'—' }, { label:'Tip', value:'Use "Seed Demo History" to populate synthetic payroll data.' }], summary:[], summaryHeaders:[] };
+  }
 
   const from   = opts.dateFrom || (salaryChanges.length ? salaryChanges[0].timestamp.slice(0,10) : new Date(Date.now()-365*24*60*60*1000).toISOString().slice(0,10));
   const to     = opts.dateTo   || new Date().toISOString().slice(0,10);
@@ -1012,6 +1098,8 @@ function execPayReviewFlags(opts) {
   });
   const entries = Object.values(deptData).filter(d => d.flagged + d.ok > 0);
   entries.sort((a,b) => b.flagged - a.flagged);
+  const totalFlagged = entries.reduce((s,e) => s+e.flagged, 0);
+  const totalAll = entries.reduce((s,e) => s+e.flagged+e.ok, 0);
   return {
     type:'bar',
     data:{ labels:entries.map(e=>e.name), datasets:[
@@ -1019,8 +1107,12 @@ function execPayReviewFlags(opts) {
       { label:'No Flag',      data:entries.map(e=>e.ok),      backgroundColor:CHART_COLORS[0]+'44', borderRadius:4 },
     ]},
     options: barOptions(true, true),
-    summary: entries.map(e => ({ label:e.name, value:`${e.flagged} flagged of ${e.flagged+e.ok}` })),
-    summaryHeaders:['Department','Flags'],
+    summary: [
+      ...entries.map(e => { const t=e.flagged+e.ok; return { label:e.name, value:`${e.flagged} of ${t} (${t ? Math.round(e.flagged/t*100) : 0}%)` }; }),
+      { label:'Org total', value:`${totalFlagged} of ${totalAll} (${totalAll ? Math.round(totalFlagged/totalAll*100) : 0}%)` },
+    ],
+    summaryHeaders:['Department','% Flagged'],
+    _insight: totalFlagged > 0 ? `${totalFlagged} employee${totalFlagged > 1 ? 's' : ''} flagged for salary review (${totalAll ? Math.round(totalFlagged/totalAll*100) : 0}% of workforce). Highest rate: ${entries[0]?.name} (${entries[0] ? Math.round(entries[0].flagged/(entries[0].flagged+entries[0].ok)*100) : 0}%).` : undefined,
   };
 }
 
@@ -1096,12 +1188,16 @@ function execDivAgeDist(opts) {
   });
   const labels = Object.keys(buckets);
   const data   = Object.values(buckets);
+  const total  = data.reduce((a,b) => a+b, 0);
   return {
     type:'bar',
     data:{ labels, datasets:[{ label:'Employees', data, backgroundColor:CHART_COLORS[0]+'cc', borderRadius:4 }]},
     options: barOptions(false),
-    summary: labels.map((l,i) => ({ label:l, value:data[i] })),
-    summaryHeaders:['Age Group','Count'],
+    summary: [
+      ...labels.map((l,i) => ({ label:l, value:`${data[i]} (${total ? Math.round(data[i]/total*100) : 0}%)` })),
+      { label:'Total', value:total },
+    ],
+    summaryHeaders:['Age Group','Employees'],
   };
 }
 
@@ -1132,12 +1228,27 @@ function execDivCountrySplit(opts) {
   let entries = Object.entries(countryCounts).sort((a,b) => b[1]-a[1]);
   const topN = parseInt(opts.topN || '10', 10);
   if (topN > 0) entries = entries.slice(0, topN);
+  const total = entries.reduce((s, e) => s + e[1], 0);
+
+  if (entries.length <= 1) {
+    const loc = entries[0]?.[0] || 'Unknown';
+    const cnt = entries[0]?.[1] || 0;
+    return {
+      kpi:[{ label:'All employees in one location', value:loc }, { label:'Headcount', value:String(cnt) }],
+      summary:[], summaryHeaders:[],
+      _insight:`All ${cnt} employees share the same location (${loc}). Add country/city data to employees to enable geographic analysis.`,
+    };
+  }
+
   return {
     type:'bar',
     data:{ labels:entries.map(e=>e[0]), datasets:[{ label:'Employees', data:entries.map(e=>e[1]), backgroundColor:CHART_COLORS[0]+'cc', borderRadius:4 }]},
     options: barOptions(true),
-    summary: entries.map(e => ({ label:e[0], value:e[1] })),
-    summaryHeaders:['Country','Count'],
+    summary: [
+      ...entries.map(e => ({ label:e[0], value:`${e[1]} (${total ? Math.round(e[1]/total*100) : 0}%)` })),
+      { label:'Total', value:total },
+    ],
+    summaryHeaders:['Country','Employees'],
   };
 }
 
@@ -1240,6 +1351,303 @@ function execOrgPayrollShare(opts) {
   };
 }
 
+// ── New Reports ───────────────────────────────────────────────────
+
+async function execHcAttritionRate(opts) {
+  const [deletes, softTerms] = await Promise.all([
+    fetchChangelogAll({ entityType:'person', operation:'DELETE', from: opts.dateFrom || undefined, to: opts.dateTo || undefined }),
+    fetchChangelogAll({ entityType:'person', field:'noLongerHired', from: opts.dateFrom || undefined, to: opts.dateTo || undefined }),
+  ]);
+  const termEvents = [
+    ...deletes.map(e => ({ ts: e.timestamp, entityId: e.entityId, oldValue: e.oldValue })),
+    ...softTerms.filter(e => e.newValue === true).map(e => ({ ts: e.timestamp, entityId: e.entityId, oldValue: null })),
+  ];
+
+  if (!termEvents.length) {
+    return { kpi:[{ label:'No attrition events found', value:'—' }, { label:'Tip', value:'Use "Seed Demo History" to populate synthetic attrition data.' }], summary:[], summaryHeaders:[] };
+  }
+
+  const from = opts.dateFrom || termEvents.reduce((a,b) => a.ts < b.ts ? a : b).ts.slice(0,10);
+  const to   = opts.dateTo   || new Date().toISOString().slice(0,10);
+
+  // Date range in months for annualisation
+  const fromD = new Date(from), toD = new Date(to);
+  const periodMonths = Math.max(1, (toD.getFullYear() - fromD.getFullYear()) * 12 + (toD.getMonth() - fromD.getMonth()));
+
+  // Count terminations per department
+  const deptTerms = {};
+  const deptHeadcount = {};
+  appData.departments.forEach(d => { deptTerms[d.name] = 0; deptHeadcount[d.name] = 0; });
+
+  // Current headcount per dept
+  getActivePersons('active').forEach(p => {
+    const r = getPrimaryRoleForPerson(p.id);
+    const dept = appData.departments.find(d => d.id === (r?.departmentId || r?.department));
+    if (dept) deptHeadcount[dept.name] = (deptHeadcount[dept.name] || 0) + 1;
+  });
+
+  // Attribute terminations to departments
+  termEvents.filter(e => e.ts >= from + 'T00:00:00Z' && e.ts <= to + 'T23:59:59Z').forEach(e => {
+    // Try to find dept from current persons (soft terms), then from oldValue (hard deletes)
+    const currentPerson = appData.persons.find(p => String(p.id) === String(e.entityId));
+    let deptName = null;
+    if (currentPerson) {
+      const r = getPrimaryRoleForPerson(currentPerson.id);
+      const dept = appData.departments.find(d => d.id === (r?.departmentId || r?.department));
+      if (dept) deptName = dept.name;
+    }
+    if (!deptName && e.oldValue?.departmentId) {
+      const dept = appData.departments.find(d => d.id === e.oldValue.departmentId);
+      if (dept) deptName = dept.name;
+    }
+    if (!deptName) deptName = 'Unknown';
+    if (!(deptName in deptTerms)) deptTerms[deptName] = 0;
+    deptTerms[deptName]++;
+  });
+
+  let entries = Object.entries(deptTerms)
+    .map(([name, terms]) => {
+      const hc = deptHeadcount[name] || 0;
+      const avgHc = hc + terms; // approximate avg headcount during period
+      const rate = avgHc ? (terms / avgHc) * (12 / periodMonths) * 100 : 0;
+      return { name, terms, hc, rate };
+    })
+    .filter(e => e.terms > 0 || e.hc > 0)
+    .sort((a,b) => b.rate - a.rate);
+
+  const totalTerms = entries.reduce((s,e) => s+e.terms, 0);
+  const totalHc = entries.reduce((s,e) => s+e.hc, 0);
+  const orgRate = totalHc ? (totalTerms / (totalHc + totalTerms)) * (12 / periodMonths) * 100 : 0;
+
+  return {
+    type:'bar',
+    data:{ labels:entries.map(e=>e.name), datasets:[{
+      label:'Annualised Attrition %',
+      data:entries.map(e=>Math.round(e.rate * 10) / 10),
+      backgroundColor:entries.map(e => e.rate > 20 ? CHART_COLORS[6]+'cc' : e.rate > 10 ? CHART_COLORS[3]+'cc' : CHART_COLORS[2]+'cc'),
+      borderRadius:4,
+    }]},
+    options: barOptions(true, false, 'Attrition %'),
+    summary: [
+      ...entries.map(e => ({ label:e.name, value:`${e.rate.toFixed(1)}% (${e.terms} leavers, ${e.hc} current headcount)` })),
+      { label:'Org average', value:`${orgRate.toFixed(1)}% (${totalTerms} total leavers)` },
+    ],
+    summaryHeaders:['Department','Attrition Rate'],
+    _insight: entries.length > 0 ? `Highest attrition: ${entries[0].name} at ${entries[0].rate.toFixed(1)}% annualised. Org average: ${orgRate.toFixed(1)}%. ${orgRate > 20 ? 'Above 20% is considered high — review retention.' : orgRate > 10 ? 'Moderate attrition — monitor trends.' : 'Healthy attrition level.'}` : undefined,
+  };
+}
+
+function execPayLevelSpread(opts) {
+  const data = {};
+  getActivePersons('active').forEach(p => {
+    if (!p.salary) return;
+    const r = getPrimaryRoleForPerson(p.id);
+    const lvl = r ? (r.level || 'Unleveled') : 'Unassigned';
+    if (!data[lvl]) data[lvl] = [];
+    data[lvl].push(p.salary);
+  });
+  const bands = appData.salaryBands || {};
+  const levels = Object.keys(data).sort((a,b) => levelSortKey(a)-levelSortKey(b)).filter(l => data[l].length >= 2);
+
+  if (!levels.length) {
+    return { kpi:[{ label:'No salary data', value:'—' }, { label:'Note', value:'At least 2 employees per level are needed to compute spread.' }], summary:[], summaryHeaders:[] };
+  }
+
+  // Build floating bar chart: spacer (transparent) + IQR bar
+  const p25s    = levels.map(l => percentile(data[l], 25));
+  const medians = levels.map(l => median(data[l]));
+  const p75s    = levels.map(l => percentile(data[l], 75));
+  const iqrs    = levels.map((l,i) => p75s[i] - p25s[i]);
+  const cvs     = levels.map(l => cv(data[l]));
+
+  const insight = (() => {
+    const worstIdx = cvs.indexOf(Math.max(...cvs));
+    const worst = cvs[worstIdx];
+    if (worst > 20) return `Pay spread is high at ${levels[worstIdx]} (CV ${Math.round(worst)}%) — employees at the same level have very different salaries. Consider a pay equity review.`;
+    if (worst > 12) return `Moderate pay spread at ${levels[worstIdx]} (CV ${Math.round(worst)}%). Within normal range but worth monitoring.`;
+    return `Pay spread is consistent across all levels (max CV ${Math.round(worst)}%). Good pay equity signal.`;
+  })();
+
+  return {
+    type:'bar',
+    data:{ labels:levels, datasets:[
+      { label:'Min (spacer)', data:p25s, backgroundColor:'transparent', borderWidth:0, stack:'spread' },
+      { label:'P25–P75 Range', data:iqrs, backgroundColor:CHART_COLORS[0]+'88', borderRadius:4, stack:'spread' },
+      { label:'Median', data:medians, type:'line', borderColor:CHART_COLORS[1], backgroundColor:'transparent', pointRadius:5, pointBackgroundColor:CHART_COLORS[1], tension:0, yAxisID:'y' },
+    ]},
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ display:true, position:'top', labels:{ filter: i => i.text !== 'Min (spacer)', boxWidth:12, color:makeTickColor() } }, tooltip:{ callbacks:{ label: ctx => ctx.dataset.label === 'Min (spacer)' ? null : ` ${ctx.dataset.label}: ${fmt(ctx.parsed.y ?? ctx.parsed.x)}` } } },
+      scales:{ x:{ stacked:true, grid:{color:makeGridColor()}, ticks:{color:makeTickColor()} }, y:{ stacked:false, grid:{color:makeGridColor()}, ticks:{color:makeTickColor(), callback: v => fmt(v) }, title:{display:true,text:'Salary',color:makeTickColor()} } },
+    },
+    summary: levels.map((l,i) => {
+      const band = bands[l];
+      const bandStr = band ? ` · band ${fmt(band.min)}–${fmt(band.max)}` : '';
+      return { label:l, value:`Median ${fmt(medians[i])} · P25 ${fmt(p25s[i])} · P75 ${fmt(p75s[i])} · CV ${Math.round(cvs[i])}%${bandStr}` };
+    }),
+    summaryHeaders:['Level','Pay Spread'],
+    _insight: insight,
+  };
+}
+
+async function execHcPromotionRate(opts) {
+  const levelChanges = await fetchChangelogAll({ entityType:'role', field:'level', from: opts.dateFrom || undefined, to: opts.dateTo || undefined });
+
+  if (!levelChanges.length) {
+    return { kpi:[{ label:'No promotion events found', value:'—' }, { label:'Tip', value:'The demo history seeder does not yet emit promotion events. This report will populate once level changes are recorded in the audit log.' }], summary:[], summaryHeaders:[] };
+  }
+
+  const promotions = levelChanges.filter(e => levelNum(e.newValue) > levelNum(e.oldValue));
+  const demotions  = levelChanges.filter(e => levelNum(e.newValue) < levelNum(e.oldValue));
+
+  const allEvents = [...promotions, ...demotions];
+  const from  = opts.dateFrom || allEvents.reduce((a,b) => a.timestamp < b.timestamp ? a : b).timestamp.slice(0,10);
+  const to    = opts.dateTo   || new Date().toISOString().slice(0,10);
+  const bucket = opts.bucket || 'quarter';
+  const buckets = generateBuckets(bucket, from, to);
+
+  const promSeries = buckets.map(b => promotions.filter(e => e.timestamp >= b.start && e.timestamp <= b.end).length);
+  const demSeries  = buckets.map(b => demotions.filter(e => e.timestamp >= b.start && e.timestamp <= b.end).length);
+  const totalProms = promSeries.reduce((a,b) => a+b, 0);
+  const activeHc   = getActivePersons('active').length;
+
+  return {
+    type:'bar',
+    data:{ labels:buckets.map(b=>b.label), datasets:[
+      { label:'Promotions', data:promSeries, backgroundColor:CHART_COLORS[2]+'cc', borderRadius:4 },
+      { label:'Demotions',  data:demSeries,  backgroundColor:CHART_COLORS[1]+'cc', borderRadius:4 },
+    ]},
+    options: barOptions(false, true),
+    summary: buckets.map((b,i) => ({ label:b.label, value:`${promSeries[i]} promotions · ${demSeries[i]} demotions` })),
+    summaryHeaders:['Period','Level Changes'],
+    _insight: `${totalProms} total promotions over the period${activeHc ? ` (${Math.round(totalProms/activeHc*100)}% of current headcount)` : ''}.`,
+  };
+}
+
+function execDivGenderPipeline(opts) {
+  const TIERS = [
+    { label:'Entry (L1–L2)',      levels:['L1','L2'] },
+    { label:'Mid (L3–L4)',        levels:['L3','L4'] },
+    { label:'Senior (L5–L6)',     levels:['L5','L6'] },
+    { label:'Leadership (L7–L8)', levels:['L7','L8'] },
+  ];
+
+  const tierData = TIERS.map(tier => {
+    const counts = { male:0, female:0, other:0 };
+    getActivePersons('active').forEach(p => {
+      const r = getPrimaryRoleForPerson(p.id);
+      if (!r || !tier.levels.includes(r.level)) return;
+      const g = genderKey(p);
+      if (g === 'unknown') counts.other++;
+      else counts[g]++;
+    });
+    const total = counts.male + counts.female + counts.other;
+    return { ...tier, ...counts, total, femaleRatio: total ? counts.female / total : 0 };
+  });
+
+  const populated = tierData.filter(t => t.total > 0);
+  if (!populated.length) {
+    return { kpi:[{ label:'No employees found', value:'—' }], summary:[], summaryHeaders:[] };
+  }
+
+  const entry      = populated[0];
+  const leadership = populated[populated.length - 1];
+  const gap = entry.femaleRatio - leadership.femaleRatio;
+  const insight = gap > 0.1
+    ? `Pipeline gap detected: ${Math.round(entry.femaleRatio*100)}% female at entry (${entry.label}) but only ${Math.round(leadership.femaleRatio*100)}% at leadership (${leadership.label}) — a ${Math.round(gap*100)}pp drop-off.`
+    : gap < -0.05
+    ? `Reverse pipeline: More women at leadership (${Math.round(leadership.femaleRatio*100)}%) than entry (${Math.round(entry.femaleRatio*100)}%).`
+    : `Gender representation is consistent across career tiers (within 10pp). Strong pipeline health.`;
+
+  const total100 = tierData.map(t => t.total);
+  return {
+    type:'bar',
+    data:{ labels:tierData.map(t=>t.label), datasets:[
+      { label:'Female', data:tierData.map(t => t.total ? Math.round(t.female/t.total*100) : 0), backgroundColor:GENDER_COLORS.female+'cc', borderRadius:2, stack:'s' },
+      { label:'Male',   data:tierData.map(t => t.total ? Math.round(t.male/t.total*100) : 0),   backgroundColor:GENDER_COLORS.male+'cc',   borderRadius:2, stack:'s' },
+      { label:'Other/Unknown', data:tierData.map(t => t.total ? Math.round(t.other/t.total*100) : 0), backgroundColor:GENDER_COLORS.other+'cc', borderRadius:2, stack:'s' },
+    ]},
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      indexAxis:'y',
+      plugins:{ legend:{ display:true, position:'top', labels:{ boxWidth:12, color:makeTickColor() } }, tooltip:{ callbacks:{ label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.x}%` } } },
+      scales:{
+        x:{ stacked:true, min:0, max:100, grid:{color:makeGridColor()}, ticks:{color:makeTickColor(), callback: v => v+'%' } },
+        y:{ stacked:true, grid:{color:makeGridColor()}, ticks:{color:makeTickColor()} },
+      },
+    },
+    summary: tierData.map(t => ({ label:t.label, value:`${t.total} employees · ${t.total ? Math.round(t.femaleRatio*100) : 0}% female · ${t.total ? Math.round(t.male/t.total*100) : 0}% male` })),
+    summaryHeaders:['Career Tier','Gender Composition'],
+    _insight: insight,
+  };
+}
+
+async function execOrgLayeringTrend(opts) {
+  const roleCreates = await fetchChangelogAll({ entityType:'role', operation:'CREATE', from: opts.dateFrom || undefined, to: opts.dateTo || undefined });
+  const roleDeletes = await fetchChangelogAll({ entityType:'role', operation:'DELETE', from: opts.dateFrom || undefined, to: opts.dateTo || undefined });
+
+  if (!roleCreates.length) {
+    return { kpi:[{ label:'No role history found', value:'—' }, { label:'Tip', value:'This report requires role creation/deletion events in the audit log.' }], summary:[], summaryHeaders:[] };
+  }
+
+  const allRoleEvents = [...roleCreates, ...roleDeletes];
+  const from  = opts.dateFrom || allRoleEvents.reduce((a,b) => a.timestamp < b.timestamp ? a : b).timestamp.slice(0,10);
+  const to    = opts.dateTo   || new Date().toISOString().slice(0,10);
+  const bucket = opts.bucket || 'quarter';
+  const buckets = generateBuckets(bucket, from, to);
+
+  // Track manager vs IC roles: a role is a "manager role" if it is referenced as managerRoleId by another role
+  // We approximate by tracking roles whose newValue has managerRoleId set (they are ICs) vs roles that are referenced
+  // Simpler: use snapshot — for each bucket end, count current manager role IDs
+  // Since we don't have full snapshots, use the current state and assume it's roughly representative
+  const managerRoleIds = new Set();
+  appData.roles.forEach(r => { if (r.managerRoleId) managerRoleIds.add(r.managerRoleId); });
+  const currentManagers = [...managerRoleIds].filter(mId => appData.roleAssignments.some(a => a.roleId === mId)).length;
+  const currentTotal = getActivePersons('active').length;
+  const currentICs = Math.max(0, currentTotal - currentManagers);
+  const currentRatio = currentManagers ? Math.round(currentICs / currentManagers * 10) / 10 : 0;
+  const currentMgrPct = currentTotal ? Math.round(currentManagers / currentTotal * 100) : 0;
+
+  // For trend: approximate by interpolating role creation events
+  // Count manager roles created per bucket (roles that will eventually become manager roles)
+  // This is a rough approximation — proper calculation needs full state replay
+  const series = buckets.map(b => {
+    const created = roleCreates.filter(e => e.timestamp >= b.start && e.timestamp <= b.end).length;
+    const deleted = roleDeletes.filter(e => e.timestamp >= b.start && e.timestamp <= b.end).length;
+    return { created, deleted, net: created - deleted };
+  });
+
+  // Show running cumulative headcount and estimated manager %
+  let runningTotal = currentTotal - series.reduce((s,b) => s+b.net, 0);
+  const totalSeries = series.map(b => { runningTotal += b.net; return Math.max(0, runningTotal); });
+  // Manager % approximated as constant (current snapshot) — with a note
+  const mgrPctSeries = totalSeries.map(() => currentMgrPct);
+
+  return {
+    type:'line',
+    data:{ labels:buckets.map(b=>b.label), datasets:[
+      { label:'Total Roles', data:totalSeries, borderColor:CHART_COLORS[0], backgroundColor:CHART_COLORS[0]+'22', fill:true, tension:0.3, pointRadius:3, yAxisID:'y' },
+      { label:'Manager %', data:mgrPctSeries, borderColor:CHART_COLORS[1], borderDash:[4,3], tension:0, pointRadius:0, yAxisID:'y2' },
+    ]},
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ display:true, position:'top', labels:{ boxWidth:12, color:makeTickColor() } }, tooltip:{ callbacks:{ label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y}${ctx.dataset.yAxisID === 'y2' ? '%' : ''}` } } },
+      scales:{
+        x:{ grid:{color:makeGridColor()}, ticks:{color:makeTickColor()} },
+        y:{ grid:{color:makeGridColor()}, ticks:{color:makeTickColor()}, beginAtZero:true, title:{display:true,text:'Headcount',color:makeTickColor()} },
+        y2:{ type:'linear', position:'right', grid:{drawOnChartArea:false}, ticks:{color:makeTickColor(), callback: v => v+'%' }, title:{display:true,text:'Manager %',color:makeTickColor()} },
+      },
+    },
+    summary:[
+      { label:'Current headcount', value:String(currentTotal) },
+      { label:'Manager roles', value:`${currentManagers} (${currentMgrPct}%)` },
+      { label:'IC:Manager ratio', value:currentManagers ? `${currentRatio}:1` : 'N/A' },
+    ],
+    summaryHeaders:['Metric','Value'],
+    _insight: `Current IC:Manager ratio is ${currentRatio}:1 (${currentManagers} managers, ${currentICs} ICs). ${currentRatio < 4 ? 'Low ratio — organisation may be top-heavy with management overhead.' : currentRatio > 10 ? 'High ratio — managers may have wide spans of control.' : 'Ratio is within a healthy range (4–10:1).'}`,
+  };
+}
+
 // ── Custom Builder Executor ───────────────────────────────────────
 async function execCustom(opts) {
   const { entity, field, aggregation, dimension } = opts;
@@ -1335,6 +1743,21 @@ function renderResult(result) {
     kpiWrap.style.display = 'none';
     canvas.style.display = 'block';
     activeChart = new Chart(canvas, { type:result.type, data:result.data, options:result.options });
+  }
+
+  // Insight callout (between chart and summary)
+  let insightEl = document.getElementById('report-insight');
+  if (result._insight) {
+    if (!insightEl) {
+      insightEl = document.createElement('div');
+      insightEl.id = 'report-insight';
+      summaryEl.parentNode.insertBefore(insightEl, summaryEl);
+    }
+    insightEl.className = 'report-insight';
+    insightEl.innerHTML = `<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="8" cy="8" r="6.5"/><line x1="8" y1="7" x2="8" y2="11"/><circle cx="8" cy="5" r="0.5" fill="currentColor" stroke="none"/></svg><span>${escHtml(result._insight)}</span>`;
+    insightEl.style.display = 'flex';
+  } else if (insightEl) {
+    insightEl.style.display = 'none';
   }
 
   // Summary table

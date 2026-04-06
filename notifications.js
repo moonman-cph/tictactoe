@@ -16,6 +16,13 @@
   //   detail — full description shown in the modal (plain text or simple HTML)
   const RELEASE_NOTES = [
     {
+      id:     'release-0.11.0-reports-overhaul',
+      date:   '6 Apr 2026',
+      title:  'Reports overhaul — 5 new reports + insight callouts (0.11.0)',
+      body:   'Added 5 new HR reports, percentage breakdowns across all count reports, and inline insight callouts that surface the "so what" automatically.',
+      detail: 'Major improvements to the Reports page. Five new reports: Attrition Rate by Department (annualised, colour-coded by severity), Pay Spread by Level (P25–P75 range chart with coefficient of variation), Promotion Rate Over Time (level-up/down events from audit log), Gender Pipeline Analysis (female representation across career tiers), and Org Layering Trend (IC:manager ratio). All headcount and distribution reports now show percentages alongside counts. Reports with no data show helpful empty states instead of blank charts. An amber insight callout now surfaces the key finding automatically (e.g. "Widest gender pay gap at L5: 18%"). The New Joiners report now shows hires vs leavers as a stacked bar with a net-change line. Sidebar now shows template counts per category and "New" badges on recently added reports.',
+    },
+    {
       id:     'release-0.10.5-demo-history',
       date:   '6 Apr 2026',
       title:  'Demo history seeder + headcount trend fix (0.10.5)',

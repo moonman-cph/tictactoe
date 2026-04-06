@@ -16,6 +16,13 @@
   //   detail — full description shown in the modal (plain text or simple HTML)
   const RELEASE_NOTES = [
     {
+      id:     'release-0.11.1-demo-seeder-roles',
+      date:   '6 Apr 2026',
+      title:  'Demo seeder now generates role + promotion history (0.11.1)',
+      body:   'Seed Demo History now creates role creation events and promotion (level change) events, enabling the Org Layering Trend and Promotion Rate reports.',
+      detail: 'The demo history seeder previously only recorded person CREATE/DELETE and salary UPDATE events. Role-based reports (Org Layering Trend, Promotion Rate) were showing empty states because the changelog had no role events. The seeder now generates: role CREATE events for every role, aligned to when their assigned person joined; and role level-change (promotion) events at ~8% of roles per pay review round, rolled back from current levels the same way salary history is derived. Re-seed demo history to populate these reports.',
+    },
+    {
       id:     'release-0.11.0-reports-overhaul',
       date:   '6 Apr 2026',
       title:  'Reports overhaul — 5 new reports + insight callouts (0.11.0)',

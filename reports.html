@@ -437,7 +437,7 @@ async function seedDemoHistory() {
     if (!res.ok) throw new Error(json.error || res.statusText);
 
     const s = json.summary;
-    showToast(`Demo history seeded: ${s.personsSeeded} employees over ${s.monthsBack} months, ${s.salaryUpdateEvents} salary events, ${s.ghostEmployeesAdded} attrition cases.`);
+    showToast(`Demo history seeded: ${s.personsSeeded} employees, ${s.rolesSeeded} roles, ${s.salaryUpdateEvents} salary events, ${s.promotionEvents} promotions, ${s.ghostEmployeesAdded} attrition cases.`);
 
     // Refresh any open trend report
     if (activeConfig) runReport();

@@ -371,7 +371,50 @@ function renderSidebar() {
       </div>`;
     }
   }
+  // Dev / admin tool: seed demo history button (visible to hr/org_admin/super_admin)
+  const userRole = window.__currentUser?.role;
+  if (['super_admin', 'org_admin', 'hr'].includes(userRole)) {
+    html += `<div class="sidebar-divider"></div>
+    <div style="padding:0 8px 10px">
+      <button id="seed-demo-btn" onclick="seedDemoHistory()" style="width:100%;padding:6px 10px;font-size:11px;color:#78716c;background:#f5f3ef;border:1px solid #e2ded8;border-radius:6px;cursor:pointer;text-align:left;line-height:1.4" title="Replace changelog with 18 months of synthetic data for report testing">
+        <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="vertical-align:-1px;margin-right:4px"><path d="M3 8a5 5 0 0 1 9.9-1M13 8a5 5 0 0 1-9.9 1"/><polyline points="12 5 13 8 10 8"/><polyline points="4 11 3 8 6 8"/></svg>
+        Seed Demo History
+      </button>
+    </div>`;
+  }
   document.getElementById('sidebar-body').innerHTML = html;
+}
+
+// ── Demo History Seeder ───────────────────────────────────────────
+
+async function seedDemoHistory() {
+  const confirmed = confirm(
+    'Seed 18-month demo history?\n\n' +
+    'This will REPLACE the entire changelog with synthetic data ' +
+    '(120 employees distributed over 18 months, pay reviews, 8 ghost employees for attrition testing).\n\n' +
+    'A backup will be saved as changelog.backup.json (file mode only).\n\n' +
+    'Click OK to proceed.'
+  );
+  if (!confirmed) return;
+
+  const btn = document.getElementById('seed-demo-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Seeding…'; }
+
+  try {
+    const res  = await fetch('/api/dev/seed-demo-history', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ monthsBack: 18 }) });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || res.statusText);
+
+    const s = json.summary;
+    showToast(`Demo history seeded: ${s.personsSeeded} employees over ${s.monthsBack} months, ${s.salaryUpdateEvents} salary events, ${s.ghostEmployeesAdded} attrition cases.`);
+
+    // Refresh any open trend report
+    if (activeConfig) runReport();
+  } catch (e) {
+    alert('Seed failed: ' + e.message);
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'Seed Demo History'; }
+  }
 }
 
 // ── Main Grid Rendering ───────────────────────────────────────────
@@ -778,9 +821,12 @@ function execHcVacancy(opts) {
 async function execHcTrend(opts) {
   const creates = await fetchChangelogAll({ entityType:'person', operation:'CREATE' });
   const deletes = await fetchChangelogAll({ entityType:'person', operation:'DELETE' });
+  // Also count noLongerHired field changes: true = termination (−1), false = reinstatement (+1)
+  const softTerms = await fetchChangelogAll({ entityType:'person', field:'noLongerHired' });
   const events = [
     ...creates.map(e => ({ ts: e.timestamp, delta: +1 })),
     ...deletes.map(e => ({ ts: e.timestamp, delta: -1 })),
+    ...softTerms.map(e => ({ ts: e.timestamp, delta: e.newValue === true ? -1 : +1 })),
   ].sort((a,b) => a.ts.localeCompare(b.ts));
 
   const from  = opts.dateFrom || (events.length ? events[0].ts.slice(0,10) : null);

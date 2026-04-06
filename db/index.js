@@ -390,6 +390,11 @@ function _fileAppend(entries) {
   log.push(...entries);
   fs.writeFileSync(CHANGELOG_FILE, JSON.stringify(log, null, 2), 'utf8');
 }
+function _fileReplaceChangelog(entries) {
+  const backup = CHANGELOG_FILE.replace('.json', '.backup.json');
+  try { fs.copyFileSync(CHANGELOG_FILE, backup); } catch { /* no existing file */ }
+  fs.writeFileSync(CHANGELOG_FILE, JSON.stringify(entries, null, 2), 'utf8');
+}
 
 // ── getData: assemble full org state from normalized tables ───────────────────
 
@@ -787,6 +792,57 @@ async function appendChangelogEntries(entries) {
           e.newValue    != null ? JSON.stringify(e.newValue) : null,
           e.changeReason   ?? null,
           e.source         ?? 'ui',
+          e.bulkId         ?? null,
+          e.isSensitive    ?? false,
+        ]
+      );
+    }
+    await client.query('COMMIT');
+  } catch (err) {
+    await client.query('ROLLBACK');
+    throw err;
+  } finally {
+    client.release();
+  }
+}
+
+// ── replaceChangelog ─────────────────────────────────────────────────────────
+// Dev-only: backs up and replaces the entire changelog for the given org.
+// File mode: backs up changelog.json → changelog.backup.json, writes new file.
+// PG mode:   DELETE all rows for the org, then INSERT new entries.
+
+async function replaceChangelog(entries, orgId = 'default') {
+  if (!process.env.DATABASE_URL) {
+    return _fileReplaceChangelog(entries);
+  }
+  await ensureSchema();
+  const client = await getPool().connect();
+  try {
+    await client.query('BEGIN');
+    await client.query(`DELETE FROM audit_log WHERE org_id = $1`, [orgId]);
+    for (const e of entries) {
+      await client.query(
+        `INSERT INTO audit_log (
+           id, org_id, correlation_id, timestamp,
+           actor_id, actor_email, actor_role, actor_ip, actor_user_agent,
+           operation, entity_type, entity_id, entity_label, field,
+           old_value, new_value, change_reason, source, bulk_id, is_sensitive
+         ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20)`,
+        [
+          e.id,
+          e.orgId          ?? orgId,
+          e.correlationId  ?? null,
+          e.timestamp,
+          null, null, null, null, null,
+          e.operation,
+          e.entityType     ?? null,
+          e.entityId       ?? null,
+          e.entityLabel    ?? null,
+          e.field          ?? null,
+          e.oldValue    != null ? JSON.stringify(e.oldValue) : null,
+          e.newValue    != null ? JSON.stringify(e.newValue) : null,
+          e.changeReason   ?? null,
+          e.source         ?? 'system',
           e.bulkId         ?? null,
           e.isSensitive    ?? false,
         ]
@@ -1327,7 +1383,7 @@ async function updateUserRole(userId, role) {
 }
 
 module.exports = {
-  getData, setData, getChangelog, appendChangelogEntries, DATA_FILE, CHANGELOG_FILE,
+  getData, setData, getChangelog, appendChangelogEntries, replaceChangelog, DATA_FILE, CHANGELOG_FILE,
   getUserByEmail, getUserById, createUser, updateUserLastLogin, updateUserPassword, listUsers,
   syncDemoUser,
   createScheduledJob, getDueJobs, markJobRunning, markJobCompleted, markJobFailed,

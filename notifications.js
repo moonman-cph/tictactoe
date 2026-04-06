@@ -16,6 +16,13 @@
   //   detail — full description shown in the modal (plain text or simple HTML)
   const RELEASE_NOTES = [
     {
+      id:     'release-0.10.5-demo-history',
+      date:   '6 Apr 2026',
+      title:  'Demo history seeder + headcount trend fix (0.10.5)',
+      body:   'New "Seed Demo History" button generates 18 months of synthetic changelog data for report testing. Also fixes the headcount trend to correctly count soft terminations.',
+      detail: 'The Reports page now includes a "Seed Demo History" button (visible to hr/org_admin/super_admin roles) that replaces the changelog with 18 months of realistic synthetic data: 120 employees hired gradually, twice-yearly pay reviews, and 8 ghost employees who joined and left — 4 via hard delete and 4 via noLongerHired — to demonstrate how each type of termination affects the headcount trend. Also fixed a bug where the Headcount Trend report never showed decreasing headcount: the normal workflow for terminating an employee sets noLongerHired=true (a field UPDATE event), but the trend was only counting physical DELETE events. The fix adds noLongerHired field change events as −1/+1 deltas so the trend now matches the snapshot headcount.',
+    },
+    {
       id:     'release-0.10.4-plannedchange-nullclear',
       date:   '6 Apr 2026',
       title:  'Bug fix: planned change re-applied on every page load (0.10.4)',

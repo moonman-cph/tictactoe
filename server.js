@@ -95,6 +95,27 @@ app.get('/api/sim-data',    requireAuth, (req, res) => simData ? res.json(simDat
 app.post('/api/sim-data',   requireAuth, (req, res) => { simData = req.body; res.json({ ok: true }); });
 app.delete('/api/sim-data', requireAuth, (req, res) => { simData = null; res.json({ ok: true }); });
 
+// ── Dev-only: seed demo changelog history ─────────────────────────────────────
+// POST /api/dev/seed-demo-history — requires hr/org_admin/super_admin role.
+// Replaces changelog with 18 months of synthetic data for report testing.
+
+app.post('/api/dev/seed-demo-history', requireAuth, async (req, res) => {
+  const role = req.user?.role;
+  if (!['super_admin', 'org_admin', 'hr'].includes(role)) {
+    return res.status(403).json({ error: 'Insufficient role. Requires hr, org_admin, or super_admin.' });
+  }
+  try {
+    const { generateDemoHistory } = require('./lib/demo-history-generator');
+    const orgData = await db.getData(req.user.orgId || 'default');
+    const { entries, summary } = generateDemoHistory(orgData, { monthsBack: req.body?.monthsBack || 18 });
+    await db.replaceChangelog(entries, req.user.orgId || 'default');
+    res.json({ ok: true, summary });
+  } catch (e) {
+    console.error('[seed-demo-history]', e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
 // ── Authenticated API routes ───────────────────────────────────────────────────
 
 app.use('/api/v1/data',      requireAuth, v1Data);
